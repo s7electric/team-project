@@ -3,9 +3,9 @@
  * It defines methods for creating, reading, updating, and deleting these entities in the data storage system.
  */
 package data_access;
-import entities.User;
-import entities.Product;
-import entities.Order;
+import entity.User;
+import entity.Product;
+import entity.Order;
 import java.util.List;
 
 public interface DataAccessInterface {
