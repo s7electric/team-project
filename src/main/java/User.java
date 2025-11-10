@@ -1,0 +1,151 @@
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * This class is an entity representing a customer in the online store.
+ * User has username, email, hashed password, balance, billing address, previous purchases categories.
+ * */
+public class User {
+    private String username;
+    private String email;
+    private int hashedPassword;
+    private double balance;
+    private List<String> billingAddresses;
+    private List<String> previousPurchasesCategories;
+
+    /**
+     * Creates a new user when signing up.
+     * @param username the name of the user
+     * @param email the email of the user
+     * @param password the password of the user
+     * @param billingAddress the first billing address of the user
+     * @throws IllegalArgumentException when arguments are incorrect
+     * */
+    public User(String username, String email, String password, String billingAddress){
+        if (username.isEmpty()) {throw new IllegalArgumentException("The usermame cannot be empty!");}
+        this.username = username;
+
+        if (email.isEmpty()) {throw new IllegalArgumentException("The email cannot be empty!");}
+        this.email = email;
+
+        if (password.isEmpty()) {throw new IllegalArgumentException("The password cannot be empty!");}
+        this.hashedPassword = hashPassword(password);
+
+        if (billingAddress.isEmpty()) {throw new IllegalArgumentException("The billing address cannot be empty!");}
+        this.billingAddresses.add(billingAddress);
+
+        this.balance = 0;
+        this.previousPurchasesCategories = new ArrayList<>();
+    }
+
+    /**
+     * Creates a new user when loading the users data from the database.
+     * @param username the name of the user
+     * @param email the email of the user
+     * @param hashedPassword the hashed password of the user
+     * @param balance the balance of the user
+     * @param billingAddresses the billing address of the user
+     * @param previousPurchasesCategories: the list of the categories of the user's previous purchases of the user
+     * @throws IllegalArgumentException when arguments are incorrect
+     * */
+    public User(String username, String email, int hashedPassword, double balance, List<String> billingAddresses, List<String> previousPurchasesCategories){
+        if (username.isEmpty()) {throw new IllegalArgumentException("The usermame cannot be empty!");}
+        this.username = username;
+
+        if (email.isEmpty()) {throw new IllegalArgumentException("The email cannot be empty!");}
+        this.email = email;
+
+        if (balance < 0) {throw new IllegalArgumentException("The balance cannot be negative!");}
+        this.balance = balance;
+
+        this.billingAddresses = billingAddresses;
+        this.hashedPassword = hashedPassword;
+        this.previousPurchasesCategories = previousPurchasesCategories;
+    }
+
+    public String getUsername(){
+        return this.username;
+    }
+
+    public String email(){
+        return this.email;
+    }
+
+    public List<String> getBillingAddresses(){
+        return this.billingAddresses;
+    }
+
+    public List<String> getPreviousPurchasesCategories(){
+        return this.previousPurchasesCategories;
+    }
+
+    public double getBalance(){
+        return this.balance;
+    }
+
+    /**
+     * Gets the hashed password of the user when prompted by a security code
+     * @param securityCode the security code needed to access the hashed password of the user
+     * @throws IllegalArgumentException when the security code is incorrect
+     * @return hashedPassword of the user
+     * */
+    public int getHashedPassword(int securityCode) throws IllegalArgumentException{
+        if (securityCode != 56734822) {throw new IllegalArgumentException("The security code is invalid!");}
+        return this.hashedPassword;
+    }
+
+    /**
+     * Adds the new purchase category to the list of the categories of the user's previous purchases
+     * @param category the category of the user's purchase
+     * @throws IllegalArgumentException when the category is empty
+     * */
+    public void addCategory(String category){
+        if (category.isEmpty()) {throw new IllegalArgumentException("The category cannot be empty");}
+        this.previousPurchasesCategories.add(category);
+    }
+
+    /**
+     * Adds the new address to the list of the user's billing addresses
+     * @param address the new billing address of the user
+     * @throws IllegalArgumentException when the address is empty
+     * */
+    public void addAddress(String address){
+        if (address.isEmpty()) {throw new IllegalArgumentException("The address cannot be empty");}
+        this.billingAddresses.add(address);
+    }
+
+    /**
+     * Adds an amount of money to the balance
+     * @param amount the amount of money to be added to the balance
+     * @throws IllegalArgumentException when the amount is negative
+     * */
+    public void addBalance(double amount) throws IllegalArgumentException{
+        if (amount < 0) {throw new IllegalArgumentException("The amount cannot be negative!");}
+        this.balance += amount;
+    }
+
+    /**
+     * Removes an amount of money from the balance
+     * @param amount the amount of money to be removed from the balance
+     * @throws IllegalArgumentException when the amount is negative
+     * */
+    public void removeBalance(double amount) throws IllegalArgumentException{
+        if (amount < 0) {throw new IllegalArgumentException("The amount cannot be negative!");}
+        this.balance -= amount;
+    }
+
+    /**
+     * Checks the password of the user and another password to see whether they are equal or not
+     * @param password the other password that the password of the user is going to be compared with
+     * @throws IllegalArgumentException when the input password is empty
+     * */
+    public boolean checkPassword(String password) throws IllegalArgumentException{
+        if (password.isEmpty()) {throw new IllegalArgumentException("The password cannot be negative!");}
+        return this.hashedPassword == hashPassword(password);
+    }
+
+    // turns the password into a hash
+    private int hashPassword(String password){
+        return password.hashCode();
+    }
+}
