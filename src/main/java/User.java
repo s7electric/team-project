@@ -3,7 +3,7 @@ import java.util.List;
 
 /**
  * This class is an entity representing a customer in the online store.
- * User has username, email, hashed password, balance, billing address, previous purchases categories.
+ * User has username, email, hashed password, balance, billing address, previous purchases categories, cart.
  * */
 public class User {
     private String username;
@@ -12,6 +12,7 @@ public class User {
     private double balance;
     private List<String> billingAddresses;
     private List<String> previousPurchasesCategories;
+    private Cart cart;
 
     /**
      * Creates a new user when signing up.
@@ -36,6 +37,7 @@ public class User {
 
         this.balance = 0;
         this.previousPurchasesCategories = new ArrayList<>();
+        this.cart = new Cart(username);
     }
 
     /**
@@ -46,9 +48,10 @@ public class User {
      * @param balance the balance of the user
      * @param billingAddresses the billing address of the user
      * @param previousPurchasesCategories: the list of the categories of the user's previous purchases of the user
+     * @param cart: the user's cart stored in the database
      * @throws IllegalArgumentException when arguments are incorrect
      * */
-    public User(String username, String email, int hashedPassword, double balance, List<String> billingAddresses, List<String> previousPurchasesCategories){
+    public User(String username, String email, int hashedPassword, double balance, List<String> billingAddresses, List<String> previousPurchasesCategories, Cart cart){
         if (username.isEmpty()) {throw new IllegalArgumentException("The usermame cannot be empty!");}
         this.username = username;
 
@@ -61,13 +64,14 @@ public class User {
         this.billingAddresses = billingAddresses;
         this.hashedPassword = hashedPassword;
         this.previousPurchasesCategories = previousPurchasesCategories;
+        this.cart = cart;
     }
 
     public String getUsername(){
         return this.username;
     }
 
-    public String email(){
+    public String getEmail(){
         return this.email;
     }
 
@@ -81,6 +85,10 @@ public class User {
 
     public double getBalance(){
         return this.balance;
+    }
+
+    public Cart getCart(){
+        return this.cart;
     }
 
     /**
