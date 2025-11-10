@@ -32,6 +32,10 @@ public class Product {
     public double getPrice() {
         return price;
     }
+    public void setPrice(double price) {
+        if (price < 0 ) { throw new IllegalArgumentException("Product price cannot be negative");}
+        this.price = price;
+    }
     public String getImageUrl() {
         return imageUrl;
     }
@@ -47,4 +51,9 @@ public class Product {
     public ArrayList<Integer> getScores() {
         return scores;
     }
-}
+    public void addScore(int score) {
+        if (score < 1 || score > 5) {throw new IllegalArgumentException("Invalid score value");}
+        scores.add(score);
+        double newTotal = 0.0   ;
+        for (Integer integer : scores) {
+            newTotal += integer;
