@@ -1,9 +1,11 @@
+package entity;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * This class is an entity representing a customer in the online store.
- * User has username, email, hashed password, balance, billing address, previous purchases categories, cart.
+ * entity.User has username, email, hashed password, balance, billing address, previous purchases categories, cart.
  * */
 public class User {
     private String username;
@@ -37,7 +39,7 @@ public class User {
 
         this.balance = 0;
         this.previousPurchasesCategories = new ArrayList<>();
-        this.cart = new Cart(username);
+        this.cart = new Cart(this);
     }
 
     /**
