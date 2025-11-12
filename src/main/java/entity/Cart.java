@@ -1,4 +1,6 @@
 package entity;
+import java.util.List;
+
 
 /**
  * This class is an entity representing the shopping cart of Owner.
