@@ -9,6 +9,8 @@ public class Cart {
     private final User owner;
     private final List<Product> products;
 
+
+
     /**
      * Creates a new cart for the owner.
      * @param owner the owner
@@ -17,6 +19,8 @@ public class Cart {
         this.owner = owner;
         this.products = new ArrayList<>();
     }
+
+
 
     public User getOwner() {
         return owner;
