@@ -1,4 +1,19 @@
 package interface_adapter.login;
 
+import use_case.login.LoginInputBoundary;
+import use_case.login.LoginInputData;
+
 public class LoginController {
+
+    private final LoginInputBoundary loginUseCaseInteractor;
+
+    public LoginController(LoginInputBoundary loginUseCaseInteractor) {
+        this.loginUseCaseInteractor = loginUseCaseInteractor;
+    }
+
+    public void login(String username, String password){
+        LoginInputData input = new LoginInputData(username, password);
+        loginUseCaseInteractor.execute(input);
+    }
+
 }
