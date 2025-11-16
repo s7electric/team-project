@@ -17,14 +17,14 @@ public class SignUpPresenter implements SignUpOutputBoundary{
     }
 
     public void updateSuccess(SignUpOutputData outputData){
-        this.signUpState.setState("Success", outputData.getUser());
+        this.signUpState.setSuccess(outputData.getUser());
         this.signUpViewModel.setState(signUpState);
         this.signUpViewModel.firePropertyChange("SignUpSuccess");
     }
 
     public void updateFailure(SignUpOutputData outputData) {
-        this.signUpState.setState("Failure", outputData.getError());
-        this.signUpViewModel.setState(signUpState);
+        this.signUpState.setSuccess(outputData.getError());
+        this.signUpViewModel.setFailure(signUpState);
         this.signUpViewModel.firePropertyChange("SignUpFailure");
     }
 }
