@@ -3,7 +3,7 @@ package use_case.sign_up;
 import entity.User;
 
 /**
- * This interface is for the SignUpPresenter to implement and for the SignUpUseCaseInteractor to call its methods
+ * This interface is for the SignUpPresenter to implement and for the SignUpInteractor to call its methods
  * */
 public interface SignUpOutputBoundary {
     /**
