@@ -1,0 +1,107 @@
+package view;
+
+import entity.User;
+
+import javax.swing.*;
+import java.awt.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
+/**
+ * This class creates the view for the signup use case.
+ * It contains a SignUpViewModel and a SignUpController and a string error.
+ * */
+public class SignUpView extends JPanel implements PropertyChangeListener {
+    private SignUpViewModel signUpViewModel;
+    private SignUpController signUpController;
+    private String error = "";
+
+    /**
+     * Creates a SignUpView object for the signup use case.
+     * */
+    public SignUpView(){
+        this.signUpViewModel = new SignUpViewModel();
+        JPanel usernamePanel = new JPanel();
+        JLabel usernameLabel = new JLabel("Username:");
+        JTextField usernameTextField = new JTextField(10);
+        usernamePanel.add(usernameLabel);
+        usernamePanel.add(usernameTextField);
+
+        JPanel passwordPanel = new JPanel();
+        JLabel passwordLabel = new JLabel("Password:");
+        JTextField passwordTextField = new JTextField(10);
+        passwordPanel.add(passwordLabel);
+        passwordPanel.add(passwordTextField);
+
+        JPanel password2Panel = new JPanel();
+        JLabel password2Label = new JLabel("Confirm Password:");
+        JTextField password2TextField = new JTextField(10);
+        password2Panel.add(password2Label);
+        password2Panel.add(password2TextField);
+
+        JPanel emailPanel = new JPanel();
+        JLabel emailLabel = new JLabel("Email:");
+        JTextField emailTextField = new JTextField(10);
+        emailPanel.add(emailLabel);
+        emailPanel.add(emailTextField);
+
+        JPanel billingAddressPanel = new JPanel();
+        JLabel billingAddressLabel = new JLabel("Billing Address:");
+        JTextField billingAddressTextField = new JTextField(10);
+        billingAddressPanel.add(billingAddressLabel);
+        billingAddressPanel.add(billingAddressTextField);
+
+        JPanel buttonsPanel = new JPanel();
+        JButton createButton = new JButton("Create");
+        JButton loginButton = new JButton("Login");
+        buttonsPanel.add(createButton);
+        buttonsPanel.add(loginButton);
+
+        JPanel errorPanel = new JPanel();
+        JLabel errorLabel = new JLabel(this.error);
+        errorLabel.setForeground(new Color(255,0,0));
+        errorPanel.add(errorLabel);
+
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        mainPanel.add(usernamePanel);
+        mainPanel.add(passwordPanel);
+        mainPanel.add(password2Panel);
+        mainPanel.add(emailPanel);
+        mainPanel.add(billingAddressPanel);
+        mainPanel.add(errorPanel);
+        mainPanel.add(buttonsPanel);
+
+        createButton.addActionListener(event -> {
+            String username = usernameTextField.getText();
+            String password = passwordTextField.getText();
+            String password2 = password2TextField.getText();
+            String email = emailTextField.getText();
+            String billingAddress = billingAddressTextField.getText();
+            if (password.equals(password2)){
+                this.signUpController = new SignUpController();
+                this.signUpController.execute(username, password, email, billingAddress);
+            } else {
+                this.error = "Passwords do not match!";
+            }
+        });
+
+        loginButton.addActionListener(event -> {new LoginView();});
+    }
+
+    /**
+     * Listens to the event of the property change to see if the process was successful or not
+     * and updates the view accordingly
+     * @param evt the event of the property change
+     * */
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        if (evt.getPropertyName().equals("SignUpSuccess")){
+            User loggedInUser = this.signUpViewModel.getState().getSuccess();
+            new LoggedInView(loggedInUser);
+        } else if (evt.getPropertyName().equals("SgnUpFailure")){
+            String error = this.signUpViewModel.getState().getFailure();
+            this.error = error;
+        }
+    }
+}
