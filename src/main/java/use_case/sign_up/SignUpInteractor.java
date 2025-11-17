@@ -9,7 +9,7 @@ import entity.User;
  * */
 public class SignUpInteractor implements SignUpInputBoundary{
     private SignUpOutputBoundary signUpPresenter;
-    private DataAccessInterface dataAccess;
+    private SignUpDataAccessInterface dataAccess;
 
     /**
      * Creates the SignUpInteractor object for the signup use case
