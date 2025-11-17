@@ -1,6 +1,7 @@
 package use_case.sign_up;
 
-import data_access.DataAccessInterface;
+import interface_adapter.sign_up.SignUpPresenter;
+import data_access.DataAccess;
 import entity.User;
 
 /**
@@ -48,7 +49,7 @@ public class SignUpInteractor implements SignUpInputBoundary{
             // if the signing up process failed, informs the new user about it
             } catch (IllegalArgumentException e) {
                 SignUpOutputData outputData = new SignUpOutputData(e.getMessage());
-                signUpPresenter.upadteFailure(outputData);
+                signUpPresenter.updateFailure(outputData);
             }
         }
     }

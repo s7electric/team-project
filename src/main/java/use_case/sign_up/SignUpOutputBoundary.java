@@ -8,13 +8,13 @@ import entity.User;
 public interface SignUpOutputBoundary {
     /**
      * Updates the view to show the use case was successful
-     * @param user the user currently signed up
+     * @param signUpOutputData the formatted data for a successful signup process
      * */
-    public void updateSuccess(User user);
+    public void updateSuccess(SignUpOutputData signUpOutputData);
 
     /**
      * Updates the view to show the use case was successful
-     * @param error the error regarding the failure
+     * @param signUpOutputData the formatted data for a failed signup process
      * */
-    public void updateFailure(String error);
+    public void updateFailure(SignUpOutputData signUpOutputData);
 }

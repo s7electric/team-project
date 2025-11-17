@@ -1,6 +1,8 @@
 package view;
 
 import entity.User;
+import interface_adapter.sign_up.SignUpController;
+import interface_adapter.sign_up.SignUpViewModel;
 
 import javax.swing.*;
 import java.awt.*;

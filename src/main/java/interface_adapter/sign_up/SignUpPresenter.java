@@ -1,6 +1,7 @@
 package interface_adapter.sign_up;
 
 import use_case.sign_up.SignUpOutputBoundary;
+import use_case.sign_up.SignUpOutputData;
 
 /**
  * This class unwraps the formatted output data from the SignUpInteractor into raw data for the SignUpView.
@@ -33,8 +34,8 @@ public class SignUpPresenter implements SignUpOutputBoundary{
      * @param outputData the output data of the SignUpInteractor
      * */
     public void updateFailure(SignUpOutputData outputData) {
-        this.signUpState.setSuccess(outputData.getError());
-        this.signUpViewModel.setFailure(signUpState);
+        this.signUpState.setFailure(outputData.getError());
+        this.signUpViewModel.setState(signUpState);
         this.signUpViewModel.firePropertyChange("SignUpFailure");
     }
 }

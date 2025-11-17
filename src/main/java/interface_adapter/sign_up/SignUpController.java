@@ -2,6 +2,7 @@ package interface_adapter.sign_up;
 
 import use_case.sign_up.SignUpInputBoundary;
 import use_case.sign_up.SignUpInputData;
+import use_case.sign_up.SignUpInteractor;
 
 /**
  * This is controller class for the signup use case.
