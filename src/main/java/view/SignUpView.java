@@ -7,11 +7,18 @@ import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+/**
+ * This class creates the view for the signup use case.
+ * It contains a SignUpViewModel and a SignUpController and a string error.
+ * */
 public class SignUpView extends JPanel implements PropertyChangeListener {
-    private final String VIEW_NAME = "Sign Up";
     private SignUpViewModel signUpViewModel;
     private SignUpController signUpController;
     private String error = "";
+
+    /**
+     * Creates a SignUpView object for the signup use case.
+     * */
     public SignUpView(){
         this.signUpViewModel = new SignUpViewModel();
         JPanel usernamePanel = new JPanel();
@@ -74,19 +81,26 @@ public class SignUpView extends JPanel implements PropertyChangeListener {
             if (password.equals(password2)){
                 this.signUpController = new SignUpController();
                 this.signUpController.execute(username, password, email, billingAddress);
+            } else {
+                this.error = "Passwords do not match!";
             }
         });
 
         loginButton.addActionListener(event -> {new LoginView();});
     }
 
+    /**
+     * Listens to the event of the property change to see if the process was successful or not
+     * and updates the view accordingly
+     * @param evt the event of the property change
+     * */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals("SignUpSuccess")){
-            User loggedInUser = this.signUpViewModel.getState().getUser();
+            User loggedInUser = this.signUpViewModel.getState().getSuccess();
             new LoggedInView(loggedInUser);
         } else if (evt.getPropertyName().equals("SgnUpFailure")){
-            String error = this.signUpViewModel.getState().getUser();
+            String error = this.signUpViewModel.getState().getFailure();
             this.error = error;
         }
     }
