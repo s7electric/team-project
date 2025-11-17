@@ -5,14 +5,21 @@ import java.util.List;
 
 /**
  * This class is an entity representing a customer in the online store.
- * entity.User has username, email, hashed password, balance, billing address, previous purchases categories, cart.
- * */
+ * entity.User has username, email, hashed password, balance, billing addresses,
+ * previous purchases categories, and a cart.
+ */
 public class User {
     private String username;
     private String email;
     private int hashedPassword;
     private double balance;
-    private List<String> billingAddresses;
+
+    /**
+     * NOTE: changed from List<String> to List<Address>
+     * so that we can store structured address information.
+     */
+    private List<Address> billingAddresses;
+
     private List<String> previousPurchasesCategories;
     private Cart cart;
 
@@ -21,24 +28,37 @@ public class User {
      * @param username the name of the user
      * @param email the email of the user
      * @param password the password of the user
-     * @param billingAddress the first billing address of the user
+     * @param billingAddress the first billing address of the user (single-line)
      * @throws IllegalArgumentException when arguments are incorrect
-     * */
+     */
     public User(String username, String email, String password, String billingAddress){
-        if (username.isEmpty()) {throw new IllegalArgumentException("The usermame cannot be empty!");}
+        if (username == null || username.isEmpty()) {
+            throw new IllegalArgumentException("The usermame cannot be empty!");
+        }
         this.username = username;
 
-        if (email.isEmpty()) {throw new IllegalArgumentException("The email cannot be empty!");}
+        if (email == null || email.isEmpty()) {
+            throw new IllegalArgumentException("The email cannot be empty!");
+        }
         this.email = email;
 
-        if (password.isEmpty()) {throw new IllegalArgumentException("The password cannot be empty!");}
+        if (password == null || password.isEmpty()) {
+            throw new IllegalArgumentException("The password cannot be empty!");
+        }
         this.hashedPassword = hashPassword(password);
 
-        if (billingAddress.isEmpty()) {throw new IllegalArgumentException("The billing address cannot be empty!");}
-        this.billingAddresses.add(billingAddress);
+        if (billingAddress == null || billingAddress.isEmpty()) {
+            throw new IllegalArgumentException("The billing address cannot be empty!");
+        }
+
+        // Initialize lists BEFORE using them
+        this.billingAddresses = new ArrayList<>();
+        this.previousPurchasesCategories = new ArrayList<>();
+
+        // Wrap the first address string into an Address entity
+        this.billingAddresses.add(new Address(billingAddress));
 
         this.balance = 0;
-        this.previousPurchasesCategories = new ArrayList<>();
         this.cart = new Cart(this);
     }
 
@@ -48,24 +68,37 @@ public class User {
      * @param email the email of the user
      * @param hashedPassword the hashed password of the user
      * @param balance the balance of the user
-     * @param billingAddresses the billing address of the user
-     * @param previousPurchasesCategories: the list of the categories of the user's previous purchases of the user
-     * @param cart: the user's cart stored in the database
+     * @param billingAddresses the list of billing addresses of the user
+     * @param previousPurchasesCategories the list of categories of the user's previous purchases
+     * @param cart the user's cart stored in the database
      * @throws IllegalArgumentException when arguments are incorrect
-     * */
-    public User(String username, String email, int hashedPassword, double balance, List<String> billingAddresses, List<String> previousPurchasesCategories, Cart cart){
-        if (username.isEmpty()) {throw new IllegalArgumentException("The usermame cannot be empty!");}
+     */
+    public User(String username, String email, int hashedPassword, double balance,
+                List<Address> billingAddresses,
+                List<String> previousPurchasesCategories,
+                Cart cart){
+
+        if (username == null || username.isEmpty()) {
+            throw new IllegalArgumentException("The usermame cannot be empty!");
+        }
         this.username = username;
 
-        if (email.isEmpty()) {throw new IllegalArgumentException("The email cannot be empty!");}
+        if (email == null || email.isEmpty()) {
+            throw new IllegalArgumentException("The email cannot be empty!");
+        }
         this.email = email;
 
-        if (balance < 0) {throw new IllegalArgumentException("The balance cannot be negative!");}
+        if (balance < 0) {
+            throw new IllegalArgumentException("The balance cannot be negative!");
+        }
         this.balance = balance;
 
-        this.billingAddresses = billingAddresses;
+        // If null is passed, we create empty lists to avoid NullPointerException.
+        this.billingAddresses = (billingAddresses == null) ? new ArrayList<>() : billingAddresses;
+        this.previousPurchasesCategories = (previousPurchasesCategories == null)
+                ? new ArrayList<>() : previousPurchasesCategories;
+
         this.hashedPassword = hashedPassword;
-        this.previousPurchasesCategories = previousPurchasesCategories;
         this.cart = cart;
     }
 
@@ -77,7 +110,11 @@ public class User {
         return this.email;
     }
 
-    public List<String> getBillingAddresses(){
+    /**
+     * Gets the list of billing addresses of the user.
+     * The list elements are Address entities, not plain strings.
+     */
+    public List<Address> getBillingAddresses(){
         return this.billingAddresses;
     }
 
@@ -98,9 +135,11 @@ public class User {
      * @param securityCode the security code needed to access the hashed password of the user
      * @throws IllegalArgumentException when the security code is incorrect
      * @return hashedPassword of the user
-     * */
+     */
     public int getHashedPassword(int securityCode) throws IllegalArgumentException{
-        if (securityCode != 56734822) {throw new IllegalArgumentException("The security code is invalid!");}
+        if (securityCode != 56734822) {
+            throw new IllegalArgumentException("The security code is invalid!");
+        }
         return this.hashedPassword;
     }
 
@@ -108,19 +147,37 @@ public class User {
      * Adds the new purchase category to the list of the categories of the user's previous purchases
      * @param category the category of the user's purchase
      * @throws IllegalArgumentException when the category is empty
-     * */
+     */
     public void addCategory(String category){
-        if (category.isEmpty()) {throw new IllegalArgumentException("The category cannot be empty");}
+        if (category == null || category.isEmpty()) {
+            throw new IllegalArgumentException("The category cannot be empty");
+        }
         this.previousPurchasesCategories.add(category);
     }
 
     /**
-     * Adds the new address to the list of the user's billing addresses
+     * Adds a new address (as a String) to the list of the user's billing addresses.
+     * Internally this is wrapped into an Address entity.
      * @param address the new billing address of the user
      * @throws IllegalArgumentException when the address is empty
-     * */
+     */
     public void addAddress(String address){
-        if (address.isEmpty()) {throw new IllegalArgumentException("The address cannot be empty");}
+        if (address == null || address.isEmpty()) {
+            throw new IllegalArgumentException("The address cannot be empty");
+        }
+        this.billingAddresses.add(new Address(address));
+    }
+
+    /**
+     * Adds a new Address entity directly to the list of billing addresses.
+     * This overload is useful when use cases already work with Address objects.
+     * @param address the new billing address of the user
+     * @throws IllegalArgumentException when address is null
+     */
+    public void addAddress(Address address){
+        if (address == null) {
+            throw new IllegalArgumentException("The address cannot be null");
+        }
         this.billingAddresses.add(address);
     }
 
@@ -128,9 +185,11 @@ public class User {
      * Adds an amount of money to the balance
      * @param amount the amount of money to be added to the balance
      * @throws IllegalArgumentException when the amount is negative
-     * */
+     */
     public void addBalance(double amount) throws IllegalArgumentException{
-        if (amount < 0) {throw new IllegalArgumentException("The amount cannot be negative!");}
+        if (amount < 0) {
+            throw new IllegalArgumentException("The amount cannot be negative!");
+        }
         this.balance += amount;
     }
 
@@ -138,9 +197,11 @@ public class User {
      * Removes an amount of money from the balance
      * @param amount the amount of money to be removed from the balance
      * @throws IllegalArgumentException when the amount is negative
-     * */
+     */
     public void removeBalance(double amount) throws IllegalArgumentException{
-        if (amount < 0) {throw new IllegalArgumentException("The amount cannot be negative!");}
+        if (amount < 0) {
+            throw new IllegalArgumentException("The amount cannot be negative!");
+        }
         this.balance -= amount;
     }
 
@@ -148,9 +209,11 @@ public class User {
      * Checks the password of the user and another password to see whether they are equal or not
      * @param password the other password that the password of the user is going to be compared with
      * @throws IllegalArgumentException when the input password is empty
-     * */
+     */
     public boolean checkPassword(String password) throws IllegalArgumentException{
-        if (password.isEmpty()) {throw new IllegalArgumentException("The password cannot be negative!");}
+        if (password == null || password.isEmpty()) {
+            throw new IllegalArgumentException("The password cannot be negative!");
+        }
         return this.hashedPassword == hashPassword(password);
     }
 
