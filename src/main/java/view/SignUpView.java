@@ -74,6 +74,11 @@ public class SignUpView {
                     signUpController.execute(username, password, email, billingAddress);
                 }
             });
+
+            loginButton.addActionListener(event -> {new LoginView();});
+
+
+
         });
     }
 
