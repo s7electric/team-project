@@ -34,14 +34,15 @@ public class SignUpInteractor implements SignUpInputBoundary{
         boolean oldUser = dataAccess.checkUserExists(username);
 
         // if a user with same username exists, informs the new user about it
-        if (!oldUser) {
+        if (oldUser) {
             SignUpOutputData outputData = new SignUpOutputData("An user with the same username exists, try to login!");
             signUpPresenter.updateFailure(outputData);
 
         // if not try to sign up the new user
         } else {
             try {
-                User newUser = new User(username, password, email, billingAddress);
+                Address billingAddressObject = new Address(billingAddress);
+                User newUser = new User(username, password, email, billingAddressObject);
                 dataAccess.createUser(newUser);
                 SignUpOutputData outputData = new SignUpOutputData(newUser);
                 signUpPresenter.updateSuccess(outputData);
