@@ -29,18 +29,12 @@ public abstract class ViewModel<StateType> {
     }
 
     public void setState(StateType state) {
-        // StateType old = this.state;
+        StateType oldState = this.state;
         this.state = state;
-        // support.firePropertyChange("state", old, state); ?
+        firePropertyChange("state", oldState, state);
     }
 
-    // public void setViewName(String viewName) {
-    //     String old = this.viewName;
-    //     this.viewName = viewName;
-    //     support.firePropertyChange("viewName", old, viewName);
-    // }
-
-    protected void firePropertyChange(String property, Object oldValue, Object newValue) {
+    public void firePropertyChange(String property, Object oldValue, Object newValue) {
         support.firePropertyChange(property, oldValue, newValue);
     }
 

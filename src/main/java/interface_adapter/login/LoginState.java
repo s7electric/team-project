@@ -3,6 +3,7 @@ package interface_adapter.login;
 public class LoginState {
     private String username;
     private String errorMessage;
+    private String password;
     private boolean loggedIn;
 
     public LoginState() {
@@ -12,6 +13,7 @@ public class LoginState {
     public LoginState(String username, String errorMessage, boolean loggedIn) {
         this.username = username;
         this.errorMessage = errorMessage;
+        this.password = "";
         this.loggedIn = loggedIn;
     }
 
@@ -26,8 +28,17 @@ public class LoginState {
     public String getErrorMessage() {
         return errorMessage;
     }
+
     public void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public boolean isLoggedIn() {

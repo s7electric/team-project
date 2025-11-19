@@ -11,9 +11,8 @@ public class ViewManagerModel extends ViewModel {
         return this.activeViewName;
     }
 
-    // public void setActiveViewName(String viewName) {
-    //     String old = this.activeViewName;
-    //     this.activeViewName = viewName;
-    //     firePropertyChange("activeView", old, viewName);
-    // }
+     public void setActiveViewName (String viewName) {
+         this.activeViewName = viewName;
+         setState(viewName);
+     }
 }

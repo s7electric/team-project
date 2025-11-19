@@ -1,36 +1,55 @@
 package interface_adapter.login;
 
+import interface_adapter.HomePagLoggedIN.HomePageLoggedInState;
+import interface_adapter.HomePagLoggedIN.HomePageLoggedInViewModel;
 import interface_adapter.ViewManagerModel;
+import interface_adapter.sign_up.SignUpViewModel;
 import use_case.login.LoginOutputBoundary;
 import use_case.login.LoginOutputData;
 
 /**
- * Presenter for the login use case. Updates the LoginViewModel and view navigation state.
+ * Presenter for the login use case. Updates view models and triggers navigation.
  */
 public class LoginPresenter implements LoginOutputBoundary {
-    private final LoginViewModel loginViewModel;
     private final ViewManagerModel viewManagerModel;
-    private final String loggedInViewName;
+    private final HomePageLoggedInViewModel homePageLoggedInViewModel;
+    private final LoginViewModel loginViewModel;
+    private final SignUpViewModel signUpViewModel;
 
-    public LoginPresenter(LoginViewModel loginViewModel,
-                          ViewManagerModel viewManagerModel,
-                          String loggedInViewName) {
-        this.loginViewModel = loginViewModel;
+    public LoginPresenter(ViewManagerModel viewManagerModel,
+                          HomePageLoggedInViewModel homePageLoggedInViewModel,
+                          LoginViewModel loginViewModel,
+                          SignUpViewModel signUpViewModel) {
         this.viewManagerModel = viewManagerModel;
-        this.loggedInViewName = loggedInViewName;
+        this.homePageLoggedInViewModel = homePageLoggedInViewModel;
+        this.loginViewModel = loginViewModel;
+        this.signUpViewModel = signUpViewModel;
     }
 
     @Override
     public void prepareSuccessView(LoginOutputData outputData) {
-        LoginState newState = new LoginState(outputData.getUsername(), null, true);
-        loginViewModel.setState(newState);
-        viewManagerModel.setActiveViewName(loggedInViewName);
+        HomePageLoggedInState homePageLoggedInState = homePageLoggedInViewModel.getState();
+        homePageLoggedInState.setUsername(outputData.getUsername());
+        homePageLoggedInViewModel.setState(homePageLoggedInState);
+
+        loginViewModel.setState(new LoginState());
+        viewManagerModel.setActiveViewName(homePageLoggedInViewModel.getViewName());
     }
 
     @Override
     public void prepareFailView(String errorMessage) {
-        LoginState currentState = loginViewModel.getState();
-        LoginState newState = new LoginState(currentState.getUsername(), errorMessage, false);
-        loginViewModel.setState(newState);
+        LoginState state = loginViewModel.getState();
+        state.setErrorMessage(errorMessage);
+        loginViewModel.setState(state);
+    }
+
+    @Override
+    public void switchToSignUpView() {
+        viewManagerModel.setActiveViewName(signUpViewModel.getViewName());
+    }
+
+    @Override
+    public void switchToHomePage() {
+        viewManagerModel.setActiveViewName(homeViewModel.getViewName());
     }
 }

@@ -13,7 +13,20 @@ public class LoginController {
 
     public void login(String username, String password){
         LoginInputData input = new LoginInputData(username, password);
-        loginUseCaseInteractor.execute(input);
+        loginUseCaseInteractor.login(input);
     }
 
+    /**
+     * Executes the "switch to Sign Up View" Use Case.
+     */
+    public void switchToSignUpView() {
+        loginUseCaseInteractor.switchToSignUpView();
+    }
+
+    /**
+     * Executes the "switch to Home Page" Use Case.
+     */
+    public void switchToHomePage() {
+        loginUseCaseInteractor.switchToHomePage();
+    }
 }

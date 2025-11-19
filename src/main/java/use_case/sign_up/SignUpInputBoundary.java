@@ -9,4 +9,9 @@ public interface SignUpInputBoundary {
      * @param inputData the formatted input data needed for the execution of the signup use case
      * */
     public void execute(SignUpInputData inputData);
+
+    /**
+     * Executes the switch to login view use case.
+     */
+    public void switchToLoginView();
 }

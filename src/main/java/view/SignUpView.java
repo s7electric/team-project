@@ -1,65 +1,71 @@
 package view;
 
-import entity.User;
-
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+
+import interface_adapter.sign_up.SignUpViewModel;
+import interface_adapter.sign_up.SignUpController;
+
 
 /**
  * This class creates the view for the signup use case.
  * It contains a SignUpViewModel and a SignUpController and a string error.
  * */
-public class SignUpView extends JPanel implements PropertyChangeListener {
-    private SignUpViewModel signUpViewModel;
+public class SignUpView extends JPanel implements ActionListener, PropertyChangeListener {
+    private final SignUpViewModel signUpViewModel;
     private SignUpController signUpController;
     private String error = "";
 
     /**
      * Creates a SignUpView object for the signup use case.
      * */
-    public SignUpView(){
-        this.signUpViewModel = new SignUpViewModel();
+    public SignUpView(SignUpViewModel signUpViewModel) {
+        this.signUpViewModel = signUpViewModel;
+        SignUpViewModel.addPropertyChangeListener(this);
+
         JPanel usernamePanel = new JPanel();
-        JLabel usernameLabel = new JLabel("Username:");
+        JLabel usernameLabel = new JLabel(SignUpViewModel.USERNAME_LABEL);
         JTextField usernameTextField = new JTextField(10);
         usernamePanel.add(usernameLabel);
         usernamePanel.add(usernameTextField);
 
         JPanel passwordPanel = new JPanel();
-        JLabel passwordLabel = new JLabel("Password:");
+        JLabel passwordLabel = new JLabel(SignUpViewModel.PASSWORD_LABEL);
         JTextField passwordTextField = new JTextField(10);
         passwordPanel.add(passwordLabel);
         passwordPanel.add(passwordTextField);
 
         JPanel password2Panel = new JPanel();
-        JLabel password2Label = new JLabel("Confirm Password:");
+        JLabel password2Label = new JLabel(SignUpViewModel.PASSWORD2_LABEL);
         JTextField password2TextField = new JTextField(10);
         password2Panel.add(password2Label);
         password2Panel.add(password2TextField);
 
         JPanel emailPanel = new JPanel();
-        JLabel emailLabel = new JLabel("Email:");
+        JLabel emailLabel = new JLabel(SignUpViewModel.EMAIL_LABEL);
         JTextField emailTextField = new JTextField(10);
         emailPanel.add(emailLabel);
         emailPanel.add(emailTextField);
 
         JPanel billingAddressPanel = new JPanel();
-        JLabel billingAddressLabel = new JLabel("Billing Address:");
+        JLabel billingAddressLabel = new JLabel(SignUpViewModel.BILLING_ADDRESS_LABEL);
         JTextField billingAddressTextField = new JTextField(10);
         billingAddressPanel.add(billingAddressLabel);
         billingAddressPanel.add(billingAddressTextField);
 
         JPanel buttonsPanel = new JPanel();
-        JButton createButton = new JButton("Create");
-        JButton loginButton = new JButton("Login");
+        JButton createButton = new JButton(SignUpViewModel.CREATE_BUTTON_LABEL);
+        JButton loginButton = new JButton(SignUpViewModel.LOGIN_BUTTON_LABEL);
         buttonsPanel.add(createButton);
         buttonsPanel.add(loginButton);
 
         JPanel errorPanel = new JPanel();
         JLabel errorLabel = new JLabel(this.error);
-        errorLabel.setForeground(new Color(255,0,0));
+        errorLabel.setForeground(new Color(255, 0, 0));
         errorPanel.add(errorLabel);
 
         JPanel mainPanel = new JPanel();
@@ -78,15 +84,20 @@ public class SignUpView extends JPanel implements PropertyChangeListener {
             String password2 = password2TextField.getText();
             String email = emailTextField.getText();
             String billingAddress = billingAddressTextField.getText();
-            if (password.equals(password2)){
-                this.signUpController = new SignUpController();
-                this.signUpController.execute(username, password, email, billingAddress);
+            if (password.equals(password2)) {
+                this.signUpController.signUp(username, password, email, billingAddress);
             } else {
                 this.error = "Passwords do not match!";
             }
         });
 
-        loginButton.addActionListener(event -> {new LoginView();});
+        loginButton.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        signUpController.switchToLoginView();
+                    }
+                }
+        );
     }
 
     /**
@@ -96,12 +107,11 @@ public class SignUpView extends JPanel implements PropertyChangeListener {
      * */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getPropertyName().equals("SignUpSuccess")){
-            User loggedInUser = this.signUpViewModel.getState().getSuccess();
-            new LoggedInView(loggedInUser);
-        } else if (evt.getPropertyName().equals("SgnUpFailure")){
-            String error = this.signUpViewModel.getState().getFailure();
-            this.error = error;
-        }
+        // TODO: update signup state display once SignUpViewModel is integrated.
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent evt) {
+        System.out.println("Click " + evt.getActionCommand());
     }
 }

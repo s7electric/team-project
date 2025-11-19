@@ -2,6 +2,7 @@ package use_case.sign_up;
 
 import data_access.DataAccessInterface;
 import entity.User;
+import interface_adapter.sign_up.SignUpPresenter;
 
 /**
  * This class is the interactor for the signup use case
@@ -14,9 +15,10 @@ public class SignUpInteractor implements SignUpInputBoundary{
     /**
      * Creates the SignUpInteractor object for the signup use case
      * */
-    public SignUpInteractor(){
-        this.signUpPresenter = new SignUpPresenter();
-        this.dataAccess = new DataAccess();
+    public SignUpInteractor(SignUpDataAccessInterface signUpDataAccessInterface,
+                            SignUpOutputBoundary signUpOutputBoundary) {
+        this.signUpPresenter = signUpOutputBoundary;
+        this.dataAccess = signUpDataAccessInterface;
     }
 
     /**
@@ -52,4 +54,7 @@ public class SignUpInteractor implements SignUpInputBoundary{
             }
         }
     }
+
+    @Override
+    public void switchToLoginView(){signUpPresenter.switchToLoginView();}
 }

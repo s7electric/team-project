@@ -1,6 +1,9 @@
 package interface_adapter.sign_up;
 
+import interface_adapter.login.LoginViewModel;
 import use_case.sign_up.SignUpOutputBoundary;
+import interface_adapter.ViewManagerModel;
+import use_case.sign_up.SignUpOutputData;
 
 /**
  * This class unwraps the formatted output data from the SignUpInteractor into raw data for the SignUpView.
@@ -9,13 +12,19 @@ import use_case.sign_up.SignUpOutputBoundary;
 public class SignUpPresenter implements SignUpOutputBoundary{
     private SignUpViewModel signUpViewModel;
     private SignUpState signUpState;
+    private final ViewManagerModel viewManagerModel;
+    private final LoginViewModel loginViewModel;
 
     /**
      * Creates a SignUpPresenter object to unwrap the formatted output data of SignUpInteractor.
      * */
-    public SignUpPresenter(){
+    public SignUpPresenter(ViewManagerModel viewManagerModel,
+                           SignUpViewModel signUpViewModel,
+                           LoginViewModel loginViewModel) {
         this.signUpViewModel = new SignUpViewModel();
         this.signUpState = new SignUpState();
+        this.viewManagerModel = viewManagerModel;
+        this.loginViewModel = loginViewModel;
     }
 
     /**
@@ -36,5 +45,10 @@ public class SignUpPresenter implements SignUpOutputBoundary{
         this.signUpState.setSuccess(outputData.getError());
         this.signUpViewModel.setFailure(signUpState);
         this.signUpViewModel.firePropertyChange("SignUpFailure");
+    }
+
+    @Override
+    public void switchToLoginView() {
+        viewManagerModel.setActiveViewName(loginViewModel.getViewName());
     }
 }

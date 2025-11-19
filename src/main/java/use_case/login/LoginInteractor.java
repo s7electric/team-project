@@ -15,7 +15,7 @@ public class LoginInteractor implements LoginInputBoundary{
     }
 
     @Override
-    public void execute(LoginInputData input){
+    public void login(LoginInputData input){
         String username = input.getUsername();
         String password = input.getPassword();
 
@@ -43,4 +43,15 @@ public class LoginInteractor implements LoginInputBoundary{
         LoginOutputData output = new LoginOutputData(user.getUsername());
         presenter.prepareSuccessView(output);
     }
+
+    @Override
+    public void switchToSignUpView() {
+        presenter.switchToSignUpView();
+    }
+
+    @Override
+    public void switchToHomePage() {
+        presenter.switchToHomePage();
+    }
+
 }

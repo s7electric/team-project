@@ -17,4 +17,9 @@ public interface SignUpOutputBoundary {
      * @param error the error regarding the failure
      * */
     public void updateFailure(String error);
+
+    /**
+     * Switches to Login View
+     */
+    public void switchToLoginView();
 }
