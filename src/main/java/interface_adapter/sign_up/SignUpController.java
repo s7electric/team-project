@@ -2,7 +2,6 @@ package interface_adapter.sign_up;
 
 import use_case.sign_up.SignUpInputBoundary;
 import use_case.sign_up.SignUpInputData;
-import use_case.sign_up.SignUpInteractor;
 
 /**
  * This is controller class for the signup use case.
@@ -28,6 +27,27 @@ public class SignUpController {
      * */
     public void execute(String username, String password, String email, String billingAddress){
         SignUpInputData inputData = new SignUpInputData(username, password, email, billingAddress);
-        signUpInteractor.execute(inputData);
+        this.signUpInteractor.execute(inputData);
+    }
+
+    /**
+     * Switches to log in view
+     * */
+    public void switchToLoginView(){
+        this.signUpInteractor.switchToLoginView();
+    }
+
+    /**
+     * Switches to logged out view
+     * */
+    public void switchToLoggedOutView(){
+        this.signUpInteractor.switchToLoggedOutView();
+    }
+
+    /**
+     * Switches to logged in view
+     * */
+    public void switchToLoggedInView(){
+        this.signUpInteractor.switchToLoggedInView();
     }
 }

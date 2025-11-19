@@ -1,7 +1,5 @@
 package use_case.sign_up;
 
-import interface_adapter.sign_up.SignUpPresenter;
-import data_access.DataAccess;
 import entity.User;
 
 /**
@@ -55,5 +53,26 @@ public class SignUpInteractor implements SignUpInputBoundary{
                 signUpPresenter.updateFailure(outputData);
             }
         }
+    }
+
+    /**
+     * Switches to log in view
+     * */
+    public void switchToLoginView(){
+        this.signUpPresenter.switchToLoginView();
+    }
+
+    /**
+     * Switches to logged out view
+     * */
+    public void switchToLoggedOutView(){
+        this.signUpPresenter.switchToLoggedOutView();
+    }
+
+    /**
+     * Switches to logged in view
+     * */
+    public void switchToLoggedInView(){
+        this.signUpPresenter.switchToLoggedInView();
     }
 }

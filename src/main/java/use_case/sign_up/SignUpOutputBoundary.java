@@ -10,11 +10,26 @@ public interface SignUpOutputBoundary {
      * Updates the view to show the use case was successful
      * @param signUpOutputData the formatted data for a successful signup process
      * */
-    public void updateSuccess(SignUpOutputData signUpOutputData);
+    void updateSuccess(SignUpOutputData signUpOutputData);
 
     /**
      * Updates the view to show the use case was successful
      * @param signUpOutputData the formatted data for a failed signup process
      * */
-    public void updateFailure(SignUpOutputData signUpOutputData);
+    void updateFailure(SignUpOutputData signUpOutputData);
+
+    /**
+     * Switches to log in view
+     * */
+    void switchToLoginView();
+
+    /**
+     * Switches to logged out view
+     * */
+    void switchToLoggedOutView();
+
+    /**
+     * Switches to logged in view
+     * */
+    void switchToLoggedInView();
 }
