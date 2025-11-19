@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  * This class is an entity representing a customer in the online store.
- * entity.User has username, email, hashed password, balance, billing addresses,
+ * User has username, email, hashed password, balance, billing addresses,
  * previous purchases categories, and a cart.
  */
 public class User {
@@ -14,7 +14,9 @@ public class User {
     private int hashedPassword;
     private double balance;
     private int pointsBalance;
-    private List<String> billingAddresses;
+
+    // IMPORTANT: now this holds Address entities, not Strings
+    private List<Address> billingAddresses;
     private List<String> previousPurchasesCategories;
     private Cart cart;
 
@@ -28,7 +30,7 @@ public class User {
      */
     public User(String username, String email, String password, String billingAddress){
         if (username == null || username.isEmpty()) {
-            throw new IllegalArgumentException("The usermame cannot be empty!");
+            throw new IllegalArgumentException("The username cannot be empty!");
         }
         this.username = username;
 
@@ -46,14 +48,16 @@ public class User {
             throw new IllegalArgumentException("The billing address cannot be empty!");
         }
 
-        this.balance = 0;
-        this.pointsBalance = 0;
+        this.billingAddresses = new ArrayList<>();
         this.previousPurchasesCategories = new ArrayList<>();
 
-        // Wrap the first address string into an Address entity
+        this.balance = 0;
+        this.pointsBalance = 0;
+
+
         this.billingAddresses.add(new Address(billingAddress));
 
-        this.balance = 0;
+        // create an empty cart for this user
         this.cart = new Cart(this);
     }
 
@@ -74,7 +78,7 @@ public class User {
                 Cart cart){
 
         if (username == null || username.isEmpty()) {
-            throw new IllegalArgumentException("The usermame cannot be empty!");
+            throw new IllegalArgumentException("The username cannot be empty!");
         }
         this.username = username;
 
@@ -88,12 +92,14 @@ public class User {
         }
         this.balance = balance;
 
+        this.hashedPassword = hashedPassword;
+
         // If null is passed, we create empty lists to avoid NullPointerException.
         this.billingAddresses = (billingAddresses == null) ? new ArrayList<>() : billingAddresses;
-        this.previousPurchasesCategories = (previousPurchasesCategories == null)
-                ? new ArrayList<>() : previousPurchasesCategories;
+        this.previousPurchasesCategories =
+                (previousPurchasesCategories == null) ? new ArrayList<>() : previousPurchasesCategories;
 
-        this.hashedPassword = hashedPassword;
+        this.pointsBalance = 0;
         this.cart = cart;
     }
 
@@ -208,22 +214,25 @@ public class User {
      * Adds an amount of points to the user's account.
      * @param amount the amount of points to be added to the balance
      * @throws IllegalArgumentException when the amount is negative
-     * */
+     */
     public void addPointsBalance(int amount) throws IllegalArgumentException{
-        if (amount < 0) {throw new IllegalArgumentException("The amount cannot be negative!");}
+        if (amount < 0) {
+            throw new IllegalArgumentException("The amount cannot be negative!");
+        }
         this.pointsBalance += amount;
     }
 
     /**
-     * Adds an amount of points to the user's account.
-     * @param amount the amount of points to be added to the balance
+     * Removes an amount of points from the user's account.
+     * @param amount the amount of points to be removed from the balance
      * @throws IllegalArgumentException when the amount is negative
-     * */
+     */
     public void removePointsBalance(int amount) throws IllegalArgumentException{
-        if (amount < 0) {throw new IllegalArgumentException("The amount cannot be negative!");}
+        if (amount < 0) {
+            throw new IllegalArgumentException("The amount cannot be negative!");
+        }
         this.pointsBalance -= amount;
     }
-
 
     /**
      * Checks the password of the user and another password to see whether they are equal or not
@@ -232,7 +241,7 @@ public class User {
      */
     public boolean checkPassword(String password) throws IllegalArgumentException{
         if (password == null || password.isEmpty()) {
-            throw new IllegalArgumentException("The password cannot be negative!");
+            throw new IllegalArgumentException("The password cannot be empty!");
         }
         return this.hashedPassword == hashPassword(password);
     }
