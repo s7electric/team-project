@@ -1,7 +1,5 @@
 package entity;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.*;
 
 
 /**
@@ -11,9 +9,7 @@ import java.util.Collections;
 public class Cart {
 
     private final User owner;
-    private final List<Product> products;
-
-
+    private final Map<Integer, CartItem> products;
 
     /**
      * Creates a new cart for the owner.
@@ -21,28 +17,44 @@ public class Cart {
      */
     public Cart(User owner) {
         this.owner = owner;
-        this.products = new ArrayList<>();
+        this.products = new HashMap<>();
     }
-
-
 
     public User getOwner() {
         return owner;
     }
 
-    public List<Product> getProducts() {
-        return Collections.unmodifiableList(products);
+    public Map<Integer, CartItem> getProducts() {
+        return Map.copyOf(products); // makes products unmodifiable
     }
 
-    public void addProduct(Product product) {
-        products.add(product);
-    }
+    public void addProduct(Product product, int quantity) {
+        int id = product.getProductid();
+        CartItem item = products.get(id);
+        if (item == null)
+            products.put(id, new CartItem(product, quantity));
+        else
+            products.get(id).increase(quantity);
+        }
 
-    public void removeProduct(Product product) {
-        products.remove(product);
+    public void removeProduct(Product product, int quantity) {
+        int id = product.getProductid();
+        CartItem item = products.get(id);
+
+        if (item == null) return;
+
+        if (quantity >= item.getQuantity()) {
+            products.remove(id); // if the quantity removed is larger than the current number in cart
+        } else {
+            item.decrease(quantity); // if the quantity in the cart is larger than the number removed
+        }
     }
 
     public int getTotalQuantity() {
-        return products.size();
+        int total = 0;
+        for (CartItem item : products.values()) {
+            total += item.getQuantity();
+        }
+        return total;
     }
 }
