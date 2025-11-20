@@ -1,6 +1,5 @@
 package use_case.sign_up;
 
-import data_access.DataAccessInterface;
 import entity.User;
 import interface_adapter.sign_up.SignUpPresenter;
 
@@ -14,11 +13,12 @@ public class SignUpInteractor implements SignUpInputBoundary{
 
     /**
      * Creates the SignUpInteractor object for the signup use case
+     * @param signUpPresenter the presenter for the signup use case
+     * @param dataAccess the data access object
      * */
-    public SignUpInteractor(SignUpDataAccessInterface signUpDataAccessInterface,
-                            SignUpOutputBoundary signUpOutputBoundary) {
-        this.signUpPresenter = signUpOutputBoundary;
-        this.dataAccess = signUpDataAccessInterface;
+    public SignUpInteractor(SignUpOutputBoundary signUpPresenter, SignUpDataAccessInterface dataAccess){
+        this.signUpPresenter = signUpPresenter;
+        this.dataAccess = dataAccess;
     }
 
     /**
@@ -35,14 +35,15 @@ public class SignUpInteractor implements SignUpInputBoundary{
         boolean oldUser = dataAccess.checkUserExists(username);
 
         // if a user with same username exists, informs the new user about it
-        if (!oldUser) {
+        if (oldUser) {
             SignUpOutputData outputData = new SignUpOutputData("An user with the same username exists, try to login!");
             signUpPresenter.updateFailure(outputData);
 
         // if not try to sign up the new user
         } else {
             try {
-                User newUser = new User(username, password, email, billingAddress);
+                Address billingAddressObject = new Address(billingAddress);
+                User newUser = new User(username, password, email, billingAddressObject);
                 dataAccess.createUser(newUser);
                 SignUpOutputData outputData = new SignUpOutputData(newUser);
                 signUpPresenter.updateSuccess(outputData);
@@ -50,11 +51,29 @@ public class SignUpInteractor implements SignUpInputBoundary{
             // if the signing up process failed, informs the new user about it
             } catch (IllegalArgumentException e) {
                 SignUpOutputData outputData = new SignUpOutputData(e.getMessage());
-                signUpPresenter.upadteFailure(outputData);
+                signUpPresenter.updateFailure(outputData);
             }
         }
     }
 
-    @Override
-    public void switchToLoginView(){signUpPresenter.switchToLoginView();}
+    /**
+     * Switches to log in view
+     * */
+    public void switchToLoginView(){
+        this.signUpPresenter.switchToLoginView();
+    }
+
+    /**
+     * Switches to logged out view
+     * */
+    public void switchToLoggedOutView(){
+        this.signUpPresenter.switchToLoggedOutView();
+    }
+
+    /**
+     * Switches to logged in view
+     * */
+    public void switchToLoggedInView(){
+        this.signUpPresenter.switchToLoggedInView();
+    }
 }

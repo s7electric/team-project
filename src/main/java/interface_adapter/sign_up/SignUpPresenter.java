@@ -1,8 +1,8 @@
 package interface_adapter.sign_up;
 
+import interface_adapter.ViewManagerModel;
 import interface_adapter.login.LoginViewModel;
 import use_case.sign_up.SignUpOutputBoundary;
-import interface_adapter.ViewManagerModel;
 import use_case.sign_up.SignUpOutputData;
 
 /**
@@ -12,19 +12,27 @@ import use_case.sign_up.SignUpOutputData;
 public class SignUpPresenter implements SignUpOutputBoundary{
     private SignUpViewModel signUpViewModel;
     private SignUpState signUpState;
-    private final ViewManagerModel viewManagerModel;
-    private final LoginViewModel loginViewModel;
+    private ViewManagerModel viewManagerModel;
+    private LoginViewModel loginViewModel;
+    private LoggedOutViewModel loggedOutViewModel;
+    private LoggedInViewModel loggedInViewModel;
 
     /**
      * Creates a SignUpPresenter object to unwrap the formatted output data of SignUpInteractor.
+     * @param signUpViewModel the view model for signup use case
+     * @param signUpState the state for the signup use case
+     * @param viewManagerModel the view manager model for the app
+     * @param loginViewModel the view model for the log in view
+     * @param loggedOutViewModel the view model for the logged out view
+     * @param loggedInViewModel the view model for the logged in view
      * */
-    public SignUpPresenter(ViewManagerModel viewManagerModel,
-                           SignUpViewModel signUpViewModel,
-                           LoginViewModel loginViewModel) {
-        this.signUpViewModel = new SignUpViewModel();
-        this.signUpState = new SignUpState();
+    public SignUpPresenter(SignUpViewModel signUpViewModel, SignUpState signUpState, ViewManagerModel viewManagerModel, LoginViewModel loginViewModel, LoggedOutViewModel loggedOutViewModel, LoggedInViewModel loggedInViewModel){
+        this.signUpViewModel = signUpViewModel;
+        this.signUpState = signUpState;
         this.viewManagerModel = viewManagerModel;
         this.loginViewModel = loginViewModel;
+        this.loggedOutViewModel = loggedOutViewModel;
+        this.loggedInViewModel = loggedInViewModel;
     }
 
     /**
@@ -42,13 +50,32 @@ public class SignUpPresenter implements SignUpOutputBoundary{
      * @param outputData the output data of the SignUpInteractor
      * */
     public void updateFailure(SignUpOutputData outputData) {
-        this.signUpState.setSuccess(outputData.getError());
-        this.signUpViewModel.setFailure(signUpState);
+        this.signUpState.setFailure(outputData.getError());
+        this.signUpViewModel.setState(signUpState);
         this.signUpViewModel.firePropertyChange("SignUpFailure");
     }
 
-    @Override
-    public void switchToLoginView() {
-        viewManagerModel.setActiveViewName(loginViewModel.getViewName());
+    /**
+     * Switches to log in view
+     * */
+    public void switchToLoginView(){
+        this.viewManagerModel.setState(loginViewModel.getName());
+        this.viewManagerModel.firePropertyChange();
+    }
+
+    /**
+     * Switches to logged out view
+     * */
+    public void switchToLoggedOutView(){
+        this.viewManagerModel.setState(loggedOutViewModel.getName());
+        this.viewManagerModel.firePropertyChange();
+    }
+
+    /**
+     * Switches to logged in view
+     * */
+    public void switchToLoggedInView(){
+        this.viewManagerModel.setState(loggedInViewModel.getName());
+        this.viewManagerModel.firePropertyChange();
     }
 }

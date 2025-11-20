@@ -13,8 +13,9 @@ public class SignUpController {
 
     /**
      * Creates SignUpController object for the signup use case
+     * @param signUpInteractor the interactor fo the signup use case
      * */
-    public SignUpController(SignUpInteractor signUpInteractor) {
+    public SignUpController(SignUpInputBoundary signUpInteractor){
         this.signUpInteractor = signUpInteractor;
     }
 
@@ -27,7 +28,28 @@ public class SignUpController {
      * */
     public void signUp (String username, String password, String email, String billingAddress){
         SignUpInputData inputData = new SignUpInputData(username, password, email, billingAddress);
-        signUpInteractor.execute(inputData);
+        this.signUpInteractor.execute(inputData);
+    }
+
+    /**
+     * Switches to log in view
+     * */
+    public void switchToLoginView(){
+        this.signUpInteractor.switchToLoginView();
+    }
+
+    /**
+     * Switches to logged out view
+     * */
+    public void switchToLoggedOutView(){
+        this.signUpInteractor.switchToLoggedOutView();
+    }
+
+    /**
+     * Switches to logged in view
+     * */
+    public void switchToLoggedInView(){
+        this.signUpInteractor.switchToLoggedInView();
     }
 
     public void switchToLoginView(){

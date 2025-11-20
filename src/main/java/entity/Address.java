@@ -1,11 +1,15 @@
 package entity;
 
+import java.util.UUID;
+
 /**
  * This class is an entity representing a postal address for a user
  * in the online store. It can be used as a billing address or
  * shipping address (or both).
  */
 public class Address {
+
+    private final String id;
 
     private String recipientName;
     private String line1;
@@ -19,6 +23,50 @@ public class Address {
     private boolean defaultShipping;
 
     /**
+     * Full constructor including id. This is private so that we keep the
+     * public API (two constructors) almost the same as before.
+     */
+    private Address(String id,
+                    String recipientName,
+                    String line1,
+                    String line2,
+                    String city,
+                    String provinceOrState,
+                    String postalCode,
+                    String country,
+                    boolean defaultBilling,
+                    boolean defaultShipping) {
+
+        if (line1 == null || line1.isEmpty()) {
+            throw new IllegalArgumentException("The first address line cannot be empty!");
+        }
+        if (city == null || city.isEmpty()) {
+            throw new IllegalArgumentException("The city cannot be empty!");
+        }
+        if (provinceOrState == null || provinceOrState.isEmpty()) {
+            throw new IllegalArgumentException("The province/state cannot be empty!");
+        }
+        if (postalCode == null || postalCode.isEmpty()) {
+            throw new IllegalArgumentException("The postal code cannot be empty!");
+        }
+        if (country == null || country.isEmpty()) {
+            throw new IllegalArgumentException("The country cannot be empty!");
+        }
+
+        this.id = id;
+
+        this.recipientName = (recipientName == null) ? "" : recipientName;
+        this.line1 = line1;
+        this.line2 = (line2 == null) ? "" : line2;
+        this.city = city;
+        this.provinceOrState = provinceOrState;
+        this.postalCode = postalCode;
+        this.country = country;
+        this.defaultBilling = defaultBilling;
+        this.defaultShipping = defaultShipping;
+    }
+
+    /**
      * Creates a very simple address from a single line.
      *
      * @param fullAddress a single-line string representing the address
@@ -28,6 +76,9 @@ public class Address {
         if (fullAddress == null || fullAddress.isEmpty()) {
             throw new IllegalArgumentException("The address cannot be empty!");
         }
+
+        this.id = UUID.randomUUID().toString();
+
         this.line1 = fullAddress;
         this.recipientName = "";
         this.line2 = "";
@@ -57,31 +108,26 @@ public class Address {
                    String city, String provinceOrState, String postalCode,
                    String country, boolean defaultBilling, boolean defaultShipping) {
 
-        if (line1 == null || line1.isEmpty()) {
-            throw new IllegalArgumentException("The first address line cannot be empty!");
-        }
-        if (city == null || city.isEmpty()) {
-            throw new IllegalArgumentException("The city cannot be empty!");
-        }
-        if (provinceOrState == null || provinceOrState.isEmpty()) {
-            throw new IllegalArgumentException("The province/state cannot be empty!");
-        }
-        if (postalCode == null || postalCode.isEmpty()) {
-            throw new IllegalArgumentException("The postal code cannot be empty!");
-        }
-        if (country == null || country.isEmpty()) {
-            throw new IllegalArgumentException("The country cannot be empty!");
-        }
+        // Delegate to the full constructor with a new random id
+        this(
+                UUID.randomUUID().toString(),  // NEW: auto-generated id
+                recipientName,
+                line1,
+                line2,
+                city,
+                provinceOrState,
+                postalCode,
+                country,
+                defaultBilling,
+                defaultShipping
+        );
+    }
 
-        this.recipientName = recipientName == null ? "" : recipientName;
-        this.line1 = line1;
-        this.line2 = line2 == null ? "" : line2;
-        this.city = city;
-        this.provinceOrState = provinceOrState;
-        this.postalCode = postalCode;
-        this.country = country;
-        this.defaultBilling = defaultBilling;
-        this.defaultShipping = defaultShipping;
+    /**
+     * Returns the unique identifier of this address.
+     */
+    public String getId() {
+        return id;
     }
 
     //Getters

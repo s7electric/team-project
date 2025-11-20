@@ -5,5 +5,18 @@ package use_case.add_to_cart;
  */
 public class AddToCartOutputData {
 
+    private String username;
+    private Integer cartTotal;
 
+    public AddToCartOutputData(String username, Integer cartTotal) {
+        this.username = username;
+        this.cartTotal = cartTotal;
+    }
+
+    public String getUsername() {
+        return username;
+        }
+        public Integer getCartTotal() {
+        return cartTotal;
+        }
 }
