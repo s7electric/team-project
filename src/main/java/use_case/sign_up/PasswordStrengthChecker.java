@@ -13,10 +13,22 @@ public class PasswordStrengthChecker {
      * @throws IllegalArgumentException the message that the password is weak
      * */
     public static void checkStrength(String username, String email, String password) throws IllegalArgumentException{
+        checkLength(password);
         checkWithWeakPasswords(password);
         checkWithUsername(username, password);
         checkWithEmail(email, password);
         checkCharacters(password);
+    }
+
+    /**
+     * Checks the strength of the password with its length
+     * @param password the password of the user
+     * @throws IllegalArgumentException if the password is shorter than 10 characters
+     */
+    private static void checkLength (String password) throws IllegalArgumentException{
+        if (password.length() < 10) {
+            throw new IllegalArgumentException("Your password is shorter than 10 characters");
+        }
     }
 
     /**
@@ -26,15 +38,18 @@ public class PasswordStrengthChecker {
      * @throws IllegalArgumentException the message that the password is weak
      * */
     private static void checkWithWeakPasswords (String password) throws IllegalArgumentException {
-        if (password.contains("12345") || password.contains("54321") || password.contains("11111")){
-            throw new IllegalArgumentException("Your password contains weak sequences of characters.");
-        }
-        if (password.toLowerCase().contains("password") || password.toLowerCase().contains("drowssap") || password.toLowerCase().contains("admin")){
-            throw new IllegalArgumentException("Your password contains weak sequences of characters.");
-        }
-        if (password.toLowerCase().contains("qwerty") || password.toLowerCase().contains("ytrewq")){
-            throw new IllegalArgumentException("Your password contains weak sequences of characters.");
-        }
+        int numCharSeq = 3;
+        String errorMessage = "Your password contains weak sequences of characters.";
+        checkSeqChars(password, "123456789",  errorMessage, numCharSeq);
+        checkSeqChars(password, "987654321", errorMessage , numCharSeq);
+        checkSeqChars(password, "111", errorMessage , numCharSeq);
+        checkSeqChars(password, "abcdefghijklmnopqrstuvwxyz", errorMessage , numCharSeq);
+        checkSeqChars(password, "zyxwvutsrqponmlkjihgfedcba", errorMessage , numCharSeq);
+        numCharSeq = 4;
+        checkSeqChars(password, "password", errorMessage , numCharSeq);
+        checkSeqChars(password, "drowssap", errorMessage , numCharSeq);
+        checkSeqChars(password, "qwertyuiopasdfghjklzxcvbnm", errorMessage , numCharSeq);
+        checkSeqChars(password, "mnbvcxzlkjhgfdsapoiuytrewq", errorMessage , numCharSeq);
     }
 
     /**
@@ -46,20 +61,9 @@ public class PasswordStrengthChecker {
      * */
     private static void checkWithUsername(String username, String password) throws IllegalArgumentException{
         String usernameLower = username.toLowerCase();
-        if (password.toLowerCase().contains(usernameLower)){
-            throw new IllegalArgumentException("Your password contains your username.");
-        }
-        for (int i = 0; i < usernameLower.length() - 4; i++){
-            String curser = ""
-                    + usernameLower.charAt(i)
-                    + usernameLower.charAt(i+1)
-                    + usernameLower.charAt(i+2)
-                    + usernameLower.charAt(i+3);
-
-            if (password.toLowerCase().contains(curser)){
-                throw new IllegalArgumentException("Your password contains your username.");
-            }
-        }
+        String errorMessage = "Your password contains your username or a 4-character sequence from the username.";
+        int numCharSeq = 4;
+        checkSeqChars(password, usernameLower, errorMessage, numCharSeq);
     }
 
     /**
@@ -70,19 +74,32 @@ public class PasswordStrengthChecker {
      * @throws IllegalArgumentException the message that the password is weak
      * */
     private static void checkWithEmail(String email, String password) throws IllegalArgumentException{
-        String emailSection = email.toLowerCase().substring(email.toLowerCase().indexOf('@'));
-        if (password.toLowerCase().contains(emailSection)){
-            throw new IllegalArgumentException("Your password contains your username.");
-        }
-        for (int i = 0; i < emailSection.length() - 4; i++){
-            String curser = ""
-                    + emailSection.charAt(i)
-                    + emailSection.charAt(i+1)
-                    + emailSection.charAt(i+2)
-                    + emailSection.charAt(i+3);
+        String emailSection = email.toLowerCase().substring(0, email.toLowerCase().indexOf('@'));
+        String errorMessage = "Your password contains your email or a 4-character sequence from the email.";
+        int numCharSeq = 4;
+        checkSeqChars(password, emailSection, errorMessage, numCharSeq);
+    }
 
-            if (password.toLowerCase().contains(curser)){
-                throw new IllegalArgumentException("Your password contains your username.");
+    /**
+     * Checks the strength of the password with n-character sequences from a string
+     * to see if the password contains the sequence
+     * @param password the password of the user
+     * @param fullString the string that n-character sequences come from
+     * @param errorMessage the error message that will be thrown if the password contains the sequence
+     * @param numCharSeq the number of characters that the sequence should have
+     * @throws IllegalArgumentException if the password contains the n-character sequence
+     * */
+    private static void checkSeqChars(String password, String fullString, String errorMessage, int numCharSeq) throws IllegalArgumentException {
+        if (password.toLowerCase().contains(fullString)) {
+            throw new IllegalArgumentException(errorMessage + " (" + fullString + ") ");
+        }
+        for (int i = 0; i < fullString.length() - numCharSeq; i++) {
+            StringBuilder curser = new StringBuilder();
+            for (int n = 0; n < numCharSeq; n++) {
+                curser.append(fullString.charAt(i + n));
+            }
+            if (password.toLowerCase().contains(curser.toString())) {
+                throw new IllegalArgumentException(errorMessage + " (" + curser + ")");
             }
         }
     }
@@ -93,16 +110,27 @@ public class PasswordStrengthChecker {
      * @throws IllegalArgumentException the message that the password is weak
      * */
     private static void checkCharacters(String password) throws IllegalArgumentException{
-        password = password.toLowerCase();
+        boolean hasDigit = false;
+        boolean hasLowerCase = false;
+        boolean hasUpperCase = false;
+        boolean hasSpecial = false;
         for (int i = 0; i < password.length(); i++){
             char c = password.charAt(i);
-            if (!Character.isDigit(c)){
-                if (!Character.isLetter(c)){
-                    if (!"!@#$%^&*(){}[]||?/".contains("" + c)){
-                        throw new IllegalArgumentException("Your password is weak.");
-                    }
-                }
+            if (Character.isDigit(c)){
+                hasDigit = true;
             }
+            if (Character.isLowerCase(c)){
+                hasLowerCase = true;
+            }
+            if (Character.isUpperCase(c)){
+                hasUpperCase = true;
+            }
+            if ("!@#$%^&*()_+{}|?/[]-=~:<>,.;".contains("" + c)) {
+                hasSpecial = true;
+            }
+        }
+        if (!hasDigit || !hasLowerCase || !hasUpperCase || !hasSpecial) {
+            throw new IllegalArgumentException("Your password should have a digit, a lower case letter, an upper case letter, and a special character like: !@#$%^&*()_+{}|?/[]-=~:<>,.;");
         }
     }
 }
