@@ -1,9 +1,9 @@
-package interface_adapter.logged_in;
+package interface_adapter.homepage;
 
-public class LoggedInState {
+public class HomepageState {
     private String username;
 
-    public LoggedInState(String username) {
+    public HomepageState(String username) {
         this.username = username;
     }
 

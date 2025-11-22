@@ -1,11 +1,11 @@
-package interface_adapter.logged_in;
+package interface_adapter.homepage;
 
 import interface_adapter.ViewModel;
 
-public class LoggedInViewModel extends ViewModel<LoggedInState> {
+public class HomepageViewModel extends ViewModel<HomepageState> {
 
-    public LoggedInViewModel() {
-        super("logged_in");
-        setState(new LoggedInState(""));
+    public HomepageViewModel() {
+        super("homepage");
+        setState(new HomepageState(""));
     }
 }
