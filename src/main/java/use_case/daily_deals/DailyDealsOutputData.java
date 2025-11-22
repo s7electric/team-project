@@ -1,22 +1,25 @@
 package use_case.daily_deals;
 
+import java.util.List;
+
 /**
  * Output Data for the Add to Cart Use Case.
  */
-public class AddToCartOutputData {
+class DailyDealsOutputData {
+    List<DealItem> items;
 
-    private String username;
-    private Integer cartTotal;
-
-    public AddToCartOutputData(String username, Integer cartTotal) {
-        this.username = username;
-        this.cartTotal = cartTotal;
+    static class DealItem {
+        Integer productId;
+        String name;
+        String imageUrl;
+        double displayPrice;
+        int discountPercent;
+    }
+    public DailyDealsOutputData(List<DealItem> items) {
+        this.items = items;
     }
 
-    public String getUsername() {
-        return username;
-        }
-        public Integer getCartTotal() {
-        return cartTotal;
-        }
+    public List<DealItem> getItems() {
+        return items;
+    }
 }
