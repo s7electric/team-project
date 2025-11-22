@@ -1,4 +1,4 @@
-package use_case.filter;
+package interface_adapter.filter;
 
 import entity.Product;
 
