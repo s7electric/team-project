@@ -64,16 +64,9 @@ public class SignUpInteractor implements SignUpInputBoundary{
     }
 
     /**
-     * Switches to logged out view
+     * Switches to homepage view
      * */
-    public void switchToLoggedOutView(){
-        this.signUpPresenter.switchToLoggedOutView();
-    }
-
-    /**
-     * Switches to logged in view
-     * */
-    public void switchToLoggedInView(){
-        this.signUpPresenter.switchToLoggedInView();
+    public void switchToHomepageView(){
+        this.signUpPresenter.switchToHomepageView();
     }
 }

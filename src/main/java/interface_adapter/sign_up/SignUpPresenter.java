@@ -14,8 +14,8 @@ public class SignUpPresenter implements SignUpOutputBoundary{
     private SignUpState signUpState;
     private ViewManagerModel viewManagerModel;
     private LoginViewModel loginViewModel;
-    private LoggedOutViewModel loggedOutViewModel;
-    private LoggedInViewModel loggedInViewModel;
+    private LoggedInViewModel homepageViewModel;
+    private LoggedInState loggedInState;
 
     /**
      * Creates a SignUpPresenter object to unwrap the formatted output data of SignUpInteractor.
@@ -23,16 +23,14 @@ public class SignUpPresenter implements SignUpOutputBoundary{
      * @param signUpState the state for the signup use case
      * @param viewManagerModel the view manager model for the app
      * @param loginViewModel the view model for the log in view
-     * @param loggedOutViewModel the view model for the logged out view
-     * @param loggedInViewModel the view model for the logged in view
+     * @param homepageViewModel the view model for the homepage view
      * */
-    public SignUpPresenter(SignUpViewModel signUpViewModel, SignUpState signUpState, ViewManagerModel viewManagerModel, LoginViewModel loginViewModel, LoggedOutViewModel loggedOutViewModel, LoggedInViewModel loggedInViewModel){
+    public SignUpPresenter(SignUpViewModel signUpViewModel, SignUpState signUpState, ViewManagerModel viewManagerModel, LoginViewModel loginViewModel, LoggedInViewModel homepageViewModel){
         this.signUpViewModel = signUpViewModel;
         this.signUpState = signUpState;
         this.viewManagerModel = viewManagerModel;
         this.loginViewModel = loginViewModel;
-        this.loggedOutViewModel = loggedOutViewModel;
-        this.loggedInViewModel = loggedInViewModel;
+        this.homepageViewModel = homepageViewModel;
     }
 
     /**
@@ -65,20 +63,12 @@ public class SignUpPresenter implements SignUpOutputBoundary{
     }
 
     /**
-     * Switches to logged out view
+     * Switches to homepage view and passes the username
      * */
-    public void switchToLoggedOutView(){
+    public void switchToHomepageView(){
+        this.loggedInState.setUsername(this.signUpState.getSuccess());
         this.signUpState.setSuccess(null);
         this.signUpState.setFailure(null);
-        this.viewManagerModel.setActiveViewName(loggedOutViewModel.getViewName());
-    }
-
-    /**
-     * Switches to logged in view
-     * */
-    public void switchToLoggedInView(){
-        this.signUpState.setSuccess(null);
-        this.signUpState.setFailure(null);
-        this.viewManagerModel.setActiveViewName(loggedInViewModel.getViewName());
+        this.viewManagerModel.setActiveViewName(homepageViewModel.getViewName());
     }
 }

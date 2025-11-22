@@ -111,7 +111,7 @@ public class SignUpView extends JPanel implements PropertyChangeListener {
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                signUpController.switchToLoggedOutView();
+                signUpController.switchToHomepageView();
             }
         });
 
@@ -134,7 +134,7 @@ public class SignUpView extends JPanel implements PropertyChangeListener {
     public void propertyChange(PropertyChangeEvent evt) {
         SignUpState signUpState = (SignUpState) evt.getNewValue();
         if (signUpState.getSuccess() != null){
-            this.signUpController.switchToLoggedInView();
+            this.signUpController.switchToHomepageView();
         }
         if (signUpState.getFailure() != null){
             this.error = signUpState.getFailure();

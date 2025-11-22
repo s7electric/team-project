@@ -39,16 +39,9 @@ public class SignUpController {
     }
 
     /**
-     * Switches to logged out view
+     * Switches to homepage view
      * */
-    public void switchToLoggedOutView(){
-        this.signUpInteractor.switchToLoggedOutView();
-    }
-
-    /**
-     * Switches to logged in view
-     * */
-    public void switchToLoggedInView(){
-        this.signUpInteractor.switchToLoggedInView();
+    public void switchToHomepageView(){
+        this.signUpInteractor.switchToHomepageView();
     }
 }
