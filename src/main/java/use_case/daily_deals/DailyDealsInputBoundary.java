@@ -5,8 +5,8 @@ package use_case.daily_deals;
  */
 public interface DailyDealsInputBoundary {
     /**
-     * Executes the add to cart iuse case.
-     * @param dailyDealsInputData the input data
+     * Executes the daily deals use case.
+     * After this executes, the user will be on a daily deals view.
      */
-    void execute(DailyDealsInputData dailyDealsInputData);
+    void execute();
 }
