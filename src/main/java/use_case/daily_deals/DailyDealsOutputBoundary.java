@@ -9,10 +9,4 @@ public interface DailyDealsOutputBoundary {
      * @param outputData the output data
      */
     void prepareSuccessView(DailyDealsOutputData outputData);
-    /**
-     * Prepares the failure view for the Daily Deals Use Case.
-     * @param errorMessage the explanation of the failure
-     */
-    void prepareFailureView(String errorMessage);
-
 }

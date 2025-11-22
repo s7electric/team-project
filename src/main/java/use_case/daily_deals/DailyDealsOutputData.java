@@ -9,18 +9,18 @@ public class DailyDealsOutputData {
 
     public final List<DealItem> items;
 
-        public static class DealItem {
+        public static class DealItem { // for display on GUI
             public final Integer productId;
             public final String name;
             public final String imageUrl;
-            public final double displayPrice;
-            public final int discountPercent;
+            public final double price; // The original price of the product
+            public final int discountPercent; // The display should calculate the new price using this
 
             public DealItem(Integer productId, String name, String imageUrl, double displayPrice, int discountPercent) {
                 this.productId = productId;
                 this.name = name;
                 this.imageUrl = imageUrl;
-                this.displayPrice = displayPrice;
+                this.price = displayPrice;
                 this.discountPercent = discountPercent;
             }
         }

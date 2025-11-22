@@ -2,12 +2,11 @@ package use_case.daily_deals;
 
 import entity.Product;
 
-import java.util.List;
-
 public interface DailyDealsProductDataAccessInterface {
 
     /**
-     * Returns a list of daily deals.
+     * Returns the product associated with a productid
+     *
      */
-    List<Product> getDailyDealsProducts();
+    Product getProductByID(Integer productid);
 }
