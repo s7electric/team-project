@@ -1,16 +1,16 @@
 package use_case.daily_deals;
 
 /**
- * The output boundary for the Add To Cart Use Case.
+ * The output boundary for the Daily Deals Use Case.
  */
-public interface AddToCartOutputBoundary {
+public interface DailyDealsOutputBoundary {
     /**
-     * Prepares the success view for the Add To Cart Use Case.
+     * Prepares the success view for the Daily Deals Use Case.
      * @param outputData the output data
      */
-    void prepareSuccessView(AddToCartOutputData outputData);
+    void prepareSuccessView(DailyDealsOutputData outputData);
     /**
-     * Prepares the failure view for the Add to Cart Use Case.
+     * Prepares the failure view for the Daily Deals Use Case.
      * @param errorMessage the explanation of the failure
      */
     void prepareFailureView(String errorMessage);
