@@ -94,7 +94,7 @@ public class SignUpView extends JPanel implements PropertyChangeListener {
                     String password2 = password2TextField.getText();
                     String email = emailTextField.getText();
                     String billingAddress = billingAddressTextField.getText();
-                    if (password.equals(password2)){
+                    if (password.equalsIgnoreCase(password2)){
                         signUpController.execute(username, password, email, billingAddress);
                     } else {
                         error = "Passwords do not match!";
