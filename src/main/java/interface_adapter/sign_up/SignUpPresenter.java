@@ -4,18 +4,19 @@ import interface_adapter.ViewManagerModel;
 import interface_adapter.login.LoginViewModel;
 import use_case.sign_up.SignUpOutputBoundary;
 import use_case.sign_up.SignUpOutputData;
+import view.HomePage;
 
 /**
  * This class unwraps the formatted output data from the SignUpInteractor into raw data for the SignUpView.
- * SignUpPresenter contains a SignUpViewModel and a SignUpState.
+ * SignUpPresenter contains a SignUpViewModel and a SignUpState, ViewManagerModel, LoginViewModel, HomePageViewModel, HomePageState.
  * */
 public class SignUpPresenter implements SignUpOutputBoundary{
     private SignUpViewModel signUpViewModel;
     private SignUpState signUpState;
     private ViewManagerModel viewManagerModel;
     private LoginViewModel loginViewModel;
-    private LoggedInViewModel homepageViewModel;
-    private LoggedInState loggedInState;
+    private HomePageViewModel homepageViewModel;
+    private HomePageState homepageState;
 
     /**
      * Creates a SignUpPresenter object to unwrap the formatted output data of SignUpInteractor.
@@ -24,13 +25,15 @@ public class SignUpPresenter implements SignUpOutputBoundary{
      * @param viewManagerModel the view manager model for the app
      * @param loginViewModel the view model for the log in view
      * @param homepageViewModel the view model for the homepage view
+     * @param homepageState the state for the homepage view
      * */
-    public SignUpPresenter(SignUpViewModel signUpViewModel, SignUpState signUpState, ViewManagerModel viewManagerModel, LoginViewModel loginViewModel, LoggedInViewModel homepageViewModel){
+    public SignUpPresenter(SignUpViewModel signUpViewModel, SignUpState signUpState, ViewManagerModel viewManagerModel, LoginViewModel loginViewModel, HomePageViewModel homepageViewModel, HomePageState homepageState){
         this.signUpViewModel = signUpViewModel;
         this.signUpState = signUpState;
         this.viewManagerModel = viewManagerModel;
         this.loginViewModel = loginViewModel;
         this.homepageViewModel = homepageViewModel;
+        this.homepageState = homepageState;
     }
 
     /**
@@ -66,7 +69,7 @@ public class SignUpPresenter implements SignUpOutputBoundary{
      * Switches to homepage view and passes the username
      * */
     public void switchToHomepageView(){
-        this.loggedInState.setUsername(this.signUpState.getSuccess());
+        this.homepageState.setUsername(this.signUpState.getSuccess());
         this.signUpState.setSuccess(null);
         this.signUpState.setFailure(null);
         this.viewManagerModel.setActiveViewName(homepageViewModel.getViewName());
