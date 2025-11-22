@@ -22,7 +22,7 @@ public class SignUpView extends JPanel implements PropertyChangeListener {
     private final String signUpViewName = "Sign up";
     private SignUpViewModel signUpViewModel;
     private SignUpController signUpController;
-    private String error = "";
+    private JLabel errorLabel = new JLabel("");
 
     /**
      * Creates a SignUpView object for the signup use case.
@@ -71,9 +71,8 @@ public class SignUpView extends JPanel implements PropertyChangeListener {
         buttonsPanel.add(backButton);
 
         JPanel errorPanel = new JPanel();
-        JLabel errorLabel = new JLabel(this.error);
-        errorLabel.setForeground(new Color(255, 0, 0));
-        errorPanel.add(errorLabel);
+        this.errorLabel.setForeground(new Color(255, 0, 0));
+        errorPanel.add(this.errorLabel);
 
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
@@ -97,7 +96,7 @@ public class SignUpView extends JPanel implements PropertyChangeListener {
                     if (password.equalsIgnoreCase(password2)){
                         signUpController.execute(username, password, email, billingAddress);
                     } else {
-                        error = "Passwords do not match!";
+                        errorLabel.setText("Passwords do not match!");
                     }
                 }
             }
@@ -137,9 +136,9 @@ public class SignUpView extends JPanel implements PropertyChangeListener {
             this.signUpController.switchToHomepageView();
         }
         if (signUpState.getFailure() != null){
-            this.error = signUpState.getFailure();
+            this.errorLabel.setText(signUpState.getFailure());
         } else {
-            this.error = "";
+            this.errorLabel.setText("");
         }
     }
 
