@@ -4,7 +4,7 @@ import interface_adapter.ViewManagerModel;
 import interface_adapter.login.LoginViewModel;
 import use_case.sign_up.SignUpOutputBoundary;
 import use_case.sign_up.SignUpOutputData;
-import view.HomePage;
+import interface_adapter.homepage.*;
 
 /**
  * This class unwraps the formatted output data from the SignUpInteractor into raw data for the SignUpView.
@@ -15,8 +15,8 @@ public class SignUpPresenter implements SignUpOutputBoundary{
     private SignUpState signUpState;
     private ViewManagerModel viewManagerModel;
     private LoginViewModel loginViewModel;
-    private HomePageViewModel homepageViewModel;
-    private HomePageState homepageState;
+    private HomepageViewModel homepageViewModel;
+    private HomepageState homepageState;
 
     /**
      * Creates a SignUpPresenter object to unwrap the formatted output data of SignUpInteractor.
@@ -27,7 +27,7 @@ public class SignUpPresenter implements SignUpOutputBoundary{
      * @param homepageViewModel the view model for the homepage view
      * @param homepageState the state for the homepage view
      * */
-    public SignUpPresenter(SignUpViewModel signUpViewModel, SignUpState signUpState, ViewManagerModel viewManagerModel, LoginViewModel loginViewModel, HomePageViewModel homepageViewModel, HomePageState homepageState){
+    public SignUpPresenter(SignUpViewModel signUpViewModel, SignUpState signUpState, ViewManagerModel viewManagerModel, LoginViewModel loginViewModel, HomepageViewModel homepageViewModel, HomepageState homepageState){
         this.signUpViewModel = signUpViewModel;
         this.signUpState = signUpState;
         this.viewManagerModel = viewManagerModel;
