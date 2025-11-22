@@ -2,7 +2,6 @@ package interface_adapter.filter;
 
 import use_case.filter.FilterInputBoundary;
 import use_case.filter.FilterInputData;
-import use_case.filter.FilterOutputData;
 
 public class FilterController {
     private FilterInputBoundary filterInteractor;
@@ -15,5 +14,8 @@ public class FilterController {
     }
     public void switchToHomepageView(){
         this.filterInteractor.switchToHomepageView();
+    }
+    public void loadProducts(){
+        this.filterInteractor.loadProducts();
     }
 }
