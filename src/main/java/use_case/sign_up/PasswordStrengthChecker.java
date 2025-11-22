@@ -61,7 +61,8 @@ public class PasswordStrengthChecker {
      * */
     private static void checkWithUsername(String username, String password) throws IllegalArgumentException{
         String usernameLower = username.toLowerCase();
-        String errorMessage = "Your password contains your username or a 4-character sequence from the username.";
+        String errorMessage = "Your password contains your username or \n" +
+                "a 4-character sequence from the username.";
         int numCharSeq = 4;
         checkSeqChars(password, usernameLower, errorMessage, numCharSeq);
     }
@@ -75,7 +76,8 @@ public class PasswordStrengthChecker {
      * */
     private static void checkWithEmail(String email, String password) throws IllegalArgumentException{
         String emailSection = email.toLowerCase().substring(0, email.toLowerCase().indexOf('@'));
-        String errorMessage = "Your password contains your email or a 4-character sequence from the email.";
+        String errorMessage = "Your password contains your email or \n" +
+                "a 4-character sequence from the email.";
         int numCharSeq = 4;
         checkSeqChars(password, emailSection, errorMessage, numCharSeq);
     }
@@ -130,7 +132,10 @@ public class PasswordStrengthChecker {
             }
         }
         if (!hasDigit || !hasLowerCase || !hasUpperCase || !hasSpecial) {
-            throw new IllegalArgumentException("Your password should have a digit, a lower case letter, an upper case letter, and a special character like: !@#$%^&*()_+{}|?/[]-=~:<>,.;");
+            throw new IllegalArgumentException("Your password should have a digit, \n" +
+                    "a lower case letter, an upper case letter, \n" +
+                    "and a special character like: \n" +
+                    "!@#$%^&*()_+{}|?/[]-=~:<>,.;");
         }
     }
 }
