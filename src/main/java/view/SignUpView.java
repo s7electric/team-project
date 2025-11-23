@@ -1,8 +1,7 @@
 package view;
 
 import entity.User;
-import interface_adapter.sign_up.SignUpController;
-import interface_adapter.sign_up.SignUpViewModel;
+import interface_adapter.sign_up.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,10 +19,10 @@ import interface_adapter.sign_up.SignUpController;
  * It contains a view name, a SignUpViewModel and a SignUpController and a string error.
  * */
 public class SignUpView extends JPanel implements PropertyChangeListener {
-    private final String signUpViewName = "sign up";
+    private final String signUpViewName = "Sign up";
     private SignUpViewModel signUpViewModel;
     private SignUpController signUpController;
-    private String error = "";
+    private JLabel errorLabel = new JLabel("");
 
     /**
      * Creates a SignUpView object for the signup use case.
@@ -38,6 +37,15 @@ public class SignUpView extends JPanel implements PropertyChangeListener {
         JTextField usernameTextField = new JTextField(10);
         usernamePanel.add(usernameLabel);
         usernamePanel.add(usernameTextField);
+
+        JPanel passwordRequirementPanel = new JPanel();
+        JLabel passwordRequirementLabel = new JLabel("The acceptable password has more than 10 characters\n, " +
+                "does not include username and email,\n" +
+                "it has no weak sequences of letters and numbers,\n" +
+                "it should have numbers,\n" +
+                "it should have upper and lower case letters,\n" +
+                "and it should have special characters.");
+        passwordRequirementPanel.add(passwordRequirementLabel);
 
         JPanel passwordPanel = new JPanel();
         JLabel passwordLabel = new JLabel(SignUpViewModel.PASSWORD_LABEL);
@@ -72,14 +80,14 @@ public class SignUpView extends JPanel implements PropertyChangeListener {
         buttonsPanel.add(backButton);
 
         JPanel errorPanel = new JPanel();
-        JLabel errorLabel = new JLabel(this.error);
-        errorLabel.setForeground(new Color(255, 0, 0));
-        errorPanel.add(errorLabel);
+        this.errorLabel.setForeground(new Color(255, 0, 0));
+        errorPanel.add(this.errorLabel);
 
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.add(usernamePanel);
         mainPanel.add(passwordPanel);
+        mainPanel.add(passwordRequirementPanel);
         mainPanel.add(password2Panel);
         mainPanel.add(emailPanel);
         mainPanel.add(billingAddressPanel);
@@ -95,10 +103,10 @@ public class SignUpView extends JPanel implements PropertyChangeListener {
                     String password2 = password2TextField.getText();
                     String email = emailTextField.getText();
                     String billingAddress = billingAddressTextField.getText();
-                    if (password.equals(password2)){
+                    if (password.equalsIgnoreCase(password2)){
                         signUpController.execute(username, password, email, billingAddress);
                     } else {
-                        error = "Passwords do not match!";
+                        errorLabel.setText("Passwords do not match!");
                     }
                 }
             }
@@ -106,15 +114,13 @@ public class SignUpView extends JPanel implements PropertyChangeListener {
 
         loginButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                signUpController.switchToLoginView();
-            }
+            public void actionPerformed(ActionEvent e) {signUpController.switchToLoginView();}
         });
 
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                signUpController.switchToLoggedOutView();
+                signUpController.switchToHomepageView();
             }
         });
 
@@ -135,12 +141,14 @@ public class SignUpView extends JPanel implements PropertyChangeListener {
      * */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getPropertyName().equals("SignUpSuccess")){
-            User loggedInUser = this.signUpViewModel.getState().getSuccess();
-            this.signUpController.switchToLoggedInView();
-        } else if (evt.getPropertyName().equals("SgnUpFailure")){
-            String error = this.signUpViewModel.getState().getFailure();
-            this.error = error;
+        SignUpState signUpState = (SignUpState) evt.getNewValue();
+        if (signUpState.getSuccess() != null){
+            this.signUpController.switchToHomepageView();
+        }
+        if (signUpState.getFailure() != null){
+            this.errorLabel.setText(signUpState.getFailure());
+        } else {
+            this.errorLabel.setText("");
         }
     }
 

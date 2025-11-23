@@ -1,5 +1,6 @@
 package use_case.sign_up;
 
+import entity.Address;
 import entity.User;
 
 /**
@@ -41,8 +42,8 @@ public class SignUpInteractor implements SignUpInputBoundary{
         // if not try to sign up the new user
         } else {
             try {
-                Address billingAddressObject = new Address(billingAddress);
-                User newUser = new User(username, password, email, billingAddressObject);
+                PasswordStrengthChecker.checkStrength(username, email, password);
+                User newUser = new User(username, password, email, billingAddress);
                 dataAccess.createUser(newUser);
                 SignUpOutputData outputData = new SignUpOutputData(newUser);
                 signUpPresenter.updateSuccess(outputData);
@@ -63,16 +64,9 @@ public class SignUpInteractor implements SignUpInputBoundary{
     }
 
     /**
-     * Switches to logged out view
+     * Switches to homepage view
      * */
-    public void switchToLoggedOutView(){
-        this.signUpPresenter.switchToLoggedOutView();
-    }
-
-    /**
-     * Switches to logged in view
-     * */
-    public void switchToLoggedInView(){
-        this.signUpPresenter.switchToLoggedInView();
+    public void switchToHomepageView(){
+        this.signUpPresenter.switchToHomepageView();
     }
 }

@@ -2,6 +2,7 @@ package interface_adapter.sign_up;
 
 import use_case.sign_up.SignUpInputBoundary;
 import use_case.sign_up.SignUpInputData;
+import use_case.sign_up.SignUpInteractor;
 
 /**
  * This is controller class for the signup use case.
@@ -38,16 +39,9 @@ public class SignUpController {
     }
 
     /**
-     * Switches to logged out view
+     * Switches to homepage view
      * */
-    public void switchToLoggedOutView(){
-        this.signUpInteractor.switchToLoggedOutView();
-    }
-
-    /**
-     * Switches to logged in view
-     * */
-    public void switchToLoggedInView(){
-        this.signUpInteractor.switchToLoggedInView();
+    public void switchToHomepageView(){
+        this.signUpInteractor.switchToHomepageView();
     }
 }
