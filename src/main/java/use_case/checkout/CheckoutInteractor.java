@@ -38,7 +38,7 @@ public class CheckoutInteractor implements CheckoutInputBoundary {
                     user.getUsername(),
                     user.getEmail(),
                     billingAddress,
-                    (java.awt.List) cartItemDisplays,
+                    cartItemDisplays,
                     totalPrice,
                     totalItems
             );
