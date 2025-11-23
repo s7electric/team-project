@@ -28,10 +28,10 @@ public abstract class ViewModel<StateType> {
         return this.state;
     }
 
-    public void setState(StateType state) {
-        StateType oldState = this.state;
-        this.state = state;
-        firePropertyChange("state", oldState, state);
+    public void setState(StateType newState) {
+        // StateType oldState = this.state;
+        this.state = newState;
+        // firePropertyChange("state", oldState, newState);
     }
 
     public void firePropertyChange(String property, Object oldValue, Object newValue) {
