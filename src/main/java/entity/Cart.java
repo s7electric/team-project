@@ -7,7 +7,7 @@ import java.util.*;
  * Cart has its owner, and the products inside the cart
  * */
 public class Cart {
-
+    private String cartUUID
     private final User owner;
     private final Map<Integer, CartItem> products;
 
@@ -20,6 +20,10 @@ public class Cart {
         this.products = new HashMap<>();
     }
 
+    public String get CartUUID() {
+        return this.cartUUID;
+    }
+    
     public User getOwner() {
         return owner;
     }
