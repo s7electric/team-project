@@ -11,6 +11,10 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import interface_adapter.sign_up.SignUpViewModel;
+import interface_adapter.sign_up.SignUpController;
+
+
 /**
  * This class creates the view for the signup use case.
  * It contains a view name, a SignUpViewModel and a SignUpController and a string error.
@@ -60,16 +64,16 @@ public class SignUpView extends JPanel implements PropertyChangeListener {
         billingAddressPanel.add(billingAddressTextField);
 
         JPanel buttonsPanel = new JPanel();
-        JButton createButton = new JButton(SignUpViewModel.CREATE_BUTTON_LABEL);
-        JButton loginButton = new JButton(SignUpViewModel.LOGIN_BUTTON_LABEL);
-        JButton backButton = new JButton(SignUpViewModel.BACK_BOTTON_LABEL);
+        JButton createButton = new JButton("Create");
+        JButton loginButton = new JButton("Login");
+        JButton backButton = new JButton("Back");
         buttonsPanel.add(createButton);
         buttonsPanel.add(loginButton);
         buttonsPanel.add(backButton);
 
         JPanel errorPanel = new JPanel();
         JLabel errorLabel = new JLabel(this.error);
-        errorLabel.setForeground(new Color(255,0,0));
+        errorLabel.setForeground(new Color(255, 0, 0));
         errorPanel.add(errorLabel);
 
         JPanel mainPanel = new JPanel();
