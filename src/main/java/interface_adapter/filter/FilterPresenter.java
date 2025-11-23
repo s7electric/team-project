@@ -49,7 +49,6 @@ public class FilterPresenter implements FilterOutputBoundary {
     public void switchToHomepageView(){
         this.homepageState.setFilter(this.filterState.getFilterCategory());
         this.homepageState.setProducts(this.filterState.getFilteredProducts());
-        this.homepageViewModel.setState(this.homepageState);
         this.viewManagerModel.setActiveViewName(this.homepageViewModel.getViewName());
     }
 
