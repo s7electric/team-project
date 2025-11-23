@@ -2,6 +2,5 @@ package use_case.search;
 
 public interface SearchInputBoundary {
     void execute(SearchInputData searchInputData);
-    void switchToLoggedInView();
-    void switchToLoggedOutView();
+    void switchToHomepageView();
 }
