@@ -35,9 +35,10 @@ public class FilterPresenter implements FilterOutputBoundary {
 
     /**
      * Updates the filter state to contain all filter products
-     * @param filterOutputData the output data that wraps all the filtered products
+     * @param filterOutputData the output data that wraps all the filtered products and the filter category
      * */
     public void updateFilteredProducts(FilterOutputData filterOutputData) {
+        this.filterState.setFilterCategory(filterOutputData.getFilterCategory());
         this.filterState.setFilteredProducts(filterOutputData.getFilteredProducts());
         this.filterViewModel.setState(this.filterState);
     }
@@ -46,15 +47,17 @@ public class FilterPresenter implements FilterOutputBoundary {
      * Switches to homepage when the state has changed
      * */
     public void switchToHomepageView(){
+        this.homepageState.setFilter(this.filterState.getFilterCategory());
         this.homepageState.setProducts(this.filterState.getFilteredProducts());
         this.viewManagerModel.setActiveViewName(this.homepageViewModel.getViewName());
     }
 
     /**
      * Loads all the products when the app boots up
-     * @param filterOutputData the output data that wraps all the products
+     * @param filterOutputData the output data that wraps all the products and the filter category
      * */
     public void loadProducts(FilterOutputData filterOutputData) {
+        this.filterState.setFilterCategory(filterOutputData.getFilterCategory());
         this.filterState.setFilteredProducts(filterOutputData.getFilteredProducts());
         this.filterViewModel.setState(this.filterState);
     }

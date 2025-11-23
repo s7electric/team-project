@@ -60,7 +60,7 @@ public class FilterInteractor implements FilterInputBoundary{
                 }
             }
         }
-        FilterOutputData filterOutputData = new FilterOutputData(filteredProducts);
+        FilterOutputData filterOutputData = new FilterOutputData(filterInputData.getFilter(), filteredProducts);
         this.filterPresenter.updateFilteredProducts(filterOutputData);
     }
 
@@ -76,7 +76,7 @@ public class FilterInteractor implements FilterInputBoundary{
      * */
     public void loadProducts(){
         List<Product> allProducts = dataAccess.getAllProducts();
-        FilterOutputData filterOutputData = new FilterOutputData(allProducts);
+        FilterOutputData filterOutputData = new FilterOutputData("All", allProducts);
         this.filterPresenter.loadProducts(filterOutputData);
     }
 }
