@@ -21,8 +21,8 @@ public class FilterView extends JPanel implements PropertyChangeListener {
     private FilterController filterController;
 
     /**
-     * Creates a SignUpView object for the signup use case.
-     * @param filterViewModel the view model for the signup use case
+     * Creates a FilterView object for the filter use case.
+     * @param filterViewModel the view model for the filter use case
      * */
     public FilterView(FilterViewModel filterViewModel){
         this.filterViewModel = filterViewModel;
