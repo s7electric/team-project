@@ -1,8 +1,9 @@
 package view;
 
 import entity.User;
-import interface_adapter.sign_up.SignUpController;
-import interface_adapter.sign_up.SignUpViewModel;
+import interface_adapter.search.SearchController;
+import interface_adapter.search.SearchState;
+import interface_adapter.search.SearchViewModel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,113 +16,67 @@ import java.beans.PropertyChangeListener;
  * This class creates the view for the search use case.
  * It contains a view name, a SearchViewModel and a SearchController and a string error.
  * */
-public class SignUpView extends JPanel implements PropertyChangeListener {
+public class SearchView extends JPanel implements PropertyChangeListener {
     private final String searchViewName = "Search";
-    private SignUpViewModel signUpViewModel;
-    private SignUpController signUpController;
-    private String error = "";
+    private SearchViewModel searchViewModel;
+    private SearchController searchController;
+    private JLabel errorLabel = new JLabel("");
 
     /**
-     * Creates a SignUpView object for the signup use case.
-     * @param signUpViewModel the view model for the signup use case
+     * Creates a SearchView object for the search use case.
+     * @param searchViewModel the view model for the search use case
      * */
-    public SignUpView(SignUpViewModel signUpViewModel){
-        this.signUpViewModel = signUpViewModel;
-        this.signUpViewModel.addPropertyChangeListener(this);
+    public SearchView(SearchViewModel searchViewModel){
+        this.searchViewModel = searchViewModel;
+        this.searchViewModel.addPropertyChangeListener(this);
 
-        JPanel usernamePanel = new JPanel();
-        JLabel usernameLabel = new JLabel("Username:");
-        JTextField usernameTextField = new JTextField(10);
-        usernamePanel.add(usernameLabel);
-        usernamePanel.add(usernameTextField);
-
-        JPanel passwordPanel = new JPanel();
-        JLabel passwordLabel = new JLabel("Password:");
-        JTextField passwordTextField = new JTextField(10);
-        passwordPanel.add(passwordLabel);
-        passwordPanel.add(passwordTextField);
-
-        JPanel password2Panel = new JPanel();
-        JLabel password2Label = new JLabel("Confirm Password:");
-        JTextField password2TextField = new JTextField(10);
-        password2Panel.add(password2Label);
-        password2Panel.add(password2TextField);
-
-        JPanel emailPanel = new JPanel();
-        JLabel emailLabel = new JLabel("Email:");
-        JTextField emailTextField = new JTextField(10);
-        emailPanel.add(emailLabel);
-        emailPanel.add(emailTextField);
-
-        JPanel billingAddressPanel = new JPanel();
-        JLabel billingAddressLabel = new JLabel("Billing Address:");
-        JTextField billingAddressTextField = new JTextField(10);
-        billingAddressPanel.add(billingAddressLabel);
-        billingAddressPanel.add(billingAddressTextField);
+        JPanel searchPanel = new JPanel();
+        JLabel searchLabel = new JLabel("Search:");
+        JTextField searchTextField = new JTextField(50);
+        searchPanel.add(searchLabel);
+        searchPanel.add(searchTextField);
 
         JPanel buttonsPanel = new JPanel();
-        JButton createButton = new JButton("Create");
-        JButton loginButton = new JButton("Login");
+        JButton enterButton = new JButton("Enter");
         JButton backButton = new JButton("Back");
-        buttonsPanel.add(createButton);
-        buttonsPanel.add(loginButton);
+        buttonsPanel.add(enterButton);
         buttonsPanel.add(backButton);
 
         JPanel errorPanel = new JPanel();
-        JLabel errorLabel = new JLabel(this.error);
-        errorLabel.setForeground(new Color(255,0,0));
-        errorPanel.add(errorLabel);
+        this.errorLabel.setForeground(new Color(255,0,0));
+        errorPanel.add(this.errorLabel);
 
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-        mainPanel.add(usernamePanel);
-        mainPanel.add(passwordPanel);
-        mainPanel.add(password2Panel);
-        mainPanel.add(emailPanel);
-        mainPanel.add(billingAddressPanel);
+        mainPanel.add(searchPanel);
         mainPanel.add(errorPanel);
         mainPanel.add(buttonsPanel);
 
-        createButton.addActionListener(
+        enterButton.addActionListener(
                 new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        String username = usernameTextField.getText();
-                        String password = passwordTextField.getText();
-                        String password2 = password2TextField.getText();
-                        String email = emailTextField.getText();
-                        String billingAddress = billingAddressTextField.getText();
-                        if (password.equals(password2)){
-                            signUpController.execute(username, password, email, billingAddress);
-                        } else {
-                            error = "Passwords do not match!";
-                        }
+                        String searchText = searchTextField.getText();
+                        searchController.execute(searchText);
                     }
                 }
         );
 
-        loginButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                signUpController.switchToLoginView();
-            }
-        });
-
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                signUpController.switchToLoggedOutView();
+                searchController.switchToHomepageView();
             }
         });
 
     }
 
     /**
-     * Sets the controller for the signup use case.
-     * @param signUpController the controller for signup use case
+     * Sets the controller for the search use case.
+     * @param searchController the controller for search use case
      * */
-    public void setController(SignUpController signUpController){
-        this.signUpController = signUpController;
+    public void setController(SearchController searchController){
+        this.searchController = searchController;
     }
 
     /**
@@ -131,16 +86,18 @@ public class SignUpView extends JPanel implements PropertyChangeListener {
      * */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getPropertyName().equals("SignUpSuccess")){
-            User loggedInUser = this.signUpViewModel.getState().getSuccess();
-            this.signUpController.switchToLoggedInView();
-        } else if (evt.getPropertyName().equals("SgnUpFailure")){
-            String error = this.signUpViewModel.getState().getFailure();
-            this.error = error;
+        SearchState searchState = (SearchState) evt.getNewValue();
+        if (searchState.getSearchTextSuccess() != null){
+            this.searchController.switchToHomepageView();
+        }
+        if (searchState.getErrorFailure() != null){
+            this.errorLabel.setText(searchState.getErrorFailure());
+        } else {
+            this.errorLabel.setText("");
         }
     }
 
     public String getViewName(){
-        return this.signUpViewName;
+        return this.searchViewName;
     }
 }
