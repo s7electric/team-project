@@ -19,35 +19,77 @@ public class CheckoutInteractor implements CheckoutInputBoundary {
     @Override
     public void execute(CheckoutInputData inputData) {
         try {
-            //Get user and cart data
+            // 1. Get user from data access
             User user = dataAccess.getUser(inputData.getUserId());
+
+            // 2. Get user's cart
             Cart cart = user.getCart();
 
-            //Get default billing address
+            // 3. Validate cart has items
+            if (cart.getProducts().isEmpty()) {
+                outputBoundary.presentCheckoutError("Cart is empty");
+                return;
+            }
+
+            // 4. Get billing address
             String billingAddress = getDefaultBillingAddress(user);
 
-            //Prepare cart items for display
+            // 5. Prepare cart items for display
             List<CartItemDisplay> cartItemDisplays = prepareCartItemDisplays(cart);
 
-            //Calculate totals
-            double totalPrice = calculateTotalPrice(cart);
-            int totalItems = cart.getTotalQuantity();
+            // 6. Calculate payment details
+            PaymentCalculation paymentCalc = calculatePaymentDetails(cart, user);
 
-            // 5. Create output data and present
+            // 7. Create output data with all calculated values
             CheckoutOutputData outputData = new CheckoutOutputData(
                     user.getUsername(),
                     user.getEmail(),
                     billingAddress,
                     cartItemDisplays,
-                    totalPrice,
-                    totalItems
+                    paymentCalc.subtotal,
+                    paymentCalc.totalItems,
+                    paymentCalc.pointsDiscount,
+                    paymentCalc.totalAfterDiscount,
+                    paymentCalc.userBalance,
+                    paymentCalc.userPoints,
+                    paymentCalc.amountFromBalance,
+                    paymentCalc.balanceAfterPayment,
+                    paymentCalc.hasSufficientFunds
             );
 
+            // 8. Present the order confirmation
             outputBoundary.presentOrderConfirmation(outputData);
 
         } catch (Exception e) {
             outputBoundary.presentCheckoutError("Checkout failed: " + e.getMessage());
         }
+    }
+
+    private PaymentCalculation calculatePaymentDetails(Cart cart, User user) {
+        double subtotal = calculateTotalPrice(cart);
+        int totalItems = cart.getTotalQuantity();
+        double userBalance = user.getBalance();
+        int userPoints = user.getPointsBalance();
+
+        // Calculate points discount ($10 for every 1000 points)
+        double pointsDiscount = calculatePointsDiscount(userPoints);
+        double totalAfterDiscount = Math.max(0, subtotal - pointsDiscount);
+
+        // Calculate payment from balance
+        double amountFromBalance = Math.min(totalAfterDiscount, userBalance);
+        double balanceAfterPayment = userBalance - amountFromBalance;
+        boolean hasSufficientFunds = balanceAfterPayment >= 0;
+
+        return new PaymentCalculation(
+                subtotal, totalItems, pointsDiscount, totalAfterDiscount,
+                userBalance, userPoints, amountFromBalance, balanceAfterPayment, hasSufficientFunds
+        );
+    }
+
+    private double calculatePointsDiscount(int points) {
+        //Users receive $10 of discounts for every 1000 points, automatically,
+        //in increments of 1000 points.
+        return (double) (points - (points % 1000)) / 10;
     }
 
     private String getDefaultBillingAddress(User user) {
@@ -57,7 +99,7 @@ public class CheckoutInteractor implements CheckoutInputBoundary {
             }
         }
         return user.getBillingAddresses().isEmpty() ?
-                "No billing address" :
+                "No billing address available" :
                 user.getBillingAddresses().get(0).toSingleLine();
     }
 
@@ -84,5 +126,33 @@ public class CheckoutInteractor implements CheckoutInputBoundary {
             total += item.getProduct().getPrice() * item.getQuantity();
         }
         return total;
+    }
+
+    // Helper class to bundle payment calculation results
+    private static class PaymentCalculation {
+        final double subtotal;
+        final int totalItems;
+        final double pointsDiscount;
+        final double totalAfterDiscount;
+        final double userBalance;
+        final int userPoints;
+        final double amountFromBalance;
+        final double balanceAfterPayment;
+        final boolean hasSufficientFunds;
+
+        PaymentCalculation(double subtotal, int totalItems, double pointsDiscount,
+                           double totalAfterDiscount, double userBalance, int userPoints,
+                           double amountFromBalance, double balanceAfterPayment,
+                           boolean hasSufficientFunds) {
+            this.subtotal = subtotal;
+            this.totalItems = totalItems;
+            this.pointsDiscount = pointsDiscount;
+            this.totalAfterDiscount = totalAfterDiscount;
+            this.userBalance = userBalance;
+            this.userPoints = userPoints;
+            this.amountFromBalance = amountFromBalance;
+            this.balanceAfterPayment = balanceAfterPayment;
+            this.hasSufficientFunds = hasSufficientFunds;
+        }
     }
 }
