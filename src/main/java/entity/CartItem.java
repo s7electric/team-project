@@ -24,4 +24,8 @@ public class CartItem {
     public void decrease(int amount) {
         quantity -= amount;
     }
+
+    public double getSubtotal() {
+        return product.getPrice() * quantity;
+    }
 }
