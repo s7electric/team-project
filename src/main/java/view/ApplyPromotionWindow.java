@@ -89,11 +89,7 @@ public class ApplyPromotionWindow extends JFrame {
         return panel;
     }
 
-    /**
-     * demo logic:
-     * - "SAVE10" => 10% discount
-     * - "SAVE20" => 20% discount
-     */
+
     private void applyPromotion() {
         String code = promoCodeField.getText().trim();
         if (code.isEmpty()) {
