@@ -8,21 +8,22 @@ import java.util.*;
  * */
 public class Cart {
     private String cartUUID;
-    private final User owner;
+    private final String ownerName;
     private final Map<Integer, CartItem> products;
 
     /**
      * Creates a new cart for the owner.
      * @param owner the owner
      */
-    public Cart(User owner) {
-        this.owner = owner;
+    public Cart(String ownerName) {
+        this.ownerName = ownerName;
         this.products = new HashMap<>();
         this.cartUUID = UUID.randomUUID().toString();
     }
 
-    public Cart(User owner, String cartUUID) {
-        this.owner = owner;
+    /* This method is not for creating new carts, only for formatting DB data. */
+    public Cart(String ownerName, String cartUUID) {
+        this.ownerName = ownerName;
         this.products = new HashMap<>();
         this.cartUUID = cartUUID;
     }
@@ -31,8 +32,8 @@ public class Cart {
         return this.cartUUID;
     }
     
-    public User getOwner() {
-        return owner;
+    public String getOwnerName() {
+        return ownerName;
     }
 
     public Map<Integer, CartItem> getProducts() {
