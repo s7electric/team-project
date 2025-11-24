@@ -49,7 +49,7 @@ public class SearchPresenter implements SearchOutputBoundary {
     public void updateFailure(SearchOutputData searchOutputData){
         this.searchState.setSuccess(null, null);
         this.searchState.setFailure(searchOutputData.getError());
-        this.searchViewModel.setstate(this.searchState);
+        this.searchViewModel.setState(this.searchState);
     }
 
     /**
@@ -57,7 +57,8 @@ public class SearchPresenter implements SearchOutputBoundary {
      * */
     public void switchToHomepageView(){
         this.homepageState.setSearchText(this.searchState.getSearchTextSuccess());
-        this.homepageState.setFoundProducts(this.searchState.getFoundProductsSuccess());
+        this.homepageState.setProducts(this.searchState.getFoundProductsSuccess());
+        this.homepageViewModel.setState(this.homepageState);
         this.searchState.setSuccess(null, null);
         this.searchState.setFailure(null);
         this.viewManagerModel.setActiveViewName(homepageViewModel.getViewName());
