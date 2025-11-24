@@ -11,11 +11,11 @@ import use_case.filter.FilterOutputData;
  * This class contains FilterViewModel, FilterState, ViewManagerModel, HomePageViewModel, HomepageState.
  * */
 public class FilterPresenter implements FilterOutputBoundary {
-    private FilterViewModel filterViewModel;
-    private FilterState filterState;
-    private ViewManagerModel viewManagerModel;
-    private HomepageViewModel homepageViewModel;
-    private HomepageState homepageState;
+    private final FilterViewModel filterViewModel;
+    private final FilterState filterState;
+    private final ViewManagerModel viewManagerModel;
+    private final HomepageViewModel homepageViewModel;
+    private final HomepageState homepageState;
 
     /**
      * Creates the FilterPresenter object for the filter use case

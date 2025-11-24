@@ -28,7 +28,7 @@ public class SearchOutputData {
      * @param error the error message when no product is found
      * */
     public SearchOutputData(String error) {
-        this.searchText = error;
+        this.error = error;
     }
 
     public String getError(){

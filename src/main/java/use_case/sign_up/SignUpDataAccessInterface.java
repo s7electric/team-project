@@ -9,8 +9,9 @@ public interface SignUpDataAccessInterface {
     /**
      * Creates a user in the database
      * @param user the new user
+     * @param rawPassword the user's plaintext password (needed for external auth providers)
      * */
-    void createUser(User user);
+    void createUser(User user, String rawPassword);
 
     /**
      * Checks if the user exists from before

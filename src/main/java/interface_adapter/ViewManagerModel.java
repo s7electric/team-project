@@ -1,6 +1,6 @@
 package interface_adapter;
 
-public class ViewManagerModel extends ViewModel {
+public class ViewManagerModel extends ViewModel<String> {
     private String activeViewName;
 
     public ViewManagerModel() {
@@ -11,8 +11,8 @@ public class ViewManagerModel extends ViewModel {
         return this.activeViewName;
     }
 
-     public void setActiveViewName (String viewName) {
-         this.activeViewName = viewName;
-         setState(viewName);
-     }
+    public void setActiveViewName (String viewName) {
+        this.activeViewName = viewName;
+        setState(viewName);
+    }
 }

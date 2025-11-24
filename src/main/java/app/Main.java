@@ -6,7 +6,7 @@ public class Main {
     public static void main(String[] args) {
         AppBuilder appBuilder = new AppBuilder();
         JFrame application = appBuilder
-                .addLoginView()
+                .addLoginView() // also registers homepage, signup, search, filter, manage address, logout
                 .build();
 
         application.pack();

@@ -11,6 +11,8 @@ import java.util.Map;
 public class ManageAddressState {
     private String username;
     private List<Address> addresses = new ArrayList<>();
+    private List<String> addressIds = new ArrayList<>();
+    private List<String> displayAddresses = new ArrayList<>();
     private Map<String, String> fieldErrors;
     private String message;
 
@@ -19,6 +21,12 @@ public class ManageAddressState {
 
     public List<Address> getAddresses() { return addresses; }
     public void setAddresses(List<Address> addresses) { this.addresses = addresses; }
+
+    public List<String> getAddressIds() { return addressIds; }
+    public void setAddressIds(List<String> addressIds) { this.addressIds = addressIds; }
+
+    public List<String> getDisplayAddresses() { return displayAddresses; }
+    public void setDisplayAddresses(List<String> displayAddresses) { this.displayAddresses = displayAddresses; }
 
     public Map<String, String> getFieldErrors() { return fieldErrors; }
     public void setFieldErrors(Map<String, String> fieldErrors) { this.fieldErrors = fieldErrors; }

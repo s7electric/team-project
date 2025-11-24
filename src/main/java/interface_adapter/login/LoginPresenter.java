@@ -28,9 +28,12 @@ public class LoginPresenter implements LoginOutputBoundary {
 
     @Override
     public void prepareSuccessView(LoginOutputData outputData) {
-        HomepageState homepageState = homepageViewModel.getState();
-        homepageState.setUsername(outputData.getUsername());
-        homepageViewModel.setState(homepageState);
+        HomepageState current = homepageViewModel.getState();
+        HomepageState next = new HomepageState(outputData.getUsername());
+        next.setProducts(current.getProducts());
+        next.setSearchText(current.getSearchText());
+        next.setFilter(current.getFilter());
+        homepageViewModel.setState(next);
 
         loginViewModel.setState(new LoginState());
         viewManagerModel.setActiveViewName(homepageViewModel.getViewName());

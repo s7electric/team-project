@@ -19,7 +19,7 @@ import java.util.Map;
 /**
  * Swing JFrame View for the "Manage Addresses" use case.
  */
-public class ManageAddressView extends JFrame implements PropertyChangeListener {
+public class ManageAddressView extends JPanel implements PropertyChangeListener {
 
     private final ManageAddressController controller;
     private final ManageAddressViewModel viewModel;
@@ -51,7 +51,6 @@ public class ManageAddressView extends JFrame implements PropertyChangeListener 
 
     public ManageAddressView(ManageAddressController controller,
                              ManageAddressViewModel viewModel) {
-        super("Manage Addresses");
         this.controller = controller;
         this.viewModel = viewModel;
 
@@ -63,10 +62,6 @@ public class ManageAddressView extends JFrame implements PropertyChangeListener 
     }
 
     private void buildUI() {
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(900, 600);
-        setLocationRelativeTo(null);
-
         // Left: address list
         addressList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         addressList.setCellRenderer((list, value, index, isSelected, cellHasFocus) -> {
@@ -130,7 +125,8 @@ public class ManageAddressView extends JFrame implements PropertyChangeListener 
         splitPane.setDividerLocation(350);
         splitPane.setResizeWeight(0.4);
 
-        setContentPane(splitPane);
+        setLayout(new BorderLayout());
+        add(splitPane, BorderLayout.CENTER);
 
         rememberOriginalBorders(tfLine1, tfLine2, tfCity, tfProvince, tfPostal, tfCountry);
     }
@@ -173,14 +169,13 @@ public class ManageAddressView extends JFrame implements PropertyChangeListener 
             ManageAddressState state = viewModel.getState();
             String username = state.getUsername();
 
-            int selectedIndex = addressList.getSelectedIndex();
-            if (selectedIndex < 0) {
+            Address selected = addressList.getSelectedValue();
+            if (selected == null) {
                 JOptionPane.showMessageDialog(this, "Please select an address to update.",
                         "No selection", JOptionPane.WARNING_MESSAGE);
                 return;
             }
-
-            String addressId = String.valueOf(selectedIndex);
+            String addressId = selected.getId();
 
             controller.editAddress(
                     username,
@@ -201,14 +196,13 @@ public class ManageAddressView extends JFrame implements PropertyChangeListener 
             ManageAddressState state = viewModel.getState();
             String username = state.getUsername();
 
-            int selectedIndex = addressList.getSelectedIndex();
-            if (selectedIndex < 0) {
+            Address selected = addressList.getSelectedValue();
+            if (selected == null) {
                 JOptionPane.showMessageDialog(this, "Please select an address to delete.",
                         "No selection", JOptionPane.WARNING_MESSAGE);
                 return;
             }
-
-            String addressId = String.valueOf(selectedIndex);
+            String addressId = selected.getId();
 
             int choice = JOptionPane.showConfirmDialog(this,
                     "Delete the selected address?", "Confirm delete",

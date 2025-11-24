@@ -88,6 +88,7 @@ public class SearchView extends JPanel implements PropertyChangeListener {
     public void propertyChange(PropertyChangeEvent evt) {
         SearchState searchState = (SearchState) evt.getNewValue();
         if (searchState.getSearchTextSuccess() != null){
+            // On success, controller will navigate back.
             this.searchController.switchToHomepageView();
         }
         if (searchState.getErrorFailure() != null){

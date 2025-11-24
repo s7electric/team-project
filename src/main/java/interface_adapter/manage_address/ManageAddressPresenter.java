@@ -83,24 +83,10 @@ public class ManageAddressPresenter implements
                                         String message) {
 
         ManageAddressState newState = new ManageAddressState();
-
         newState.setUsername(username);
-
-        List<String> ids = new ArrayList<>();
-        List<String> displayTexts = new ArrayList<>();
-
-        for (Address a : addresses) {
-            ids.add(a.getLine1() + a.getPostalCode());
-
-            displayTexts.add(a.toSingleLine());
-        }
-
-        newState.setAddressIds(ids);
-        newState.setDisplayAddresses(displayTexts);
-
+        newState.setAddresses(addresses);
         newState.setFieldErrors(errors);
         newState.setMessage(message);
-
         viewModel.setState(newState);
     }
 }

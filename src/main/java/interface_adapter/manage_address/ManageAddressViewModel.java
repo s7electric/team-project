@@ -11,6 +11,11 @@ public class ManageAddressViewModel {
 
     private final PropertyChangeSupport support = new PropertyChangeSupport(this);
     private ManageAddressState state = new ManageAddressState();
+    public static final String VIEW_NAME = "manage_addresses";
+
+    public String getViewName() {
+        return VIEW_NAME;
+    }
 
     public ManageAddressState getState() { return state; }
 

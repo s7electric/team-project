@@ -9,5 +9,4 @@ public interface MakeListingInputBoundary {
      * @param makeListingInputData The input data for making a listing.
      */
     void execute(MakeListingInputData makeListingInputData);
-
-    /*
+}

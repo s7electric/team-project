@@ -8,7 +8,7 @@ import java.util.Map;
  * Cart has its owner, and the products inside the cart.
  */
 public class Cart {
-    private String cartUUID
+    private String cartUUID;
     private final User owner;
     private final Map<Integer, CartItem> products;
 
@@ -26,7 +26,7 @@ public class Cart {
         this.promotionDiscountAmount = 0.0;
     }
 
-    public String get CartUUID() {
+    public String getCartUUID() {
         return this.cartUUID;
     }
     
@@ -39,7 +39,7 @@ public class Cart {
     }
 
     public void addProduct(Product product, int quantity) {
-        int id = product.getProductid();
+        int id = product.getProductId();
         CartItem item = products.get(id);
         if (item == null) {
             products.put(id, new CartItem(product, quantity));
@@ -51,7 +51,7 @@ public class Cart {
     }
 
     public void removeProduct(Product product, int quantity) {
-        int id = product.getProductid();
+        int id = product.getProductId();
         CartItem item = products.get(id);
 
         if (item == null) return;

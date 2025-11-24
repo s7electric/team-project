@@ -6,7 +6,7 @@ public class Product {
 
     private String name;
     private double price;
-    private String productUUID;
+    private int productUUID;
     private String imageUrl;
     private User seller;
     private String category;
@@ -14,12 +14,11 @@ public class Product {
     private ArrayList<Integer> scores;
 
 
-    public Product(String name, double price, String productUUID, String imageUrl, User seller, String category) {
+    public Product(String name, double price, int productUUID, String imageUrl, User seller, String category) {
         if (name.isEmpty()) {throw new IllegalArgumentException("Product name cannot be empty");}
         this.name = name;
         if (price < 0) {throw new IllegalArgumentException("Product price cannot be negative");}
         this.price = price;
-        if  (productUUID == null) {throw new IllegalArgumentException("Product productUUID cannot be null");}
         this.productUUID = productUUID;
         if (imageUrl.isEmpty()) {throw new IllegalArgumentException("Product image url cannot be empty");}
         this.imageUrl = imageUrl;
@@ -39,7 +38,14 @@ public class Product {
         if (price < 0 ) { throw new IllegalArgumentException("Product price cannot be negative");}
         this.price = price;
     }
-    public Integer getProductUUID() {
+    public int getProductUUID() {
+        return productUUID;
+    }
+
+    /**
+     * Convenience alias expected by various callers.
+     */
+    public int getProductId() {
         return productUUID;
     }
     public String getImageUrl() {

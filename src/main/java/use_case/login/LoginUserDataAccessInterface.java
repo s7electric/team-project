@@ -1,8 +1,14 @@
 package use_case.login;
 
-import entity.User;
-
 public interface LoginUserDataAccessInterface {
-    boolean existsByName(String username);
-    User get(String username);
+    /**
+     * Attempts to authenticate the user with the provided credentials.
+     * @return true if authentication succeeds, false otherwise
+     */
+    boolean authenticate(String username, String password);
+
+    /**
+     * Returns the username (or email/display name) of the last authenticated user, if available.
+     */
+    String getCurrentUsername();
 }

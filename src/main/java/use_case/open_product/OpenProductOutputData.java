@@ -17,8 +17,8 @@ public class OpenProductOutputData {
     private String category;
     private double averageReviewScore;
 
-    public OpenProductOutputData(String username, double price, Integer productid, String imageUrl, User seller, String category, double averageReviewScore) {
-        this.name = username;
+    public OpenProductOutputData(String name, double price, Integer productid, String imageUrl, User seller, String category, double averageReviewScore) {
+        this.name = name;
         this.price = price;
         this.productid = productid;
         this.imageUrl = imageUrl;

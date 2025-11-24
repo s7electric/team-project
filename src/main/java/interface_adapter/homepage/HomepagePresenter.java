@@ -2,28 +2,40 @@ package interface_adapter.homepage;
 
 import interface_adapter.ViewManagerModel;
 import interface_adapter.login.LoginViewModel;
-import interface_adapter.make_listing.*;
 import interface_adapter.manage_address.ManageAddressState;
 import interface_adapter.manage_address.ManageAddressViewModel;
-import interface_adapter.sign_up.SignUpState;
+import interface_adapter.filter.FilterViewModel;
+import interface_adapter.search.SearchViewModel;
 import interface_adapter.sign_up.SignUpViewModel;
-import use_case.homepage.HomepageInputData;
+import use_case.homepage.HomepageOutputBoundary;
 import use_case.homepage.HomepageOutputData;
-import view.ManageAddressView;
 
-public class HomepagePresenter {
-    private SignUpViewModel signUpViewModel;
-    private ViewManagerModel viewManagerModel;
-    private LoginViewModel loginViewModel;
-    private HomepageViewModel homepageViewModel;
-    private HomepageState homepageState;
+public class HomepagePresenter implements HomepageOutputBoundary {
+    private final SignUpViewModel signUpViewModel;
+    private final ViewManagerModel viewManagerModel;
+    private final LoginViewModel loginViewModel;
+    private final HomepageViewModel homepageViewModel;
+    private final HomepageState homepageState;
+    private final ManageAddressViewModel manageAddressViewModel;
+    private final FilterViewModel filterViewModel;
+    private final SearchViewModel searchViewModel;
 
-    public HomepagePresenter(SignUpViewModel signUpViewModel, ViewManagerModel  viewManagerModel, LoginViewModel loginViewModel, HomepageViewModel homepageViewModel, HomepageState homepageState ) {
+    public HomepagePresenter(SignUpViewModel signUpViewModel,
+                             ViewManagerModel  viewManagerModel,
+                             LoginViewModel loginViewModel,
+                             HomepageViewModel homepageViewModel,
+                             HomepageState homepageState,
+                             ManageAddressViewModel manageAddressViewModel,
+                             FilterViewModel filterViewModel,
+                             SearchViewModel searchViewModel) {
         this.signUpViewModel = signUpViewModel;
         this.viewManagerModel = viewManagerModel;
         this.loginViewModel = loginViewModel;
         this.homepageState = homepageState;
-        this.homepageViewModel = new HomepageViewModel();
+        this.homepageViewModel = homepageViewModel;
+        this.manageAddressViewModel = manageAddressViewModel;
+        this.filterViewModel = filterViewModel;
+        this.searchViewModel = searchViewModel;
     }
 
     public void switchToSignUpView(){
@@ -33,18 +45,20 @@ public class HomepagePresenter {
         this.viewManagerModel.setActiveViewName(this.loginViewModel.getViewName());
     }
     public void switchToCartView(){
-
+        // Not implemented
     }
     public void switchToInfoView(HomepageOutputData homepageOutputData){
-        int productId = homepageOutputData.getProductId();
-        String username = this.homepageState.getUsername();
-
+        // Not implemented
     }
     public void switchToAddressView(){
-
+        // pass username to manage address state
+        ManageAddressState mas = manageAddressViewModel.getState();
+        mas.setUsername(homepageState.getUsername());
+        manageAddressViewModel.setState(mas);
+        this.viewManagerModel.setActiveViewName(this.manageAddressViewModel.getViewName());
     }
     public void switchToFundView(){
-
+        // Not implemented
     }
     public void switchToSearchView(){
         this.viewManagerModel.setActiveViewName(this.searchViewModel.getViewName());
@@ -53,9 +67,9 @@ public class HomepagePresenter {
         this.viewManagerModel.setActiveViewName(this.filterViewModel.getViewName());
     }
     public void switchToListingView(){
-
+        // Not implemented
     }
     public void switchToLogoutView(){
-
+        this.viewManagerModel.setActiveViewName(this.loginViewModel.getViewName());
     }
 }

@@ -21,6 +21,7 @@ public class SearchState {
     public void setSuccess(String searchText, List<Product> foundProducts){
         this.searchText = searchText;
         this.foundProducts = foundProducts;
+        this.error = null;
     }
 
     /**
@@ -29,6 +30,8 @@ public class SearchState {
      * */
     public void setFailure(String error){
         this.error = error;
+        this.searchText = null;
+        this.foundProducts = null;
     }
 
     public String getSearchTextSuccess(){

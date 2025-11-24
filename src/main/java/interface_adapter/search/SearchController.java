@@ -4,33 +4,21 @@ import use_case.search.SearchInputBoundary;
 import use_case.search.SearchInputData;
 
 /**
- * This class represents the controller for the search use case
- * It contains a search interactor
- * */
+ * Controller for the search use case.
+ */
 public class SearchController {
-    private SearchInputBoundary searchInteractor;
+    private final SearchInputBoundary searchInteractor;
 
-    /**
-     * Creates a SearchController object for the search use case
-     * @param searchInteractor the interactor for the search use case
-     * */
     public SearchController(SearchInputBoundary searchInteractor) {
         this.searchInteractor = searchInteractor;
     }
 
-    /**
-     * Executes the interactor with an input data object
-     * @param searchText the searchText that the user inputted
-     * */
     public void execute(String searchText) {
-        SearchInputData searchInputData = new SearchInputData(searchText);
-        searchInteractor.execute(searchInputData);
+        SearchInputData inputData = new SearchInputData(searchText);
+        searchInteractor.execute(inputData);
     }
 
-    /**
-     * Switches to homepage when the state of the search has changed
-     * */
-    public void switchToHomepageView(){
+    public void switchToHomepageView() {
         searchInteractor.switchToHomepageView();
     }
 }

@@ -1,7 +1,5 @@
 package use_case.login;
 
-import entity.User;
-
 /**
  * The Login Interactor.
  */
@@ -19,28 +17,27 @@ public class LoginInteractor implements LoginInputBoundary{
         String username = input.getUsername();
         String password = input.getPassword();
 
-        if (username == null || username.isBlank()){
+        if (username == null || username.isBlank()) {
             presenter.prepareFailView("Username must not be empty");
             return;
         }
 
-        if (password == null || password.isBlank()){
+        if (password == null || password.isBlank()) {
             presenter.prepareFailView("Password must not be empty");
             return;
         }
 
-        if (!userGateway.existsByName(username)){
-            presenter.prepareFailView("Account " + username + " does not exist");
+        boolean ok = userGateway.authenticate(username, password);
+        if (!ok) {
+            presenter.prepareFailView("Invalid credentials");
             return;
         }
 
-        User user = userGateway.get(username);
-        if (!user.checkPassword(password)){
-            presenter.prepareFailView("Wrong password");
-            return;
+        String resolvedUsername = userGateway.getCurrentUsername();
+        if (resolvedUsername == null || resolvedUsername.isBlank()) {
+            resolvedUsername = username;
         }
-
-        LoginOutputData output = new LoginOutputData(user.getUsername());
+        LoginOutputData output = new LoginOutputData(resolvedUsername);
         presenter.prepareSuccessView(output);
     }
 

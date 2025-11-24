@@ -19,7 +19,7 @@ import interface_adapter.sign_up.SignUpController;
  * It contains a view name, a SignUpViewModel and a SignUpController and a string error.
  * */
 public class SignUpView extends JPanel implements PropertyChangeListener {
-    private final String signUpViewName = "Sign up";
+    public static final String VIEW_NAME = "Sign up";
     private SignUpViewModel signUpViewModel;
     private SignUpController signUpController;
     private JLabel errorLabel = new JLabel("");
@@ -94,6 +94,9 @@ public class SignUpView extends JPanel implements PropertyChangeListener {
         mainPanel.add(errorPanel);
         mainPanel.add(buttonsPanel);
 
+        setLayout(new BorderLayout());
+        add(mainPanel, BorderLayout.CENTER);
+
         createButton.addActionListener(
             new ActionListener() {
                 @Override
@@ -153,6 +156,6 @@ public class SignUpView extends JPanel implements PropertyChangeListener {
     }
 
     public String getViewName(){
-        return this.signUpViewName;
+        return VIEW_NAME;
     }
 }

@@ -8,6 +8,7 @@ public class HomepageState {
     private String username;
     private String searchText;
     private List<Product> products;
+    private String filter;
 
     public HomepageState(String username) {
         this.username = username;
@@ -35,5 +36,13 @@ public class HomepageState {
 
     public List<Product> getProducts() {
         return this.products;
+    }
+
+    public String getFilter() {
+        return filter;
+    }
+
+    public void setFilter(String filter) {
+        this.filter = filter;
     }
 }

@@ -1,16 +1,15 @@
 package interface_adapter.search;
 
-import view.SearchView;
+import interface_adapter.ViewModel;
 
 /**
- * This class represents the view moel for the search use case
- * */
-public class SearchViewModel extends SearchView<SearchState>{
-    /**
-     * Creates a SearchViewModel object to update the view for the search use case
-     * */
-    public SearchViewModel(){
-        super("Search");
+ * ViewModel for the search use case.
+ */
+public class SearchViewModel extends ViewModel<SearchState> {
+    public static final String VIEW_NAME = "Search";
+
+    public SearchViewModel() {
+        super(VIEW_NAME);
         setState(new SearchState());
     }
 }
