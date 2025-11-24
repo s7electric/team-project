@@ -29,6 +29,18 @@ public class Product {
         this.averageReviewScore = 0;
         this.scores = new ArrayList<>();
     }
+
+    /* Do not use this constructor to create Products, only for formatting DB data. */
+    public Product(String name, double price, String productUUID, String imageUrl, User seller, String category, double averageReviewScore, ArrayList<Integer> scores) {
+        this.name = name;
+        this.price = price;
+        this.productUUID = productUUID;
+        this.imageUrl = imageUrl;
+        this.seller = seller;
+        this.category = category;
+        this.averageReviewScore = averageReviewScore;
+        this.scores = scores;
+    }
     public String getName() {
         return name;
     }
