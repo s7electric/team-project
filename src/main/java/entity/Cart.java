@@ -9,7 +9,8 @@ import java.util.*;
 public class Cart {
     private String cartUUID;
     private final String ownerName;
-    private final Map<Integer, CartItem> products;
+    // private final Map<Integer, CartItem> products;
+    private final Map<String, CartItem> products;
 
     /**
      * Creates a new cart for the owner.
@@ -36,27 +37,48 @@ public class Cart {
         return ownerName;
     }
 
-    public Map<Integer, CartItem> getProducts() {
+    // public Map<Integer, CartItem> getProducts() {
+    public Map<String, CartItem> getProducts() {
         return Map.copyOf(products); // makes products unmodifiable
     }
 
+    // public void addProduct(Product product, int quantity) {
+    //     int id = product.getProductid();
+    //     CartItem item = products.get(id);
+    //     if (item == null)
+    //         products.put(id, new CartItem(product, quantity));
+    //     else
+    //         products.get(id).increase(quantity);
+    //     }
     public void addProduct(Product product, int quantity) {
-        int id = product.getProductid();
-        CartItem item = products.get(id);
+        String uuid = product.getProductUUID();
+        CartItem item = products.get(uuid);
         if (item == null)
-            products.put(id, new CartItem(product, quantity));
+            products.put(uuid, new CartItem(product, quantity));
         else
-            products.get(id).increase(quantity);
+            products.get(uuid).increase(quantity);
         }
 
+    // public void removeProduct(Product product, int quantity) {
+    //     int id = product.getProductid();
+    //     CartItem item = products.get(id);
+
+    //     if (item == null) return;
+
+    //     if (quantity >= item.getQuantity()) {
+    //         products.remove(id); // if the quantity removed is larger than the current number in cart
+    //     } else {
+    //         item.decrease(quantity); // if the quantity in the cart is larger than the number removed
+    //     }
+    // }
     public void removeProduct(Product product, int quantity) {
-        int id = product.getProductid();
-        CartItem item = products.get(id);
+        String uuid = product.getProductUUID();
+        CartItem item = products.get(uuid);
 
         if (item == null) return;
 
         if (quantity >= item.getQuantity()) {
-            products.remove(id); // if the quantity removed is larger than the current number in cart
+            products.remove(uuid); // if the quantity removed is larger than the current number in cart
         } else {
             item.decrease(quantity); // if the quantity in the cart is larger than the number removed
         }
