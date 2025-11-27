@@ -51,7 +51,7 @@ public class Product {
         if (price < 0 ) { throw new IllegalArgumentException("Product price cannot be negative");}
         this.price = price;
     }
-    public Integer getProductUUID() {
+    public String getProductUUID() {
         return productUUID;
     }
     public String getImageUrl() {
