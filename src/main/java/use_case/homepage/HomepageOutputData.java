@@ -11,5 +11,4 @@ public class HomepageOutputData {
         return productId;
     }
     public String getUsername() {return username;}
-    public void setProductId(String productId) {}
 }
