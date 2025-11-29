@@ -5,6 +5,7 @@ import interface_adapter.Product.ProductViewModel;
 import interface_adapter.ViewManagerModel;
 import interface_adapter.login.LoginViewModel;
 import interface_adapter.sign_up.SignUpViewModel;
+import interface_adapter.add_to_cart.AddToCartViewModel;
 import view.HomePageLoggedInView;
 import view.LoginView;
 import view.SignUpView;
@@ -54,7 +55,9 @@ public class AppBuilder {
     }
     public AppBuilder addProductView() {
         productViewModel = new ProductViewModel();
-        productView = new ProductView(productViewModel);
+        addToCartViewModel = new AddToCartViewModel();
+
+        productView = new ProductView(productViewModel,addToCartViewModel);
         cardPanel.add(productView, productView.getViewName());
         return this;
     }

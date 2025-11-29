@@ -32,9 +32,10 @@ public class ProductView extends JPanel implements PropertyChangeListener {
     private final JButton addButton = new JButton("Add");
     private final JButton exitButton = new JButton("Exit");
 
-    public ProductView(ProductViewModel viewModel) {
+    public ProductView(ProductViewModel viewModel,AddToCartViewModel addToCartViewModel) {
         this.productViewModel = viewModel;
         this.productViewModel.addPropertyChangeListener(this);
+        this.addToCartViewModel = addToCartViewModel;
         this.addToCartViewModel.addPropertyChangeListener(this);
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -116,44 +117,47 @@ public class ProductView extends JPanel implements PropertyChangeListener {
         p.add(value);
         return p;
     }
-
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        ProductState state = (ProductState) evt.getNewValue();
-        if (state.getPrice() == null | state.getCategory() == null) {
-            productController.execute(state.getProductid(), state.getUsername());
-        }
-        else {
-            productName.setText(state.getName());
-            seller.setText(state.getSellerName());
-            productPrice.setText(state.getPrice());
-            productRating.setText(state.getRating());
-            reviewCount.setText(state.getReviewCount());
-            category.setText(state.getCategory());
-            username.setText(state.getUsername());
-            try {
-                URL url = new URL(state.getImageUrl());
-                ImageIcon icon = new ImageIcon(url);
+        Object newState = evt.getNewValue();
+        if (newState instanceof ProductState) {
+            ProductState state = (ProductState) newState;
 
-                Image scaled = icon.getImage().getScaledInstance(
-                        200, 200, Image.SCALE_SMOOTH
-                );
-                imageLabel.setIcon(new ImageIcon(scaled));
-            } catch (Exception e) {
-                e.printStackTrace();
+            if (state.getPrice() == null || state.getCategory() == null) {
+                productController.execute(state.getProductid(), state.getUsername());
+            } else {
+                productName.setText(state.getName());
+                seller.setText(state.getSellerName());
+                productPrice.setText(state.getPrice());
+                productRating.setText(state.getRating());
+                reviewCount.setText(state.getReviewCount());
+                category.setText(state.getCategory());
+                username.setText(state.getUsername());
+                try {
+                    URL url = new URL(state.getImageUrl());
+                    ImageIcon icon = new ImageIcon(url);
+                    Image scaled = icon.getImage().getScaledInstance(
+                            200, 200, Image.SCALE_SMOOTH
+                    );
+                    imageLabel.setIcon(new ImageIcon(scaled));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-        }
-    }
-    @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-        AddToCartState state = (AddToCartState) evt.getNewValue();
-        if (state.getQuantityError() != null) {
-            JOptionPane.showMessageDialog(this, state.getQuantityError());
             return;
         }
-        if (state.getMessage() != null) {
-            JOptionPane.showMessageDialog(this, state.getMessage());
-            quantityField.setText("");
+        if (newState instanceof AddToCartState) {
+            AddToCartState state = (AddToCartState) newState;
+
+            if (state.getQuantityError() != null) {
+                JOptionPane.showMessageDialog(this, state.getQuantityError());
+                return;
+            }
+
+            if (state.getMessage() != null) {
+                JOptionPane.showMessageDialog(this, state.getMessage());
+                quantityField.setText("");
+            }
         }
     }
 
