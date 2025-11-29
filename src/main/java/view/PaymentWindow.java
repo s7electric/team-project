@@ -1,8 +1,9 @@
 package view;
 
-import use_case.checkout.CheckoutOutputData;
-import entity.CartItemDisplay;
-import entity.User;
+import interface_adapter.checkout.PaymentView;
+import interface_adapter.checkout.CheckoutViewModel;
+import interface_adapter.checkout.CheckoutPresenter;
+import interface_adapter.checkout.CheckoutState;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -12,32 +13,91 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class PaymentWindow extends JFrame {
-    private final CheckoutOutputData outputData;
-    private final User user;
+public class PaymentWindow extends JFrame implements PaymentView {
+    private CheckoutPresenter presenter;
+    private CheckoutViewModel currentViewModel;
 
-    public PaymentWindow(CheckoutOutputData outputData, User user) {
-        this.outputData = outputData;
-        this.user = user;
+    public PaymentWindow(CheckoutPresenter presenter) {
+        this.presenter = presenter;
+        this.presenter.setPaymentView(this); // Register with specific interface
 
         setTitle("Payment");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(700, 700); // Increased window size to make Payment Details always visible.
+        setSize(700, 700);
         setLocationRelativeTo(null);
 
+        // Auto-initialize with current state if available
+        if (presenter.getCurrentState() != null) {
+            CheckoutViewModel paymentViewModel = createPaymentViewModel(presenter.getCurrentState());
+            showPaymentScreen(paymentViewModel);
+        }
+
+        setVisible(true);
+    }
+
+    @Override
+    public void showPaymentScreen(CheckoutViewModel viewModel) {
+        this.currentViewModel = viewModel;
+        initializeUI();
+    }
+
+    @Override
+    public void showPaymentResult(boolean success, String message) {
+        if (success) {
+            JOptionPane.showMessageDialog(this, message, "Payment Complete",
+                    JOptionPane.INFORMATION_MESSAGE);
+            dispose();
+        } else {
+            JOptionPane.showMessageDialog(this, message, "Payment Failed",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    @Override
+    public void showError(String errorMessage) {
+        JOptionPane.showMessageDialog(this, errorMessage, "Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+    // Add this missing helper method
+    private CheckoutViewModel createPaymentViewModel(CheckoutState state) {
+        String statusMessage = state.hasSufficientFunds() ?
+                "Ready to complete payment" : "Insufficient funds";
+        String statusColor = state.hasSufficientFunds() ? "BLUE" : "RED";
+
+        return new CheckoutViewModel(
+                state.getUsername(),
+                state.getEmail(),
+                state.getBillingAddress(),
+                state.getCartItems(),
+                String.format("$%.2f", state.getSubtotal()),
+                String.valueOf(state.getTotalItems()),
+                String.format("-$%.2f", state.getPointsDiscount()),
+                String.format("$%.2f", state.getTotalAfterDiscount()),
+                String.format("$%.2f", state.getUserBalance()),
+                String.valueOf(state.getUserPoints()),
+                String.format("$%.2f", state.getAmountFromBalance()),
+                String.format("$%.2f", state.getBalanceAfterPayment()),
+                state.hasSufficientFunds(),
+                statusMessage,
+                statusColor
+        );
+    }
+
+    private void initializeUI() {
         JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
         mainPanel.setBorder(new EmptyBorder(15, 15, 15, 15));
 
-        // Order Summary with scrolling
         JScrollPane orderScrollPane = new JScrollPane(createOrderSummaryPanel());
-        orderScrollPane.setPreferredSize(new Dimension(0, 250)); // Fixed height for order summary
+        orderScrollPane.setPreferredSize(new Dimension(0, 250));
         orderScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 
         mainPanel.add(orderScrollPane, BorderLayout.NORTH);
-        mainPanel.add(createPaymentDetailsPanel(), BorderLayout.CENTER); // Payment details get remaining space, because
-        mainPanel.add(createActionButtonsPanel(), BorderLayout.SOUTH); // I always want Payment Details to be visible.
+        mainPanel.add(createPaymentDetailsPanel(), BorderLayout.CENTER);
+        mainPanel.add(createActionButtonsPanel(), BorderLayout.SOUTH);
 
-        add(mainPanel);
+        setContentPane(mainPanel);
+        revalidate();
+        repaint();
     }
 
     private JPanel createOrderSummaryPanel() {
@@ -52,7 +112,7 @@ public class PaymentWindow extends JFrame {
             }
         };
 
-        for (CartItemDisplay item : outputData.getCartItems()) {
+        for (var item : currentViewModel.getCartItems()) {
             Object[] rowData = {
                     item.getProductName(),
                     String.format("$%.2f", item.getPrice()),
@@ -84,37 +144,34 @@ public class PaymentWindow extends JFrame {
     private JPanel createPaymentDetailsPanel() {
         JPanel paymentPanel = new JPanel(new GridBagLayout());
         paymentPanel.setBorder(new TitledBorder("Payment Details"));
-        paymentPanel.setPreferredSize(new Dimension(0, 300)); // Larger fixed height
+        paymentPanel.setPreferredSize(new Dimension(0, 300));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
-        gbc.insets = new Insets(5, 10, 5, 10); // Padding
-
-        // All  my calculations are already done in the use case,
-        // so here I just display the pre-calculated values.
+        gbc.insets = new Insets(5, 10, 5, 10);
 
         gbc.gridy = 0;
-        JLabel subtotalLabel = new JLabel(String.format("Subtotal: $%.2f", outputData.getSubtotal()));
+        JLabel subtotalLabel = new JLabel("Subtotal: " + currentViewModel.getFormattedSubtotal());
         subtotalLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
         paymentPanel.add(subtotalLabel, gbc);
 
         gbc.gridy = 1;
-        JLabel pointsLabel = new JLabel(String.format("Your Points: %d points", outputData.getUserPoints()));
+        JLabel pointsLabel = new JLabel("Your Points: " + currentViewModel.getFormattedUserPoints() + " points");
         pointsLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
         paymentPanel.add(pointsLabel, gbc);
 
         gbc.gridy = 2;
-        JLabel discountLabel = new JLabel(String.format("Points Discount: -$%.2f", outputData.getPointsDiscount()));
-        discountLabel.setFont(new Font("SansSerif", Font.BOLD, 14));
-        discountLabel.setForeground(new Color(33, 195, 94));
+        JLabel discountLabel = new JLabel("Points Discount: " + currentViewModel.getFormattedPointsDiscount());
+        discountLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        discountLabel.setForeground(new Color(13,186,59));
         paymentPanel.add(discountLabel, gbc);
 
         gbc.gridy = 3;
         paymentPanel.add(createSeparator(), gbc);
 
         gbc.gridy = 4;
-        JLabel totalLabel = new JLabel(String.format("Total After Discount: $%.2f", outputData.getTotalAfterDiscount()));
+        JLabel totalLabel = new JLabel("Total After Discount: " + currentViewModel.getFormattedTotalAfterDiscount());
         totalLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
         paymentPanel.add(totalLabel, gbc);
 
@@ -122,19 +179,19 @@ public class PaymentWindow extends JFrame {
         paymentPanel.add(createSeparator(), gbc);
 
         gbc.gridy = 6;
-        JLabel balanceLabel = new JLabel(String.format("Current Balance: $%.2f", outputData.getUserBalance()));
+        JLabel balanceLabel = new JLabel("Current Balance: " + currentViewModel.getFormattedUserBalance());
         balanceLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
         paymentPanel.add(balanceLabel, gbc);
 
         gbc.gridy = 7;
-        JLabel paymentLabel = new JLabel(String.format("Amount to Pay From Balance: $%.2f", outputData.getAmountFromBalance()));
+        JLabel paymentLabel = new JLabel("Amount from Balance: " + currentViewModel.getFormattedAmountFromBalance());
         paymentLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
         paymentPanel.add(paymentLabel, gbc);
 
         gbc.gridy = 8;
         JLabel finalBalanceLabel = new JLabel();
-        if (outputData.hasSufficientFunds()) {
-            finalBalanceLabel.setText(String.format("Balance After Payment: $%.2f", outputData.getBalanceAfterPayment()));
+        if (currentViewModel.hasSufficientFunds()) {
+            finalBalanceLabel.setText("Balance After Payment: " + currentViewModel.getFormattedBalanceAfterPayment());
             finalBalanceLabel.setForeground(Color.BLUE);
         } else {
             finalBalanceLabel.setText("Insufficient Funds - Balance will be negative!");
@@ -163,21 +220,17 @@ public class PaymentWindow extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 dispose();
-                // Go back to order confirmation
-                OrderConfirmationWindow orderWindow = new OrderConfirmationWindow(outputData, user);
-                orderWindow.setVisible(true);
             }
         });
 
         JButton payButton = new JButton("Complete Payment");
         payButton.setFont(new Font("SansSerif", Font.BOLD, 14));
-        payButton.setBackground(new Color(34, 139, 34)); // Forest green
+        payButton.setBackground(new Color(34, 139, 34));
         payButton.setForeground(Color.WHITE);
         payButton.setFocusPainted(false);
         payButton.setPreferredSize(new Dimension(180, 35));
 
-        // Use pre-calculated value from outputData
-        if (!outputData.hasSufficientFunds()) {
+        if (!currentViewModel.hasSufficientFunds()) {
             payButton.setEnabled(false);
             payButton.setToolTipText("Insufficient funds to complete payment");
             payButton.setBackground(Color.GRAY);
@@ -186,7 +239,7 @@ public class PaymentWindow extends JFrame {
         payButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                processPayment();
+                presenter.presentPaymentResult(true, "Payment processed successfully!");
             }
         });
 
@@ -194,36 +247,5 @@ public class PaymentWindow extends JFrame {
         buttonPanel.add(payButton);
 
         return buttonPanel;
-    }
-
-    // NEXT PR I WILL MOVE THIS
-    // I just haven't decided which file I want to move this to. (User? Checkout use case? etc)
-    private void processPayment() {
-        if (outputData.hasSufficientFunds()) {
-            // Process the payment using the pre-calculated values
-            double amountPaid = outputData.getTotalAfterDiscount();
-            int pointsUsed = (int) (outputData.getPointsDiscount() * 10);
-
-            // Update user balance and points
-            user.removeBalance(amountPaid);
-            user.removePointsBalance(pointsUsed);
-
-            JOptionPane.showMessageDialog(this,
-                    String.format("Payment successful!\n\n" +
-                                    "Amount paid: $%.2f\n" +
-                                    "Points used: %d\n" +
-                                    "New balance: $%.2f\n" +
-                                    "Remaining points: %d",
-                            amountPaid, pointsUsed, user.getBalance(), user.getPointsBalance()),
-                    "Payment Complete",
-                    JOptionPane.INFORMATION_MESSAGE);
-
-            dispose();
-        } else {
-            JOptionPane.showMessageDialog(this,
-                    "Insufficient funds to complete payment!",
-                    "Payment Failed",
-                    JOptionPane.ERROR_MESSAGE);
-        }
     }
 }
