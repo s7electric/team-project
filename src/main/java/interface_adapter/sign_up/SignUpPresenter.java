@@ -70,6 +70,7 @@ public class SignUpPresenter implements SignUpOutputBoundary{
      * */
     public void switchToHomepageView(){
         this.homepageState.setUsername(this.signUpState.getSuccess());
+        this.homepageViewModel.setState(this.homepageState);
         this.signUpState.setSuccess(null);
         this.signUpState.setFailure(null);
         this.viewManagerModel.setActiveViewName(homepageViewModel.getViewName());

@@ -29,6 +29,18 @@ public class Product {
         this.averageReviewScore = 0;
         this.scores = new ArrayList<>();
     }
+
+    /* Do not use this constructor to create Products, only for formatting DB data. */
+    public Product(String name, double price, String productUUID, String imageUrl, User seller, String category, double averageReviewScore, ArrayList<Integer> scores) {
+        this.name = name;
+        this.price = price;
+        this.productUUID = productUUID;
+        this.imageUrl = imageUrl;
+        this.seller = seller;
+        this.category = category;
+        this.averageReviewScore = averageReviewScore;
+        this.scores = scores;
+    }
     public String getName() {
         return name;
     }
@@ -39,7 +51,7 @@ public class Product {
         if (price < 0 ) { throw new IllegalArgumentException("Product price cannot be negative");}
         this.price = price;
     }
-    public Integer getProductUUID() {
+    public String getProductUUID() {
         return productUUID;
     }
     public String getImageUrl() {
@@ -52,6 +64,11 @@ public class Product {
         return category;
     }
     public double getAverageReviewScore() {
+        double newTotal = 0.0   ;
+        for (Integer integer : scores) {
+            newTotal += integer;
+        }
+        averageReviewScore = newTotal / scores.size();
         return averageReviewScore;
     }
     public ArrayList<Integer> getScores() {
@@ -59,11 +76,6 @@ public class Product {
     }
     public void addScore(Integer score) {
         if (score < 1 || score > 5) {throw new IllegalArgumentException("Invalid score value");}
-        scores.add(score);
-        double newTotal = 0.0   ;
-        for (Integer integer : scores) {
-            newTotal += integer;
-        }
-        averageReviewScore = newTotal / scores.size();
+        scores.add(score);   
     }
 }

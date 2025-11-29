@@ -7,9 +7,12 @@ import interface_adapter.manage_address.ManageAddressState;
 import interface_adapter.manage_address.ManageAddressViewModel;
 import interface_adapter.sign_up.SignUpState;
 import interface_adapter.sign_up.SignUpViewModel;
+import interface_adapter.Product.ProductViewModel;
+import interface_adapter.Product.ProductState;
 import use_case.homepage.HomepageInputData;
 import use_case.homepage.HomepageOutputData;
 import view.ManageAddressView;
+
 
 public class HomepagePresenter {
     private SignUpViewModel signUpViewModel;
@@ -17,13 +20,17 @@ public class HomepagePresenter {
     private LoginViewModel loginViewModel;
     private HomepageViewModel homepageViewModel;
     private HomepageState homepageState;
+    private ProductViewModel productViewModel;
+    private ProductState productState;
 
-    public HomepagePresenter(SignUpViewModel signUpViewModel, ViewManagerModel  viewManagerModel, LoginViewModel loginViewModel, HomepageViewModel homepageViewModel, HomepageState homepageState ) {
+    public HomepagePresenter(SignUpViewModel signUpViewModel, ViewManagerModel  viewManagerModel, LoginViewModel loginViewModel, HomepageViewModel homepageViewModel, HomepageState homepageState, ProductViewModel productViewModel, ProductState productState) {
         this.signUpViewModel = signUpViewModel;
         this.viewManagerModel = viewManagerModel;
         this.loginViewModel = loginViewModel;
         this.homepageState = homepageState;
-        this.homepageViewModel = new HomepageViewModel();
+        this.homepageViewModel = homepageViewModel;
+        this.productViewModel = productViewModel;
+        this.productState = productState;
     }
 
     public void switchToSignUpView(){
@@ -36,9 +43,12 @@ public class HomepagePresenter {
 
     }
     public void switchToInfoView(HomepageOutputData homepageOutputData){
-        int productId = homepageOutputData.getProductId();
-        String username = this.homepageState.getUsername();
-
+        String productId = homepageOutputData.getProductId();
+        String username = homepageOutputData.getUsername();
+        productState.setProductid(productId);
+        productState.setUsername(username);
+        productViewModel.setState(productState);
+        this.viewManagerModel.setActiveViewName(this.productViewModel.getViewName());
     }
     public void switchToAddressView(){
 

@@ -15,7 +15,7 @@ public class HomepageInteractor implements HomepageInputBoundary {
         this.homepagePresenter.switchToCartView();
     }
     public void switchToInfoView(HomepageInputData homepageInputData){
-        HomepageOutputData homepageOutputData = new HomepageOutputData(homepageInputData.getProductId());
+        HomepageOutputData homepageOutputData = new HomepageOutputData(homepageInputData.getProductId(), homepageInputData.getUsername());
         this.homepagePresenter.switchToInfoView(homepageOutputData);
     }
     public void switchToAddressView(){
