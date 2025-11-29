@@ -34,6 +34,8 @@ public abstract class ViewModel<StateType> {
         firePropertyChange("state", oldState, state);
     }
 
+    public void firePropertyChange(){this.support.firePropertyChange("state", null, this.state);}
+
     public void firePropertyChange(String property, Object oldValue, Object newValue) {
         support.firePropertyChange(property, oldValue, newValue);
     }

@@ -9,5 +9,8 @@ public interface OpenProductOutputBoundary {
      * @param outputData the output data
      */
     void prepareSuccessView(OpenProductOutputData outputData);
-
+    /**
+     * Switches to the HomePage View.
+     */
+    void switchToHomePageView();
 }
