@@ -1,13 +1,16 @@
 package app;
 
 import interface_adapter.HomePagLoggedIN.HomePageLoggedInViewModel;
+import interface_adapter.Product.ProductViewModel;
 import interface_adapter.ViewManagerModel;
 import interface_adapter.login.LoginViewModel;
 import interface_adapter.sign_up.SignUpViewModel;
+import interface_adapter.add_to_cart.AddToCartViewModel;
 import view.HomePageLoggedInView;
 import view.LoginView;
 import view.SignUpView;
 import view.ViewManager;
+import view.ProductView;
 
 import javax.swing.*;
 import java.awt.*;
@@ -37,6 +40,9 @@ public class AppBuilder {
     private HomePageLoggedInView homePageLoggedInView;
     private HomePageLoggedInViewModel homePageLoggedInViewModel;
 
+    private ProductView productView;
+    private ProductViewModel productViewModel;
+
     public AppBuilder() {
         cardPanel.setLayout(cardLayout);
     }
@@ -45,6 +51,14 @@ public class AppBuilder {
         loginViewModel = new LoginViewModel();
         loginView = new LoginView(loginViewModel);
         cardPanel.add(loginView, loginView.getViewName());
+        return this;
+    }
+    public AppBuilder addProductView() {
+        productViewModel = new ProductViewModel();
+        addToCartViewModel = new AddToCartViewModel();
+
+        productView = new ProductView(productViewModel,addToCartViewModel);
+        cardPanel.add(productView, productView.getViewName());
         return this;
     }
 

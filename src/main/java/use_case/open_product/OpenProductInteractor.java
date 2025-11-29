@@ -1,6 +1,7 @@
 package use_case.open_product;
 
 import entity.Product;
+import interface_adapter.Product.ProductPresenter;
 
 public class OpenProductInteractor implements OpenProductInputBoundary {
     private final OpenProductProductDataAccessInterface userDataAccessObject;
@@ -12,9 +13,15 @@ public class OpenProductInteractor implements OpenProductInputBoundary {
 
     @Override
     public void execute(OpenProductInputData openProductInputData) {
-        int productId = openProductInputData.getProductId();
-        Product showedProduct = userDataAccessObject.getProduct(productId);
-        OpenProductOutputData openProductOutputData = new OpenProductOutputData(showedProduct.getName(),showedProduct.getPrice(),showedProduct.getProductid(),showedProduct.getImageUrl(),showedProduct.getUser(),showedProduct.getCategory(),showedProduct.getAverageReviewScore());
+        String productUUID = openProductInputData.getProductId();
+        Product showedProduct = userDataAccessObject.getProduct(productUUID);
+        OpenProductOutputData openProductOutputData = new OpenProductOutputData(showedProduct.getName(),showedProduct.getPrice(),showedProduct.getProductUUID(),showedProduct.getImageUrl(),showedProduct.getUser().getUsername(),showedProduct.getCategory(),showedProduct.getAverageReviewScore(),showedProduct.getScores().size(), openProductInputData.getUsername());
         userPresenter.prepareSuccessView(openProductOutputData);
     }
+
+    @Override
+    public void switchToHomePageView() {
+        userPresenter.switchToHomePageView();
+    }
+
 }

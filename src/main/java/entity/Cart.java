@@ -57,12 +57,12 @@ public class Cart {
     //         products.get(id).increase(quantity);
     //     }
     public void addProduct(Product product, int quantity) {
-        String uuid = product.getProductUUID();
-        CartItem item = products.get(uuid);
-        if (item == null)
-            products.put(uuid, new CartItem(product, quantity));
-        else
-            products.get(uuid).increase(quantity);
+        String id = product.getProductUUID();
+        CartItem item = products.get(id);
+        if (item == null) {
+            products.put(id, new CartItem(product, quantity));
+        } else {
+            item.increase(quantity);
         }
         // When cart content changes, the promotion should be considered stale.
         clearPromotion();
@@ -81,8 +81,8 @@ public class Cart {
     //     }
     // }
     public void removeProduct(Product product, int quantity) {
-        String uuid = product.getProductUUID();
-        CartItem item = products.get(uuid);
+        String id = product.getProductUUID();
+        CartItem item = products.get(id);
 
         if (item == null) return;
 

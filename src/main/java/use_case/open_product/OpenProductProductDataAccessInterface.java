@@ -7,7 +7,7 @@ public interface OpenProductProductDataAccessInterface {
 
     /**
      * Gets the product from the database to be displayed
-     * @param productId the product to look for
+     * @param productUUID the product to look for
      */
-    Product getProduct(int productId);
+    Product getProduct(String productUUID);
 }

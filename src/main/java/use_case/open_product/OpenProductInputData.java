@@ -6,13 +6,17 @@ import entity.User;
  * The Input Data for the Add To Cart Use Case.
  */
 public class OpenProductInputData {
-    private int productId;
+    private String productId;
+    private String username;
 
-    public OpenProductInputData(int productId) {
+    public OpenProductInputData(String productId, String username) {
         this.productId = productId;
+        this.username = username;
     }
-    public int getProductId() {
+    public String getProductId() {
         return productId;
     }
-
+    public String getUsername() {
+        return username;
+    }
 }

@@ -105,7 +105,7 @@ public class CheckoutInteractor implements CheckoutInputBoundary {
 
     private List<CartItemDisplay> prepareCartItemDisplays(Cart cart) {
         List<CartItemDisplay> displays = new ArrayList<>();
-        Map<Integer, CartItem> products = cart.getProducts();
+        Map<String, CartItem> products = cart.getProducts();
 
         for (CartItem item : products.values()) {
             Product product = item.getProduct();
@@ -121,7 +121,7 @@ public class CheckoutInteractor implements CheckoutInputBoundary {
 
     private double calculateTotalPrice(Cart cart) {
         double total = 0.0;
-        Map<Integer, CartItem> products = cart.getProducts();
+        Map<String, CartItem> products = cart.getProducts();
         for (CartItem item : products.values()) {
             total += item.getProduct().getPrice() * item.getQuantity();
         }
