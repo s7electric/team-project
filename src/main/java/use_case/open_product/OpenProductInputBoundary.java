@@ -9,4 +9,9 @@ public interface OpenProductInputBoundary {
      * @param openProductInputData the input data
      */
     void execute(OpenProductInputData openProductInputData);
+
+    /**
+     * Executes the switch to homepage view use case.
+     */
+    void switchToHomePageView();
 }

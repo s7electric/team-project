@@ -1,10 +1,8 @@
-package use_case.open_product;
+package use_case.add_to_cart;
 
 import entity.Product;
-import entity.User;
 
-public interface OpenProductProductDataAccessInterface {
-
+public interface AddToCartProductDataAccessInterface {
     /**
      * Gets the product from the database to be displayed
      * @param productUUID the product to look for

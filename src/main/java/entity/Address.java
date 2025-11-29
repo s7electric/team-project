@@ -26,7 +26,9 @@ public class Address {
      * Full constructor including id. This is private so that we keep the
      * public API (two constructors) almost the same as before.
      */
-    private Address(String id,
+
+    /* Do not use this constructor to create new addresses. Use only for formatting data. */
+    public Address(String id,
                     String recipientName,
                     String line1,
                     String line2,

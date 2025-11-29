@@ -1,6 +1,7 @@
 package entity;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -16,7 +17,7 @@ public class User {
     private int pointsBalance;
 
     // IMPORTANT: now this holds Address entities, not Strings
-    private List<Address> billingAddresses;
+    private HashSet<Address> billingAddresses;
     private List<String> previousPurchasesCategories;
     private Cart cart;
 
@@ -29,8 +30,8 @@ public class User {
      * @throws IllegalArgumentException when arguments are incorrect
      */
     public User(String username, String email, String password, String billingAddress){
-        if (username == null || username.isEmpty()) {
-            throw new IllegalArgumentException("The username cannot be empty!");
+        if (username == null || username.isEmpty() || username.contains(" ")) {
+            throw new IllegalArgumentException("The username cannot be empty or contain spaces!");
         }
         this.username = username;
 
@@ -48,7 +49,7 @@ public class User {
             throw new IllegalArgumentException("The billing address cannot be empty!");
         }
 
-        this.billingAddresses = new ArrayList<>();
+        this.billingAddresses = new HashSet<>();
         this.previousPurchasesCategories = new ArrayList<>();
 
         this.balance = 0;
@@ -58,7 +59,7 @@ public class User {
         this.billingAddresses.add(new Address(billingAddress));
 
         // create an empty cart for this user
-        this.cart = new Cart(this);
+        this.cart = new Cart(this.getUsername());
     }
 
     /**
@@ -73,7 +74,7 @@ public class User {
      * @throws IllegalArgumentException when arguments are incorrect
      */
     public User(String username, String email, int hashedPassword, double balance,
-                List<Address> billingAddresses,
+                HashSet<Address> billingAddresses,
                 List<String> previousPurchasesCategories,
                 Cart cart){
 
@@ -95,7 +96,7 @@ public class User {
         this.hashedPassword = hashedPassword;
 
         // If null is passed, we create empty lists to avoid NullPointerException.
-        this.billingAddresses = (billingAddresses == null) ? new ArrayList<>() : billingAddresses;
+        this.billingAddresses = (billingAddresses == null) ? new HashSet<>() : billingAddresses;
         this.previousPurchasesCategories =
                 (previousPurchasesCategories == null) ? new ArrayList<>() : previousPurchasesCategories;
 
@@ -116,7 +117,7 @@ public class User {
      * The list elements are Address entities, not plain strings.
      */
     public List<Address> getBillingAddresses(){
-        return this.billingAddresses;
+        return new ArrayList<>(this.billingAddresses);
     }
 
     public List<String> getPreviousPurchasesCategories(){

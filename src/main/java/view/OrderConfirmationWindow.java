@@ -131,6 +131,9 @@ public class OrderConfirmationWindow extends JFrame implements OrderConfirmation
         return orderPanel;
     }
 
+    /**
+     * Bottom panel now shows the total AND an "Apply Promotion" button.
+     */
     private JPanel createTotalPanel() {
         JPanel totalPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         totalPanel.setBorder(new EmptyBorder(10, 0, 10, 0));
@@ -143,6 +146,13 @@ public class OrderConfirmationWindow extends JFrame implements OrderConfirmation
         totalLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
         totalLabel.setForeground(Color.BLUE);
 
+        JButton applyPromoButton = new JButton("Apply Promotion...");
+        applyPromoButton.addActionListener(e -> {
+            ApplyPromotionWindow promoWindow = new ApplyPromotionWindow(checkoutData);
+            promoWindow.setVisible(true);
+        });
+
+        totalPanel.add(applyPromoButton);
         totalPanel.add(totalLabel);
 
         return totalPanel;

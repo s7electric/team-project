@@ -117,7 +117,7 @@ public class HomepageView extends JPanel implements PropertyChangeListener {
             productShowcasePanel.add(productPanel);
             productInfoButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    homepageController.switchToInfoView(product.getProductid());
+                    homepageController.switchToInfoView(product.getProductUUID(),homepageState.getUsername());
                 }
             });
         }

@@ -16,8 +16,8 @@ public class HomepageController {
     public void switchToCartView(){
         this.homepageInteractor.switchToCartView();
     }
-    public void switchToInfoView(int productId){
-        HomepageInputData homepageInputData = new HomepageInputData(productId);
+    public void switchToInfoView(String productId, String username){
+        HomepageInputData homepageInputData = new HomepageInputData(productId, username);
         this.homepageInteractor.switchToInfoView(homepageInputData);
     }
     public void switchToAddressView(){

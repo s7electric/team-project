@@ -1,11 +1,14 @@
 package use_case.homepage;
 
 public class HomepageOutputData {
-    private int productId;
-    public HomepageOutputData(int productId) {
+    private String productId;
+    private String username;
+    public HomepageOutputData(String productId, String username) {
         this.productId = productId;
+        this.username = username;
     }
-    public int getProductId() {
+    public String getProductId() {
         return productId;
     }
+    public String getUsername() {return username;}
 }
