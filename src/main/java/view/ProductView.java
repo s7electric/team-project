@@ -17,6 +17,7 @@ public class ProductView extends JPanel implements PropertyChangeListener {
     private final String viewName = "Product";
     private final ProductViewModel productViewModel;
     private ProductController productController;
+    private final AddToCartViewModel addToCartViewModel;
 
     private final JLabel imageLabel = new JLabel();
     private final JLabel seller = new JLabel();
@@ -34,6 +35,7 @@ public class ProductView extends JPanel implements PropertyChangeListener {
     public ProductView(ProductViewModel viewModel) {
         this.productViewModel = viewModel;
         this.productViewModel.addPropertyChangeListener(this);
+        this.addToCartViewModel.addPropertyChangeListener(this);
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
@@ -85,14 +87,27 @@ public class ProductView extends JPanel implements PropertyChangeListener {
                 productController.switchToHomePageView();
             }
         });
-//        addButton.addActionListener(new ActionListener() {
-//            public void actionPerformed (ActionEvent e){
-//                final ProductState currentState = productViewModel.getState();
-//                addToCartController.execeute(currentState.);
-//            }
-//        });
-    }
+        addButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
 
+                ProductState currentState = productViewModel.getState();
+
+                String qtyText = quantityField.getText();
+                int quantity;
+                try {
+                    quantity = Integer.parseInt(qtyText);
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(null, "Please enter a valid number.");
+                    return;
+                }
+                addToCartController.execute(
+                        currentState.getProductid(),
+                        quantity,
+                        currentState.getUsername()
+                );
+            }
+        });
+    }
 
 
     private JPanel makeLabelPanel(String label, JLabel value) {
@@ -127,6 +142,18 @@ public class ProductView extends JPanel implements PropertyChangeListener {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+    }
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        AddToCartState state = (AddToCartState) evt.getNewValue();
+        if (state.getQuantityError() != null) {
+            JOptionPane.showMessageDialog(this, state.getQuantityError());
+            return;
+        }
+        if (state.getMessage() != null) {
+            JOptionPane.showMessageDialog(this, state.getMessage());
+            quantityField.setText("");
         }
     }
 
