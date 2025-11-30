@@ -222,4 +222,64 @@ public class ManageAddressTest {
         System.out.println("  -> OK");
     }
 
+    private static void testDeleteAddressSuccess() {
+        System.out.println("[Test] DeleteAddressInteractor - success case");
+
+        InMemoryUserDataAccess userData = new InMemoryUserDataAccess();
+        User user = new User("eric", "eric@example.com", "pwd", "First Addr");
+        // Add another address to delete
+        Address addr = new Address(
+                "Eric",
+                "Del St",
+                "",
+                "Toronto",
+                "ON",
+                "K1K 1K1",
+                "Canada",
+                false,
+                false
+        );
+        user.addAddress(addr);
+        userData.saveUser(user);
+
+        String addressIdToDelete = addr.getId();
+
+        TestDeletePresenter presenter = new TestDeletePresenter();
+        DeleteAddressInteractor interactor = new DeleteAddressInteractor(userData, presenter);
+
+        DeleteAddressInputData input = new DeleteAddressInputData("eric", addressIdToDelete);
+        interactor.execute(input);
+
+        assertTrue(presenter.successCalled, "DeleteAddress success should be called.");
+        assertTrue(!presenter.notFoundCalled, "DeleteAddress not-found should NOT be called.");
+
+        User updated = userData.getUser("eric");
+        boolean stillExists = updated.getBillingAddresses().stream()
+                .anyMatch(a -> a.getId().equals(addressIdToDelete));
+        assertTrue(!stillExists, "Address should be removed from user's addresses.");
+
+        System.out.println("  -> OK");
+    }
+
+
+    private static void testDeleteAddressNotFound() {
+        System.out.println("[Test] DeleteAddressInteractor - address not found");
+
+        InMemoryUserDataAccess userData = new InMemoryUserDataAccess();
+        User user = new User("frank", "frank@example.com", "pwd", "Base Addr");
+        userData.saveUser(user);
+
+        TestDeletePresenter presenter = new TestDeletePresenter();
+        DeleteAddressInteractor interactor = new DeleteAddressInteractor(userData, presenter);
+
+        DeleteAddressInputData input = new DeleteAddressInputData("frank", "does-not-exist");
+        interactor.execute(input);
+
+        assertTrue(!presenter.successCalled, "DeleteAddress success should NOT be called.");
+        assertTrue(presenter.notFoundCalled, "DeleteAddress not-found SHOULD be called.");
+
+        System.out.println("  -> OK");
+    }
+
+
 
