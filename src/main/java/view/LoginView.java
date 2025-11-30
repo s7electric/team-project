@@ -55,7 +55,7 @@ public class LoginView extends JPanel implements ActionListener, PropertyChangeL
         logIn.addActionListener(
             new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
-                    if (evt.getSource().equals(logIn)) {
+                    if (evt.getSource().equals(logIn) && loginController != null) {
                         final LoginState currentState = loginViewModel.getState();
 
                         loginController.login(
@@ -68,13 +68,21 @@ public class LoginView extends JPanel implements ActionListener, PropertyChangeL
 
         cancel.addActionListener(
                 new ActionListener() {
-                    public void actionPerformed(ActionEvent evt) {loginController.switchToHomePage();}
+                    public void actionPerformed(ActionEvent evt) {
+                        if (loginController != null) {
+                            loginController.switchToHomePage();
+                        }
+                    }
                 }
         );
 
         signUp.addActionListener(
                 new ActionListener() {
-                    public void actionPerformed(ActionEvent evt) {loginController.switchToSignUpView();}
+                    public void actionPerformed(ActionEvent evt) {
+                        if (loginController != null) {
+                            loginController.switchToSignUpView();
+                        }
+                    }
                 }
         );
 

@@ -24,8 +24,8 @@ public class LogoutView extends JPanel implements ActionListener, PropertyChange
 
     public LogoutView(LogoutViewModel logoutViewModel) {
         this.logoutViewModel = logoutViewModel;
-        this.logoutViewModel.addPropertyChangeListener(this);
         this.logoutState = logoutViewModel.getState();
+        this.logoutViewModel.addPropertyChangeListener(this);
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
@@ -65,8 +65,8 @@ public class LogoutView extends JPanel implements ActionListener, PropertyChange
     }
 
     private String buildMessage(String username) {
-        String name = (username == null || username.isEmpty()) ? "user" : username;
-        return "You are currently logged in as " + name + ". Do you want to log out?";
+        String displayName = (username == null || username.isEmpty()) ? "user" : username;
+        return "You are currently logged in as " + displayName + ". Do you want to log out?";
     }
 
     public void setLogoutController(LogoutController logoutController) {

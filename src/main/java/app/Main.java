@@ -7,7 +7,18 @@ public class Main {
         AppBuilder appBuilder = new AppBuilder();
         JFrame application = appBuilder
                 .addLoginView()
+                .addSignUpView()
+                .addHomepageView()
+                .addLogoutView()
                 .addProductView()
+                .addManageAddressWindow()
+                // Wire use cases
+                .addLoginUseCase()
+                .addSignUpUseCase()
+                .addManageAddressUseCase()
+                //.addCheckoutUseCase()
+                .addHomepageUseCase()
+                .addLogoutUseCase()
                 .build();
 
         application.pack();

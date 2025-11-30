@@ -38,4 +38,5 @@ public class HomepageController {
     public void switchToLogoutView(){
         this.homepageInteractor.switchToLogoutView();
     }
+    // public void switchToDealsView(){ this.homepageInteractor.switchToDealsView}
 }

@@ -88,7 +88,7 @@ public class Cart {
         if (item == null) return;
 
         if (quantity >= item.getQuantity()) {
-            products.remove(uuid); // if the quantity removed is larger than the current number in cart
+            products.remove(id); // if the quantity removed is larger than the current number in cart
         } else {
             item.decrease(quantity);
         }

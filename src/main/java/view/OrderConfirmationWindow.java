@@ -20,6 +20,7 @@ public class OrderConfirmationWindow extends JFrame implements OrderConfirmation
     private final ApplyPromotionController applyPromotionController;
 
     private CheckoutViewModel currentViewModel;
+    private CheckoutOutputData checkoutData;
 
     public OrderConfirmationWindow(CheckoutPresenter presenter,
                                    ApplyPromotionController applyPromotionController) {
@@ -55,7 +56,7 @@ public class OrderConfirmationWindow extends JFrame implements OrderConfirmation
         mainPanel.add(createOrderDetailsPanel(), BorderLayout.CENTER);
 
         JPanel southPanel = new JPanel(new BorderLayout());
-        southPanel.add(createTotalPanel(), BorderLayout.NORTH);
+        southPanel.add(createTotalPanel(checkoutData), BorderLayout.NORTH);
         southPanel.add(createPaymentButtonPanel(), BorderLayout.SOUTH);
 
         mainPanel.add(southPanel, BorderLayout.SOUTH);

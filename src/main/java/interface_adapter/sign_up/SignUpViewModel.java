@@ -6,7 +6,7 @@ import interface_adapter.ViewModel;
  * This class extends the ViewModel and initialise it for the signup use case
  * */
 public class SignUpViewModel extends ViewModel<SignUpState> {
-    public static final String VIEW_NAME = "Sign up";
+    public static final String VIEW_NAME = "signup";
     public static final String TITLE_LABEL = "Sign Up View";
     public static final String USERNAME_LABEL = "Username:";
     public static final String PASSWORD_LABEL = "Password:";

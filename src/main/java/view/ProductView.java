@@ -3,6 +3,9 @@ package view;
 import interface_adapter.Product.ProductController;
 import interface_adapter.Product.ProductState;
 import interface_adapter.Product.ProductViewModel;
+import interface_adapter.add_to_cart.AddToCartController;
+import interface_adapter.add_to_cart.AddToCartState;
+import interface_adapter.add_to_cart.AddToCartViewModel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,6 +20,7 @@ public class ProductView extends JPanel implements PropertyChangeListener {
     private final String viewName = "Product";
     private final ProductViewModel productViewModel;
     private ProductController productController;
+    private AddToCartController addToCartController;
     private final AddToCartViewModel addToCartViewModel;
 
     private final JLabel imageLabel = new JLabel();
@@ -32,9 +36,12 @@ public class ProductView extends JPanel implements PropertyChangeListener {
     private final JButton addButton = new JButton("Add");
     private final JButton exitButton = new JButton("Exit");
 
-    public ProductView(ProductViewModel viewModel,AddToCartViewModel addToCartViewModel) {
-        this.productViewModel = viewModel;
+    public ProductView(ProductViewModel productViewModel,
+                       AddToCartViewModel addToCartViewModel) {
+
+        this.productViewModel = productViewModel;
         this.productViewModel.addPropertyChangeListener(this);
+
         this.addToCartViewModel = addToCartViewModel;
         this.addToCartViewModel.addPropertyChangeListener(this);
 
@@ -122,7 +129,6 @@ public class ProductView extends JPanel implements PropertyChangeListener {
         Object newState = evt.getNewValue();
         if (newState instanceof ProductState) {
             ProductState state = (ProductState) newState;
-
             if (state.getPrice() == null || state.getCategory() == null) {
                 productController.execute(state.getProductid(), state.getUsername());
             } else {
@@ -165,7 +171,8 @@ public class ProductView extends JPanel implements PropertyChangeListener {
         return viewName;
     }
 
-    public void setController(ProductController controller) {
+    public void setProductController(ProductController controller) {
         this.productController = controller;
     }
+    public void setAddToCartController(AddToCartController controller) {this.addToCartController = controller;}
     }
