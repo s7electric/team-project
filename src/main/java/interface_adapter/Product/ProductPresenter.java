@@ -41,7 +41,6 @@ public class ProductPresenter implements OpenProductOutputBoundary{
     }
     @Override
     public void switchToHomePageView(){
-        homepageViewModel.setState(homepageViewModel.getState());
         this.viewManagerModel.setActiveViewName(this.homepageViewModel.getViewName());
     }
 
