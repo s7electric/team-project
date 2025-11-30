@@ -13,6 +13,13 @@ public interface LoginInputBoundary {
     void login(LoginInputData loginInputData);
 
     /**
+     * For tests that expect an execute method.
+     */
+    default void execute(LoginInputData loginInputData) {
+        login(loginInputData);
+    }
+
+    /**
      * Executes the switch to login view use case.
      */
     void switchToSignUpView();
@@ -22,4 +29,3 @@ public interface LoginInputBoundary {
      */
     void switchToHomePage();
 }
-

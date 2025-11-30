@@ -29,16 +29,16 @@ public class LoginInteractor implements LoginInputBoundary{
             return;
         }
 
-        // Trim to avoid false mismatches due to accidental spaces
+        // Trim to avoid false mismatches due to spaces
         username = username.trim();
         if (!userGateway.existsByName(username)){
-            presenter.prepareFailView("Account " + username + " does not exist");
+            presenter.prepareFailView(username + ": Account does not exist.");
             return;
         }
 
         User user = userGateway.get(username);
         if (!user.checkPassword(password)){
-            presenter.prepareFailView("Wrong password");
+            presenter.prepareFailView("Incorrect password for \"" + username + "\".");
             return;
         }
 

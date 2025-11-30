@@ -17,4 +17,10 @@ public interface SignUpDataAccessInterface {
      * @param username the name of the user
      * */
     boolean checkUserExists(String username);
+
+    /**
+     * Persists the username of the currently signed-in user so other flows know the session owner.
+     * @param username the username to mark as current (or null to clear)
+     */
+    void setCurrentUsername(String username);
 }

@@ -4,6 +4,7 @@ import interface_adapter.checkout.CheckoutPresenter;
 import interface_adapter.checkout.CheckoutViewModel;
 import interface_adapter.checkout.OrderConfirmationView;
 import interface_adapter.apply_promotion.ApplyPromotionController;
+import use_case.checkout.CheckoutOutputData;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -35,6 +36,13 @@ public class OrderConfirmationWindow extends JFrame implements OrderConfirmation
         setLocationRelativeTo(null);
     }
 
+    /**
+     * Convenience constructor for callers (e.g., tests) that do not wire promotions.
+     */
+    public OrderConfirmationWindow(CheckoutPresenter presenter) {
+        this(presenter, null);
+    }
+
     @Override
     public void showOrderConfirmation(CheckoutViewModel viewModel) {
         this.currentViewModel = viewModel;
@@ -56,7 +64,7 @@ public class OrderConfirmationWindow extends JFrame implements OrderConfirmation
         mainPanel.add(createOrderDetailsPanel(), BorderLayout.CENTER);
 
         JPanel southPanel = new JPanel(new BorderLayout());
-        southPanel.add(createTotalPanel(checkoutData), BorderLayout.NORTH);
+        southPanel.add(createTotalPanel(), BorderLayout.NORTH);
         southPanel.add(createPaymentButtonPanel(), BorderLayout.SOUTH);
 
         mainPanel.add(southPanel, BorderLayout.SOUTH);
@@ -150,12 +158,16 @@ public class OrderConfirmationWindow extends JFrame implements OrderConfirmation
         totalLabel.setForeground(Color.BLUE);
 
         JButton applyPromoButton = new JButton("Apply Promotion...");
-        applyPromoButton.addActionListener(e -> {
-            // Open the ApplyPromotionWindow with the current ViewModel
-            ApplyPromotionWindow promoWindow =
-                    new ApplyPromotionWindow(this, applyPromotionController, currentViewModel);
-            promoWindow.setVisible(true);
-        });
+        if (applyPromotionController == null) {
+            applyPromoButton.setEnabled(false);
+            applyPromoButton.setToolTipText("Promotion flow not configured.");
+        } else {
+            applyPromoButton.addActionListener(e -> {
+                ApplyPromotionWindow promoWindow =
+                        new ApplyPromotionWindow(this, applyPromotionController, currentViewModel);
+                promoWindow.setVisible(true);
+            });
+        }
 
         totalPanel.add(applyPromoButton);
         totalPanel.add(totalLabel);

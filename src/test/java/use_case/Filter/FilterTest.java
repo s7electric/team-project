@@ -1,4 +1,4 @@
-package test;
+package use_case.Filter;
 
 import data_access.DataAccessObject;
 import use_case.filter.*;
