@@ -137,6 +137,11 @@ public class LoginView extends JPanel implements ActionListener, PropertyChangeL
             }
         });
 
+        errorLabel.setForeground(new Color(178, 34, 34));
+        errorLabel.setFont(errorLabel.getFont().deriveFont(Font.BOLD));
+        errorLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        errorLabel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
+
         this.add(title);
         this.add(usernameInfo);
         this.add(passwordInfo);
