@@ -29,6 +29,8 @@ public class LoginInteractor implements LoginInputBoundary{
             return;
         }
 
+        // Trim to avoid false mismatches due to accidental spaces
+        username = username.trim();
         if (!userGateway.existsByName(username)){
             presenter.prepareFailView("Account " + username + " does not exist");
             return;
@@ -40,6 +42,7 @@ public class LoginInteractor implements LoginInputBoundary{
             return;
         }
 
+        userGateway.setCurrentUsername(username);
         LoginOutputData output = new LoginOutputData(user.getUsername());
         presenter.prepareSuccessView(output);
     }

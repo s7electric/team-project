@@ -1,10 +1,14 @@
 package view;
 
-import use_case.checkout.CheckoutOutputData;
-import entity.CartItemDisplay;
-import entity.User;
+
+import interface_adapter.checkout.CheckoutViewModel;
+import interface_adapter.checkout.CheckoutPresenter;
 
 import javax.swing.*;
+
+import interface_adapter.checkout.OrderConfirmationView;
+import use_case.checkout.CheckoutOutputData;
+
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
@@ -12,51 +16,68 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class OrderConfirmationWindow extends JFrame {
-    private final CheckoutOutputData outputData;
-    private final User user;
+public class OrderConfirmationWindow extends JFrame implements OrderConfirmationView {
+    private CheckoutPresenter presenter;
+    private CheckoutViewModel currentViewModel;
+    private CheckoutOutputData checkoutData;
 
-    public OrderConfirmationWindow(CheckoutOutputData outputData, User user) {
-        this.outputData = outputData;
-        this.user = user;
+    public OrderConfirmationWindow(CheckoutPresenter presenter) {
+        this.presenter = presenter;
+        this.presenter.setOrderConfirmationView(this); // Register with specific interface
 
         setTitle("Order Confirmation");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(700, 600); // Slightly reduced height
+        setSize(700, 600);
         setLocationRelativeTo(null);
+    }
 
+    @Override
+    public void showOrderConfirmation(CheckoutViewModel viewModel) {
+        this.currentViewModel = viewModel;
+        initializeUI();
+        setVisible(true);
+    }
+
+    @Override
+    public void showError(String errorMessage) {
+        JOptionPane.showMessageDialog(this, errorMessage, "Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+
+    private void initializeUI() {
         JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
         mainPanel.setBorder(new EmptyBorder(15, 15, 15, 15));
 
-        mainPanel.add(createUserInfoPanel(outputData), BorderLayout.NORTH);
-        mainPanel.add(createOrderDetailsPanel(outputData), BorderLayout.CENTER);
+        mainPanel.add(createUserInfoPanel(), BorderLayout.NORTH);
+        mainPanel.add(createOrderDetailsPanel(), BorderLayout.CENTER);
 
-        // Create a panel for both total and the payment button
         JPanel southPanel = new JPanel(new BorderLayout());
-        southPanel.add(createTotalPanel(outputData), BorderLayout.NORTH);
+        southPanel.add(createTotalPanel(checkoutData), BorderLayout.NORTH);
         southPanel.add(createPaymentButtonPanel(), BorderLayout.SOUTH);
 
         mainPanel.add(southPanel, BorderLayout.SOUTH);
 
-        add(mainPanel);
+        setContentPane(mainPanel);
+        revalidate();
+        repaint();
     }
 
     private JPanel createUserInfoPanel() {
         JPanel userPanel = new JPanel(new GridLayout(0, 1, 5, 5));
         userPanel.setBorder(new TitledBorder("Customer Information"));
-        userPanel.setPreferredSize(new Dimension(0, 240)); // Increased to ensure address visibility
+        userPanel.setPreferredSize(new Dimension(0, 150));
 
-        JLabel nameLabel = new JLabel("Name: " + checkoutData.getUsername());
-        JLabel emailLabel = new JLabel("Email: " + checkoutData.getEmail());
+        JLabel nameLabel = new JLabel("Name: " + currentViewModel.getUsername());
+        JLabel emailLabel = new JLabel("Email: " + currentViewModel.getEmail());
         JLabel addressLabel = new JLabel("Billing Address:");
 
-        JTextArea addressText = new JTextArea(checkoutData.getBillingAddress());
+        JTextArea addressText = new JTextArea(currentViewModel.getBillingAddress());
         addressText.setEditable(false);
         addressText.setBackground(getBackground());
         addressText.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         addressText.setLineWrap(true);
         addressText.setWrapStyleWord(true);
-        addressText.setRows(3); // Ensure 3 rows for address
+        addressText.setRows(3);
 
         userPanel.add(nameLabel);
         userPanel.add(emailLabel);
@@ -69,7 +90,7 @@ public class OrderConfirmationWindow extends JFrame {
     private JComponent createOrderDetailsPanel() {
         JPanel orderPanel = new JPanel(new BorderLayout());
         orderPanel.setBorder(new TitledBorder("Order Details"));
-        orderPanel.setPreferredSize(new Dimension(0, 280)); // Reduced from 350 to 280
+        orderPanel.setPreferredSize(new Dimension(0, 280));
 
         String[] columnNames = {"Product", "Price", "Quantity", "Subtotal"};
         DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0) {
@@ -79,7 +100,7 @@ public class OrderConfirmationWindow extends JFrame {
             }
         };
 
-        for (CartItemDisplay item : checkoutData.getCartItems()) {
+        for (var item : currentViewModel.getCartItems()) {
             Object[] rowData = {
                     item.getProductName(),
                     String.format("$%.2f", item.getPrice()),
@@ -91,21 +112,19 @@ public class OrderConfirmationWindow extends JFrame {
 
         JTable orderTable = new JTable(tableModel);
         orderTable.setFillsViewportHeight(true);
-        orderTable.setRowHeight(25); // Slightly reduced row height
+        orderTable.setRowHeight(25);
         orderTable.setFont(new Font("SansSerif", Font.PLAIN, 12));
 
-        // Set column widths
-        orderTable.getColumnModel().getColumn(0).setPreferredWidth(280); // Slightly reduced
+        orderTable.getColumnModel().getColumn(0).setPreferredWidth(280);
         orderTable.getColumnModel().getColumn(1).setPreferredWidth(90);
         orderTable.getColumnModel().getColumn(2).setPreferredWidth(90);
         orderTable.getColumnModel().getColumn(3).setPreferredWidth(110);
 
-        // Make the table header more visible
         orderTable.getTableHeader().setFont(new Font("SansSerif", Font.BOLD, 12));
         orderTable.getTableHeader().setBackground(new Color(240, 240, 240));
 
         JScrollPane scrollPane = new JScrollPane(orderTable);
-        scrollPane.setPreferredSize(new Dimension(0, 250)); // Reduced scroll pane height
+        scrollPane.setPreferredSize(new Dimension(0, 250));
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
@@ -117,12 +136,14 @@ public class OrderConfirmationWindow extends JFrame {
     /**
      * Bottom panel now shows the total AND an "Apply Promotion" button.
      */
-    private JPanel createTotalPanel() {
+    private JPanel createTotalPanel(CheckoutOutputData checkoutData) {
         JPanel totalPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         totalPanel.setBorder(new EmptyBorder(10, 0, 10, 0));
 
         JLabel totalLabel = new JLabel(
-                String.format("Total (%d items): $%.2f", outputData.getTotalItems(), outputData.getSubtotal())
+                String.format("Total (%s items): %s",
+                        currentViewModel.getFormattedTotalItems(),
+                        currentViewModel.getFormattedSubtotal())
         );
         totalLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
         totalLabel.setForeground(Color.BLUE);
@@ -141,7 +162,7 @@ public class OrderConfirmationWindow extends JFrame {
 
     private JPanel createPaymentButtonPanel() {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        buttonPanel.setBorder(new EmptyBorder(5, 0, 0, 0)); // Reduced padding
+        buttonPanel.setBorder(new EmptyBorder(5, 0, 0, 0));
 
         JButton paymentButton = new JButton("Proceed to Payment");
         paymentButton.setFont(new Font("SansSerif", Font.BOLD, 14));
@@ -153,10 +174,11 @@ public class OrderConfirmationWindow extends JFrame {
         paymentButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Close this window and open payment window
+
+                PaymentWindow paymentWindow = new PaymentWindow(presenter);
+
+                // Close this window
                 dispose();
-                PaymentWindow paymentWindow = new PaymentWindow(outputData, user);
-                paymentWindow.setVisible(true);
             }
         });
 

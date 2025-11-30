@@ -1,8 +1,8 @@
-package make_listing;
+//package make_listing;
 
 /**
  * The input data from making a listing.
  */
-public class MakeListingInputData {
-    private Product
-}
+//public class MakeListingInputData {
+//    private Product
+//}

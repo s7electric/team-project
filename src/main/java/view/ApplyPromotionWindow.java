@@ -46,7 +46,7 @@ public class ApplyPromotionWindow extends JFrame {
         originalTotalLabel.setText(String.format(
                 "Original Total (%d items): $%.2f",
                 checkoutData.getTotalItems(),
-                checkoutData.getTotalPrice()
+                checkoutData.getSubtotal()
         ));
         originalTotalLabel.setFont(new Font("SansSerif", Font.BOLD, 13));
 
@@ -98,7 +98,7 @@ public class ApplyPromotionWindow extends JFrame {
             return;
         }
 
-        double originalTotal = checkoutData.getTotalPrice();
+        double originalTotal = checkoutData.getSubtotal();
         double discountRate;
 
         if (code.equalsIgnoreCase("SAVE10")) {

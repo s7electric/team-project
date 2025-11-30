@@ -7,11 +7,13 @@ import interface_adapter.homepage.HomepageViewModel;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.net.URL;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -20,7 +22,7 @@ import java.util.List;
  * It contains a view name, a HomepageViewModel and a HomepageController, a variable panel for the header and a product showcase panel.
  * */
 public class HomepageView extends JPanel implements PropertyChangeListener {
-    private final String homepageViewName = "Homepage";
+    private final String homepageViewName = HomepageViewModel.VIEW_NAME;
     private HomepageViewModel homepageViewModel;
     private HomepageController homepageController;
     private JPanel variablePanel = new JPanel();
@@ -42,11 +44,11 @@ public class HomepageView extends JPanel implements PropertyChangeListener {
         buttonsLayerTwoPanel.add(searchButton);
         buttonsLayerTwoPanel.add(filterButton);
 
-        dealsButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                homepageController.switchToDealsView();
-            }
-        });
+//        dealsButton.addActionListener(new ActionListener() {
+//            public void actionPerformed(ActionEvent e) {
+//                homepageController.switchToDealsView();
+//            }
+//        });
 
         searchButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -66,6 +68,9 @@ public class HomepageView extends JPanel implements PropertyChangeListener {
         mainPanel.add(buttonsLayerTwoPanel);
         mainPanel.add(productShowcaseScroll);
 
+        setLayout(new BorderLayout());
+        add(mainPanel, BorderLayout.CENTER);
+
     }
 
     /**
@@ -83,7 +88,7 @@ public class HomepageView extends JPanel implements PropertyChangeListener {
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         HomepageState homepageState = (HomepageState) evt.getNewValue();
-        if (homepageState.getUsername() != null){
+        if (homepageState.getUsername() != null && !homepageState.getUsername().isEmpty()){
             createLoggedInPanel(homepageState);
         } else {
             createLoggedOutPanel();
@@ -93,9 +98,15 @@ public class HomepageView extends JPanel implements PropertyChangeListener {
 
     // Creates product panels for each product in the filtered product list
     private void createShowcaseScrollPanel(HomepageState homepageState) {
+        if (homepageState == null) {
+            return;
+        }
         String searchText = homepageState.getSearchText();
         JLabel searchTextLabel = new JLabel("Current Filter/Search: " + searchText);
         List<Product> products = homepageState.getProducts();
+        if (products == null) {
+            products = Collections.emptyList();
+        }
         JPanel productShowcasePanel = new JPanel();
         productShowcasePanel.setLayout(new BoxLayout(productShowcasePanel, BoxLayout.Y_AXIS));
         productShowcasePanel.add(searchTextLabel);
@@ -121,11 +132,19 @@ public class HomepageView extends JPanel implements PropertyChangeListener {
                 }
             });
         }
-        this.productShowcaseScroll = new JScrollPane(productShowcasePanel);
+        if (this.productShowcaseScroll == null) {
+            this.productShowcaseScroll = new JScrollPane(productShowcasePanel);
+            add(this.productShowcaseScroll, BorderLayout.SOUTH);
+        } else {
+            this.productShowcaseScroll.setViewportView(productShowcasePanel);
+        }
+        this.productShowcaseScroll.revalidate();
+        this.productShowcaseScroll.repaint();
     }
 
     // Creates the header for when the user is not logged in or signed up
     private void createLoggedOutPanel() {
+        this.variablePanel.removeAll();
         JPanel welcomePanel = new JPanel();
         welcomePanel.add(new JLabel("Hey there! Do you have an account?"));
         JPanel buttonsLayerOnePanel = new JPanel();
@@ -146,10 +165,13 @@ public class HomepageView extends JPanel implements PropertyChangeListener {
         this.variablePanel.setLayout(new BoxLayout(this.variablePanel, BoxLayout.Y_AXIS));
         this.variablePanel.add(welcomePanel);
         this.variablePanel.add(buttonsLayerOnePanel);
+        this.variablePanel.revalidate();
+        this.variablePanel.repaint();
     }
 
     // Creates the header for when the user is logged in or signed up
     private void createLoggedInPanel(HomepageState homepageState) {
+        this.variablePanel.removeAll();
         JPanel usernamePanel = new JPanel();
         usernamePanel.add(new JLabel(homepageState.getUsername()));
         JPanel buttonsLayerOnePanel = new JPanel();
@@ -191,6 +213,8 @@ public class HomepageView extends JPanel implements PropertyChangeListener {
         this.variablePanel.setLayout(new BoxLayout(this.variablePanel, BoxLayout.Y_AXIS));
         this.variablePanel.add(usernamePanel);
         this.variablePanel.add(buttonsLayerOnePanel);
+        this.variablePanel.revalidate();
+        this.variablePanel.repaint();
     }
 
     public String getViewName(){

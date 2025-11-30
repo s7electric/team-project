@@ -3,8 +3,7 @@ package use_case.filter;
 import entity.Product;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -39,13 +38,13 @@ public class FilterInteractor implements FilterInputBoundary{
 
         // Gets the most popular products by comparing the average ratings
         } else if (filterInputData.getFilter().equals("Most Popular")) {
-            allProducts.sort((p1, p2) -> Double.compare(p1.getAverageReviewScore(), p2.getAverageReviewScore()));
-            filteredProducts = allProducts.reversed();
+            allProducts.sort(Comparator.comparingDouble(Product::getAverageReviewScore).reversed());
+            filteredProducts = allProducts;
 
         // Gets the most expensive products by comparing their prices
         } else if (filterInputData.getFilter().equals("Most Expensive")) {
-            allProducts.sort((p1, p2) -> Double.compare(p1.getPrice(), p2.getPrice()));
-            filteredProducts = allProducts.reversed();
+            allProducts.sort(Comparator.comparingDouble(Product::getPrice).reversed());
+            filteredProducts = allProducts;
 
         // Gets the least expensive products by comparing their prices
         } else if (filterInputData.getFilter().equals("Least Expensive")) {
