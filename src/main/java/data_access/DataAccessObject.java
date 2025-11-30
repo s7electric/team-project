@@ -1,5 +1,6 @@
 package data_access;
 
+import use_case.add_to_cart.AddToCartProductDataAccessInterface;
 import use_case.add_to_cart.AddToCartUserDataAccessInterface;
 import use_case.checkout.CheckoutDataAccessInterface;
 import use_case.login.LoginUserDataAccessInterface;
@@ -32,6 +33,7 @@ import java.io.IOException;
 
 public class DataAccessObject implements
     AddToCartUserDataAccessInterface,
+        AddToCartProductDataAccessInterface,
     FilterDataAccessInterface,
     LoginUserDataAccessInterface,
     UserDataAccessInterface,

@@ -1,9 +1,13 @@
 package app;
 
 import data_access.DataAccessObject;
+import interface_adapter.Product.ProductController;
+import interface_adapter.Product.ProductPresenter;
 import interface_adapter.Product.ProductState;
 import interface_adapter.Product.ProductViewModel;
 import interface_adapter.ViewManagerModel;
+import interface_adapter.add_to_cart.AddToCartController;
+import interface_adapter.add_to_cart.AddToCartPresenter;
 import interface_adapter.add_to_cart.AddToCartViewModel;
 import interface_adapter.filter.FilterViewModel;
 import interface_adapter.homepage.HomepageController;
@@ -25,6 +29,8 @@ import interface_adapter.sign_up.SignUpController;
 import interface_adapter.sign_up.SignUpPresenter;
 import interface_adapter.sign_up.SignUpState;
 import interface_adapter.sign_up.SignUpViewModel;
+import use_case.add_to_cart.AddToCartInteractor;
+import use_case.add_to_cart.AddToCartOutputBoundary;
 import use_case.checkout.CheckoutInputData;
 import use_case.checkout.CheckoutInteractor;
 import use_case.checkout.CheckoutOutputBoundary;
@@ -34,6 +40,8 @@ import use_case.logout.LogoutInteractor;
 import use_case.manage_address.AddAddressInteractor;
 import use_case.manage_address.DeleteAddressInteractor;
 import use_case.manage_address.EditAddressInteractor;
+import use_case.open_product.OpenProductInteractor;
+import use_case.open_product.OpenProductOutputBoundary;
 import use_case.sign_up.SignUpInteractor;
 import view.HomepageView;
 import view.LoginView;
@@ -64,7 +72,7 @@ public class AppBuilder {
     private final ViewManager viewManager = new ViewManager(cardPanel, cardLayout, viewManagerModel);
 
     private final DataAccessObject dataAccessObject = new DataAccessObject();
-
+    private final DataAccessObject dataAccessObject2 = new DataAccessObject();
     // View models
     private LoginViewModel loginViewModel;
     private SignUpViewModel signUpViewModel;
@@ -92,6 +100,10 @@ public class AppBuilder {
     private HomepageController homepageController;
     private LogoutController logoutController;
     private CheckoutInteractor checkoutInteractor;
+    private ProductController productController;
+    private AddToCartController addToCartController;
+    private AddToCartInteractor addToCartInteractor;
+    private OpenProductInteractor openProductInteractor;
 
     private Runnable openManageAddress;
     private Runnable openCart;
@@ -151,10 +163,18 @@ public class AppBuilder {
     }
 
     public AppBuilder addProductView() {
+        OpenProductOutputBoundary productPresenter =
+                new ProductPresenter(viewManagerModel, productViewModel, homepageViewModel);
+        AddToCartOutputBoundary addToCartPresenter =
+                new AddToCartPresenter(viewManagerModel, addToCartViewModel);
         productState = new ProductState();
         productViewModel = new ProductViewModel();
         addToCartViewModel = new AddToCartViewModel();
-        productView = new ProductView(productViewModel, addToCartViewModel);
+        openProductInteractor = new OpenProductInteractor(dataAccessObject,productPresenter);
+        addToCartInteractor = new AddToCartInteractor(dataAccessObject,addToCartPresenter,dataAccessObject2);
+        productController = new ProductController(openProductInteractor);
+        addToCartController = new AddToCartController(addToCartInteractor);
+        productView = new ProductView(productController,addToCartController, productViewModel, addToCartViewModel);
         cardPanel.add(productView, productView.getViewName());
         return this;
     }

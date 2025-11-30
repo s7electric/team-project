@@ -36,9 +36,17 @@ public class ProductView extends JPanel implements PropertyChangeListener {
     private final JButton addButton = new JButton("Add");
     private final JButton exitButton = new JButton("Exit");
 
-    public ProductView(ProductViewModel viewModel,AddToCartViewModel addToCartViewModel) {
-        this.productViewModel = viewModel;
+    public ProductView(ProductController productController,
+                       AddToCartController addToCartController,
+                       ProductViewModel productViewModel,
+                       AddToCartViewModel addToCartViewModel) {
+
+        this.productController = productController;
+        this.addToCartController = addToCartController;
+
+        this.productViewModel = productViewModel;
         this.productViewModel.addPropertyChangeListener(this);
+
         this.addToCartViewModel = addToCartViewModel;
         this.addToCartViewModel.addPropertyChangeListener(this);
 
