@@ -3,11 +3,9 @@ package use_case.manage_address;
 import entity.Address;
 import entity.User;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
-/**
- * Interactor for adding a new address.
- */
 public class AddAddressInteractor implements AddAddressInputBoundary {
 
     private final UserDataAccessInterface userDataAccess;
@@ -33,20 +31,18 @@ public class AddAddressInteractor implements AddAddressInputBoundary {
             return;
         }
 
-        // create Address entity
         Address newAddress = new Address(
-                UUID.randomUUID().toString(),
+                inputData.getUsername(),
                 inputData.getLine1(),
                 inputData.getLine2(),
                 inputData.getCity(),
                 inputData.getProvinceOrState(),
                 inputData.getPostalCode(),
                 inputData.getCountry(),
-                inputData.isDefaultShipping(),
-                inputData.isDefaultBilling()
+                inputData.isDefaultBilling(),
+                inputData.isDefaultShipping()
         );
 
-        // if this is default shipping/billing, clear the existing ones
         if (newAddress.isDefaultShipping()) {
             user.getBillingAddresses().forEach(a -> a.setDefaultShipping(false));
         }
@@ -57,7 +53,9 @@ public class AddAddressInteractor implements AddAddressInputBoundary {
         user.addAddress(newAddress);
         userDataAccess.saveUser(user);
 
-        presenter.prepareSuccessView(new AddAddressOutputData(user.getUsername(), user.getBillingAddresses()));
+        presenter.prepareSuccessView(
+                new AddAddressOutputData(user.getUsername(), user.getBillingAddresses())
+        );
     }
 
     private Map<String, String> validate(AddAddressInputData in) {
