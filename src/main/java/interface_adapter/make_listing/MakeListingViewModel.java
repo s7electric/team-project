@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 package interface_adapter.make_listing;
 
 import interface_adapter.ViewModel;
@@ -13,11 +12,3 @@ public class MakeListingViewModel extends ViewModel<MakeListingState> {
     }
     
 }
-=======
-//package interface_adapter.make_listing;
-//
-//public class MakeListingViewModel extends ViewModel {
-//
-//
-//}
->>>>>>> origin/Logout

@@ -12,7 +12,7 @@ public interface MakeListingOutputBoundary {
      * Prepares a failure view (in case of invalid user input, for example)
      * @param errorMessage user will be shown the error message
      */
-    void prepareFailView(String errorMessage);
+    void prepareFailView(MakeListingOutputData outputData);
 
     /**
      * Return to home page after everything is finished

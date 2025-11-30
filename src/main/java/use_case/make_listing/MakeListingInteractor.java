@@ -36,13 +36,17 @@ public class MakeListingInteractor implements MakeListingInputBoundary {
                 inputData.getCategory()
             );
         } catch (IOException e) {
-            presenter.prepareFailView("Failed to read image file: " + e.getMessage());
+            presenter.prepareFailView(new MakeListingOutputData(
+                "Failed to create listing; \n" + e.getMessage() + "\n Please try again.", 
+                inputData.getSellerName()
+            ));
             return;
         }
 
         dataAccessInterface.postListing(product);
-        MakeListingOutputData outputData = new MakeListingOutputData(product, product.getName() + " listed successfully!");
-        presenter.prepareSuccessView(outputData);
+        presenter.prepareSuccessView(new MakeListingOutputData(
+            product.getName() + " listed successfully!", 
+            inputData.getSellerName()));
     }
 
     @Override

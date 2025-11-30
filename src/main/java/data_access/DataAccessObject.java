@@ -414,7 +414,7 @@ public class DataAccessObject implements
             try {
                 jsonBody.put("name", product.getName());
                 jsonBody.put("price", product.getPrice());
-                jsonBody.put("image_base64", product.getImageUrl());
+                jsonBody.put("image_base64", product.getimageBase64());
                 jsonBody.put("seller_name", product.getUser().getUsername());
                 jsonBody.put("category", product.getCategory());
                 jsonBody.put("average_review_score", product.getAverageReviewScore());

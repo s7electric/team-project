@@ -3,6 +3,10 @@ package interface_adapter.make_listing;
 public class MakeListingState {
     private String username;
 
+    public MakeListingState() {
+        this("");
+    }
+
     MakeListingState(String username) {
         this.username = username;
     }
