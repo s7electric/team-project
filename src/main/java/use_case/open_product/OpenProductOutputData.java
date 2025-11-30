@@ -1,7 +1,5 @@
 package use_case.open_product;
 
-import entity.User;
-
 /**
  * Output Data for the Add to Cart Use Case.
  */
@@ -30,7 +28,7 @@ public class OpenProductOutputData {
 
     }
 
-    public String getUsername() {return name;}
+    public String getProductName() {return name;}
     public Double getPrice() {return price;}
     public String getProductUUID() {return productUUID;}
     public String getImageURl() {return imageUrl;}
@@ -38,6 +36,6 @@ public class OpenProductOutputData {
     public String getCategory() {return category;}
     public double getAverageReviewScore() {return averageReviewScore;}
     public int getTotalReviews() {return totalReviews;}
-    public String username() {return username;}
+    public String getUsername() {return username;}
 
 }
