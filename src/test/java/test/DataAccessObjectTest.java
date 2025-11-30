@@ -114,7 +114,7 @@ public class DataAccessObjectTest {
             "Sample Product",
             10.5,
             "b6e1362a-c189-4e81-baed-f5489a4210d6",
-            "https://i.imgur.com/v2mZTR5.jpeg",
+            "",
             Jeffery,
             "food",
             5.0,

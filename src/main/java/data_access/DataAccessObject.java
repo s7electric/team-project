@@ -3,10 +3,10 @@ package data_access;
 import use_case.add_to_cart.AddToCartUserDataAccessInterface;
 import use_case.checkout.CheckoutDataAccessInterface;
 import use_case.login.LoginUserDataAccessInterface;
-import use_case.logout.LogoutUserDataAccessInterface;
 import use_case.open_product.OpenProductProductDataAccessInterface;
 import use_case.filter.FilterDataAccessInterface;
 import use_case.manage_address.UserDataAccessInterface;
+import use_case.logout.LogoutUserDataAccessInterface;
 import use_case.search.SearchDataAccessInterface;
 import use_case.sign_up.SignUpDataAccessInterface;
 import entity.Address;
@@ -42,7 +42,6 @@ public class DataAccessObject implements
 
         private final String URL1 = "https://xlez-ocau-8ty9.n2.xano.io/api:BftqpNiF";
         private final String URL2 = "https://xlez-ocau-8ty9.n2.xano.io/api:vu2PKIfe";
-        private String currentUsername;
 
         /* Helper methods */
 
@@ -129,8 +128,13 @@ public class DataAccessObject implements
         }
 
         public boolean checkIfAddressExists(Address address) {
-            return getAddresses(address.getRecipientName()).contains(address);
-            
+            HashSet<Address> addresses = getAddresses(address.getRecipientName());
+            for (Address addr : addresses) {
+                if (addr.toSingleLine().equals(address.toSingleLine())) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         public Cart getCart(String cartUUID) {
@@ -307,18 +311,18 @@ public class DataAccessObject implements
         }
 
         @Override
-        public boolean existsByName(String username) {
-            return checkUserExists(username);
-        }
-
-        @Override
         public void setCurrentUsername(String username) {
-            this.currentUsername = username;
+
         }
 
         @Override
         public String getCurrentUsername() {
-            return this.currentUsername;
+            return "";
+        }
+
+        @Override
+        public boolean existsByName(String username) {
+            return checkUserExists(username);
         }
 
         @Override
@@ -344,7 +348,7 @@ public class DataAccessObject implements
                     jsonBody.getString("name"), 
                     jsonBody.getDouble("price"), 
                     productUUID,
-                    jsonBody.getString("image_url"), 
+                    jsonBody.getString("image_base64"),
                     getUser(jsonBody.getString("seller_name")), 
                     jsonBody.getString("category"),
                     jsonBody.getDouble("average_review_score"),
@@ -378,11 +382,11 @@ public class DataAccessObject implements
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject jsonProduct = jsonArray.getJSONObject(i);
                     Product product = new Product(
-                    jsonProduct.getString("name"),
-                    jsonProduct.getDouble("price"),
+                    jsonProduct.getString("name"), 
+                    jsonProduct.getDouble("price"), 
                     jsonProduct.getString("id"),
-                    jsonProduct.getString("image_url"),
-                    getUser(jsonProduct.getString("seller_name")),
+                    jsonProduct.getString("image_base64"),
+                    getUser(jsonProduct.getString("seller_name")), 
                     jsonProduct.getString("category"),
                     jsonProduct.getDouble("average_review_score"),
                     new ArrayList<Integer>()
@@ -394,15 +398,12 @@ public class DataAccessObject implements
                     }
                     products.add(product);
                 }
-                System.out.println("[DAO] Loaded " + products.size() + " products from API.");
                 return products;
             }
             catch (IOException e) {
-                System.err.println("[DAO] Failed to load products (IO): " + e.getMessage());
                 return null;
             }
             catch (JSONException e) {
-                System.err.println("[DAO] Failed to parse products (JSON): " + e.getMessage());
                 return null;
             }
         }
@@ -413,7 +414,7 @@ public class DataAccessObject implements
             try {
                 jsonBody.put("name", product.getName());
                 jsonBody.put("price", product.getPrice());
-                jsonBody.put("image_url", product.getImageUrl());
+                jsonBody.put("image_base64", product.getImageUrl());
                 jsonBody.put("seller_name", product.getUser().getUsername());
                 jsonBody.put("category", product.getCategory());
                 jsonBody.put("average_review_score", product.getAverageReviewScore());
