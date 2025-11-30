@@ -1,124 +1,103 @@
 package view;
 
-import use_case.checkout.CheckoutOutputData;
+import interface_adapter.apply_promotion.ApplyPromotionController;
+import interface_adapter.checkout.CheckoutViewModel;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 
-/**
- * A simple window for applying a promotion or gift card.
- * Currently it uses a very simple rule:
- *   - "SAVE10" -> 10% off
- *   - "SAVE20" -> 20% off
- *
- */
+
 public class ApplyPromotionWindow extends JFrame {
 
-    private final CheckoutOutputData checkoutData;
+    private final JFrame parent;
+    private final ApplyPromotionController controller;
+    private final CheckoutViewModel checkoutViewModel;
 
-    private final JTextField promoCodeField = new JTextField();
-    private final JLabel originalTotalLabel = new JLabel();
-    private final JLabel discountedTotalLabel = new JLabel("Discounted Total: -");
-    private final JLabel messageLabel = new JLabel(" ");
+    private final JTextField promoField = new JTextField(15);
+    private final JLabel infoLabel  = new JLabel();
+    private final JLabel errorLabel = new JLabel();
 
-    public ApplyPromotionWindow(CheckoutOutputData checkoutData) {
-        this.checkoutData = checkoutData;
+    public ApplyPromotionWindow(JFrame parent,
+                                ApplyPromotionController controller,
+                                CheckoutViewModel checkoutViewModel) {
+        this.parent = parent;
+        this.controller = controller;
+        this.checkoutViewModel = checkoutViewModel;
 
         setTitle("Apply Promotion");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(400, 250);
-        setLocationRelativeTo(null);
+        setSize(400, 220);
+        setLocationRelativeTo(parent);
 
+        buildUI();
+    }
+
+    private void buildUI() {
         JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
         mainPanel.setBorder(new EmptyBorder(15, 15, 15, 15));
 
-        mainPanel.add(createInfoPanel(), BorderLayout.NORTH);
-        mainPanel.add(createCenterPanel(), BorderLayout.CENTER);
-        mainPanel.add(createButtonPanel(), BorderLayout.SOUTH);
-
-        add(mainPanel);
-    }
-
-    private JPanel createInfoPanel() {
-        JPanel panel = new JPanel(new GridLayout(0, 1, 5, 5));
-
-        originalTotalLabel.setText(String.format(
-                "Original Total (%d items): $%.2f",
-                checkoutData.getTotalItems(),
-                checkoutData.getTotalPrice()
+        infoLabel.setText(String.format(
+                "<html>Current total: <b>%s</b> (%s items)</html>",
+                checkoutViewModel.getFormattedSubtotal(),
+                checkoutViewModel.getFormattedTotalItems()
         ));
-        originalTotalLabel.setFont(new Font("SansSerif", Font.BOLD, 13));
 
-        discountedTotalLabel.setFont(new Font("SansSerif", Font.BOLD, 13));
-        discountedTotalLabel.setForeground(new Color(0, 102, 0));
+        mainPanel.add(infoLabel, BorderLayout.NORTH);
 
-        panel.add(originalTotalLabel);
-        panel.add(discountedTotalLabel);
+        JPanel center = new JPanel(new GridBagLayout());
+        GridBagConstraints gc = new GridBagConstraints();
+        gc.insets = new Insets(5, 5, 5, 5);
+        gc.fill = GridBagConstraints.HORIZONTAL;
 
-        return panel;
-    }
+        gc.gridx = 0; gc.gridy = 0;
+        center.add(new JLabel("Promo code:"), gc);
 
-    private JPanel createCenterPanel() {
-        JPanel panel = new JPanel(new BorderLayout(5, 5));
+        gc.gridx = 1; gc.gridy = 0; gc.weightx = 1.0;
+        center.add(promoField, gc);
 
-        JLabel codeLabel = new JLabel("Promo code or gift card number:");
-        panel.add(codeLabel, BorderLayout.NORTH);
+        errorLabel.setForeground(Color.RED);
+        gc.gridx = 0; gc.gridy = 1; gc.gridwidth = 2;
+        center.add(errorLabel, gc);
 
-        promoCodeField.setColumns(20);
-        panel.add(promoCodeField, BorderLayout.CENTER);
+        mainPanel.add(center, BorderLayout.CENTER);
 
-        messageLabel.setForeground(Color.RED);
-        panel.add(messageLabel, BorderLayout.SOUTH);
-
-        return panel;
-    }
-
-    private JPanel createButtonPanel() {
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-
+        JPanel buttons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         JButton applyButton = new JButton("Apply");
         JButton closeButton = new JButton("Close");
 
-        applyButton.addActionListener(e -> applyPromotion());
+        applyButton.addActionListener(this::onApplyPromotion);
         closeButton.addActionListener(e -> dispose());
 
-        panel.add(applyButton);
-        panel.add(closeButton);
+        buttons.add(closeButton);
+        buttons.add(applyButton);
 
-        return panel;
+        mainPanel.add(buttons, BorderLayout.SOUTH);
+
+        setContentPane(mainPanel);
     }
 
-
-    private void applyPromotion() {
-        String code = promoCodeField.getText().trim();
+    private void onApplyPromotion(ActionEvent e) {
+        String code = promoField.getText().trim();
         if (code.isEmpty()) {
-            messageLabel.setText("Please enter a code.");
-            discountedTotalLabel.setText("Discounted Total: -");
+            errorLabel.setText("Please enter a promotion code.");
             return;
         }
 
-        double originalTotal = checkoutData.getTotalPrice();
-        double discountRate;
+        try {
+            controller.applyPromotion(checkoutViewModel.getUsername(), code);
 
-        if (code.equalsIgnoreCase("SAVE10")) {
-            discountRate = 0.10;
-        } else if (code.equalsIgnoreCase("SAVE20")) {
-            discountRate = 0.20;
-        } else {
-            discountRate = 0.0;
-        }
+            JOptionPane.showMessageDialog(this,
+                    "Promotion applied.",
+                    "Success",
+                    JOptionPane.INFORMATION_MESSAGE);
 
-        if (discountRate <= 0.0) {
-            messageLabel.setText("Invalid or expired code. Totals unchanged.");
-            discountedTotalLabel.setText("Discounted Total: -");
-        } else {
-            double discounted = originalTotal * (1.0 - discountRate);
-            discountedTotalLabel.setText(
-                    String.format("Discounted Total: $%.2f (%.0f%% off)", discounted, discountRate * 100)
-            );
-            messageLabel.setForeground(new Color(0, 102, 0));
-            messageLabel.setText("Promotion applied successfully.");
+            dispose();
+        } catch (IllegalArgumentException ex) {
+            errorLabel.setText(ex.getMessage());
+        } catch (Exception ex) {
+            errorLabel.setText("Failed to apply promotion.");
         }
     }
 }
