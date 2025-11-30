@@ -128,3 +128,98 @@ public class ManageAddressTest {
         System.out.println("  -> OK");
     }
 
+    private static void testEditAddressSuccess() {
+        System.out.println("[Test] EditAddressInteractor - success case");
+
+        InMemoryUserDataAccess userData = new InMemoryUserDataAccess();
+        User user = new User("carol", "carol@example.com", "pwd", "Old Default Addr");
+        Address extraAddress = new Address(
+                "Carol",
+                "200 Old St",
+                "Unit 5",
+                "Toronto",
+                "ON",
+                "M1M 1M1",
+                "Canada",
+                false,
+                false
+        );
+        user.addAddress(extraAddress);
+        userData.saveUser(user);
+
+        String addressIdToEdit = extraAddress.getId();
+
+        TestEditPresenter presenter = new TestEditPresenter();
+        EditAddressInteractor interactor = new EditAddressInteractor(userData, presenter);
+
+        EditAddressInputData input = new EditAddressInputData(
+                "carol",
+                addressIdToEdit,
+                "200 New St",
+                "Unit 999",
+                "Waterloo",
+                "ON",
+                "N2L 3G1",
+                "Canada",
+                true,
+                true
+        );
+
+        interactor.execute(input);
+
+        assertTrue(presenter.successCalled, "EditAddress success should be called.");
+        assertTrue(!presenter.validationCalled, "EditAddress validation errors should NOT be called.");
+        assertTrue(!presenter.notFoundCalled, "EditAddress not-found should NOT be called.");
+
+        User updated = userData.getUser("carol");
+        Address edited = null;
+        for (Address a : updated.getBillingAddresses()) {
+            if (a.getId().equals(addressIdToEdit)) {
+                edited = a;
+                break;
+            }
+        }
+        assertTrue(edited != null, "Edited address should still exist.");
+        assertTrue("200 New St".equals(edited.getLine1()), "Line1 should be updated.");
+        assertTrue("Unit 999".equals(edited.getLine2()), "Line2 should be updated.");
+        assertTrue("Waterloo".equals(edited.getCity()), "City should be updated.");
+        assertTrue(edited.isDefaultBilling(), "Edited address should be default billing.");
+        assertTrue(edited.isDefaultShipping(), "Edited address should be default shipping.");
+
+        System.out.println("  -> OK");
+    }
+
+
+    private static void testEditAddressAddressNotFound() {
+        System.out.println("[Test] EditAddressInteractor - address not found");
+
+        InMemoryUserDataAccess userData = new InMemoryUserDataAccess();
+        User user = new User("dave", "dave@example.com", "pwd", "Some Address");
+        userData.saveUser(user);
+
+        TestEditPresenter presenter = new TestEditPresenter();
+        EditAddressInteractor interactor = new EditAddressInteractor(userData, presenter);
+
+        EditAddressInputData input = new EditAddressInputData(
+                "dave",
+                "non-existent-id",
+                "New Line 1",
+                "",
+                "City",
+                "Prov",
+                "00000",
+                "Country",
+                false,
+                false
+        );
+
+        interactor.execute(input);
+
+        assertTrue(!presenter.successCalled, "EditAddress success should NOT be called.");
+        assertTrue(!presenter.validationCalled, "EditAddress validation should NOT be called.");
+        assertTrue(presenter.notFoundCalled, "EditAddress not-found should be called.");
+
+        System.out.println("  -> OK");
+    }
+
+
