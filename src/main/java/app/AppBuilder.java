@@ -74,17 +74,17 @@ public class AppBuilder {
     private final DataAccessObject dataAccessObject = new DataAccessObject();
     private final DataAccessObject dataAccessObject2 = new DataAccessObject();
     // View models
-    private LoginViewModel loginViewModel;
-    private SignUpViewModel signUpViewModel;
-    private HomepageViewModel homepageViewModel;
+    private LoginViewModel loginViewModel = new LoginViewModel();
+    private SignUpViewModel signUpViewModel = new SignUpViewModel();
+    private HomepageViewModel homepageViewModel = new HomepageViewModel();
     private HomepageState homepageState;
-    private LogoutViewModel logoutViewModel;
-    private SearchViewModel searchViewModel;
-    private FilterViewModel filterViewModel;
-    private ProductViewModel productViewModel;
+    private LogoutViewModel logoutViewModel =  new LogoutViewModel();
+    private SearchViewModel searchViewModel =  new SearchViewModel();
+    private FilterViewModel filterViewModel =  new FilterViewModel();
+    private ProductViewModel productViewModel =  new ProductViewModel();
     private ProductState productState;
-    private AddToCartViewModel addToCartViewModel;
-    private ManageAddressViewModel manageAddressViewModel;
+    private AddToCartViewModel addToCartViewModel =   new AddToCartViewModel();
+    private ManageAddressViewModel manageAddressViewModel = new ManageAddressViewModel();
 
     // Views
     private LoginView loginView;
@@ -163,13 +163,13 @@ public class AppBuilder {
     }
 
     public AppBuilder addProductView() {
+        productViewModel = new ProductViewModel();
+        addToCartViewModel = new AddToCartViewModel();
         OpenProductOutputBoundary productPresenter =
                 new ProductPresenter(viewManagerModel, productViewModel, homepageViewModel);
         AddToCartOutputBoundary addToCartPresenter =
                 new AddToCartPresenter(viewManagerModel, addToCartViewModel);
         productState = new ProductState();
-        productViewModel = new ProductViewModel();
-        addToCartViewModel = new AddToCartViewModel();
         openProductInteractor = new OpenProductInteractor(dataAccessObject,productPresenter);
         addToCartInteractor = new AddToCartInteractor(dataAccessObject,addToCartPresenter,dataAccessObject2);
         productController = new ProductController(openProductInteractor);

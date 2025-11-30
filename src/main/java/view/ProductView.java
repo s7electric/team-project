@@ -129,7 +129,6 @@ public class ProductView extends JPanel implements PropertyChangeListener {
         Object newState = evt.getNewValue();
         if (newState instanceof ProductState) {
             ProductState state = (ProductState) newState;
-
             if (state.getPrice() == null || state.getCategory() == null) {
                 productController.execute(state.getProductid(), state.getUsername());
             } else {
