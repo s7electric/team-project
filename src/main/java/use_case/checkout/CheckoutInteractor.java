@@ -19,8 +19,8 @@ public class CheckoutInteractor implements CheckoutInputBoundary {
     @Override
     public void execute(CheckoutInputData inputData) {
         try {
-            // 1. Get user from data access
-            User user = dataAccess.getUser(inputData.getUserId());
+            // 1. Get user from data access using username as identifier
+            User user = dataAccess.getUser(inputData.getUsername());
 
             // 2. Get user's cart
             Cart cart = user.getCart();
@@ -42,7 +42,7 @@ public class CheckoutInteractor implements CheckoutInputBoundary {
 
             // 7. Create output data with all calculated values
             CheckoutOutputData outputData = new CheckoutOutputData(
-                    user.getUsername(),
+                    user.getUsername(),  // Use username as identifier
                     user.getEmail(),
                     billingAddress,
                     cartItemDisplays,
@@ -65,17 +65,16 @@ public class CheckoutInteractor implements CheckoutInputBoundary {
         }
     }
 
+    // ... (rest of the helper methods remain the same)
     private PaymentCalculation calculatePaymentDetails(Cart cart, User user) {
         double subtotal = calculateTotalPrice(cart);
         int totalItems = cart.getTotalQuantity();
         double userBalance = user.getBalance();
         int userPoints = user.getPointsBalance();
 
-        // Calculate points discount ($10 for every 1000 points)
         double pointsDiscount = calculatePointsDiscount(userPoints);
         double totalAfterDiscount = Math.max(0, subtotal - pointsDiscount);
 
-        // Calculate payment from balance
         double amountFromBalance = Math.min(totalAfterDiscount, userBalance);
         double balanceAfterPayment = userBalance - amountFromBalance;
         boolean hasSufficientFunds = balanceAfterPayment >= 0;
@@ -87,9 +86,8 @@ public class CheckoutInteractor implements CheckoutInputBoundary {
     }
 
     private double calculatePointsDiscount(int points) {
-        //Users receive $10 of discounts for every 1000 points, automatically,
-        //in increments of 1000 points.
-        return (double) (points - (points % 1000)) / 10;
+        int discountMultiplier = points / 1000;
+        return discountMultiplier * 10.0;
     }
 
     private String getDefaultBillingAddress(User user) {
@@ -105,7 +103,7 @@ public class CheckoutInteractor implements CheckoutInputBoundary {
 
     private List<CartItemDisplay> prepareCartItemDisplays(Cart cart) {
         List<CartItemDisplay> displays = new ArrayList<>();
-        Map<Integer, CartItem> products = cart.getProducts();
+        Map<String, CartItem> products = cart.getProducts();
 
         for (CartItem item : products.values()) {
             Product product = item.getProduct();
@@ -121,14 +119,13 @@ public class CheckoutInteractor implements CheckoutInputBoundary {
 
     private double calculateTotalPrice(Cart cart) {
         double total = 0.0;
-        Map<Integer, CartItem> products = cart.getProducts();
+        Map<String, CartItem> products = cart.getProducts();
         for (CartItem item : products.values()) {
             total += item.getProduct().getPrice() * item.getQuantity();
         }
         return total;
     }
 
-    // Helper class to bundle payment calculation results
     private static class PaymentCalculation {
         final double subtotal;
         final int totalItems;

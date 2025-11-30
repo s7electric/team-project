@@ -2,7 +2,6 @@ package use_case.sign_up;
 
 import entity.Address;
 import entity.User;
-import interface_adapter.sign_up.SignUpPresenter;
 
 /**
  * This class is the interactor for the signup use case
@@ -44,7 +43,7 @@ public class SignUpInteractor implements SignUpInputBoundary{
         } else {
             try {
                 PasswordStrengthChecker.checkStrength(username, email, password);
-                User newUser = new User(username, password, email, billingAddress);
+                User newUser = new User(username, email, password, billingAddress);
                 dataAccess.createUser(newUser);
                 SignUpOutputData outputData = new SignUpOutputData(newUser);
                 signUpPresenter.updateSuccess(outputData);

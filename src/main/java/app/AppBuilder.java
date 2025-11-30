@@ -1,45 +1,106 @@
 package app;
 
-import interface_adapter.HomePagLoggedIN.HomePageLoggedInViewModel;
+import data_access.DataAccessObject;
+import interface_adapter.Product.ProductState;
+import interface_adapter.Product.ProductViewModel;
 import interface_adapter.ViewManagerModel;
+import interface_adapter.add_to_cart.AddToCartViewModel;
+import interface_adapter.filter.FilterViewModel;
+import interface_adapter.homepage.HomepageController;
+import interface_adapter.homepage.HomepagePresenter;
+import interface_adapter.homepage.HomepageState;
+import interface_adapter.homepage.HomepageViewModel;
+import interface_adapter.login.LoginController;
+import interface_adapter.login.LoginPresenter;
 import interface_adapter.login.LoginViewModel;
+import interface_adapter.logout.LogoutController;
+import interface_adapter.logout.LogoutPresenter;
+import interface_adapter.logout.LogoutViewModel;
+import interface_adapter.manage_address.ManageAddressController;
+import interface_adapter.manage_address.ManageAddressPresenter;
+import interface_adapter.manage_address.ManageAddressState;
+import interface_adapter.manage_address.ManageAddressViewModel;
+import interface_adapter.search.SearchViewModel;
+import interface_adapter.sign_up.SignUpController;
+import interface_adapter.sign_up.SignUpPresenter;
+import interface_adapter.sign_up.SignUpState;
 import interface_adapter.sign_up.SignUpViewModel;
-import view.HomePageLoggedInView;
+import use_case.checkout.CheckoutInputData;
+import use_case.checkout.CheckoutInteractor;
+import use_case.checkout.CheckoutOutputBoundary;
+import use_case.homepage.HomepageInteractor;
+import use_case.login.LoginInteractor;
+import use_case.logout.LogoutInteractor;
+import use_case.manage_address.AddAddressInteractor;
+import use_case.manage_address.DeleteAddressInteractor;
+import use_case.manage_address.EditAddressInteractor;
+import use_case.sign_up.SignUpInteractor;
+import view.HomepageView;
 import view.LoginView;
+import view.LogoutView;
+import view.ManageAddressView;
+import view.PaymentWindow;
+import view.ProductView;
 import view.SignUpView;
 import view.ViewManager;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
+import java.awt.CardLayout;
 
 /**
- * Application builder that wires views, view models, and use cases.
+ * App builder with explicit add* methods for views and use cases.
+ * Views are only added when their respective add*View methods are called.
+ * Use cases/controllers are wired via add*UseCase methods.
  */
 public class AppBuilder {
     private final JPanel cardPanel = new JPanel();
     private final CardLayout cardLayout = new CardLayout();
     private final ViewManagerModel viewManagerModel = new ViewManagerModel();
-    ViewManager viewManager = new ViewManager(cardPanel, cardLayout, viewManagerModel);
 
-    // From CA-LAB
-    // DAO version using local file storage
-    // final FileUserDataAccessObject userDataAccessObject = new FileUserDataAccessObject("users.csv", userFactory);
+    private final ViewManager viewManager = new ViewManager(cardPanel, cardLayout, viewManagerModel);
 
-    // DAO version using a shared external database
-    // final DBUserDataAccessObject userDataAccessObject = new DBUserDataAccessObject(userFactory);
+    private final DataAccessObject dataAccessObject = new DataAccessObject();
 
-    private LoginView loginView;
+    // View models
     private LoginViewModel loginViewModel;
-
-    private SignUpView signUpView;
     private SignUpViewModel signUpViewModel;
+    private HomepageViewModel homepageViewModel;
+    private HomepageState homepageState;
+    private LogoutViewModel logoutViewModel;
+    private SearchViewModel searchViewModel;
+    private FilterViewModel filterViewModel;
+    private ProductViewModel productViewModel;
+    private ProductState productState;
+    private AddToCartViewModel addToCartViewModel;
+    private ManageAddressViewModel manageAddressViewModel;
 
-    private HomePageLoggedInView homePageLoggedInView;
-    private HomePageLoggedInViewModel homePageLoggedInViewModel;
+    // Views
+    private LoginView loginView;
+    private SignUpView signUpView;
+    private HomepageView homepageView;
+    private LogoutView logoutView;
+    private ProductView productView;
+    private ManageAddressView manageAddressView;
+
+    // Controllers / interactors shared
+    private LoginController loginController;
+    private SignUpController signUpController;
+    private HomepageController homepageController;
+    private LogoutController logoutController;
+    private CheckoutInteractor checkoutInteractor;
+
+    private Runnable openManageAddress;
+    private Runnable openCart;
 
     public AppBuilder() {
         cardPanel.setLayout(cardLayout);
     }
+
+    /* ---------- View adders ---------- */
 
     public AppBuilder addLoginView() {
         loginViewModel = new LoginViewModel();
@@ -48,11 +109,177 @@ public class AppBuilder {
         return this;
     }
 
+    public AppBuilder addSignUpView() {
+        signUpViewModel = new SignUpViewModel();
+        signUpView = new SignUpView(signUpViewModel);
+        cardPanel.add(signUpView, signUpView.getViewName());
+        return this;
+    }
+
+    public AppBuilder addHomepageView() {
+        homepageState = new HomepageState(null);
+        homepageViewModel = new HomepageViewModel();
+        homepageViewModel.setState(homepageState);
+        homepageView = new HomepageView(homepageViewModel);
+        cardPanel.add(homepageView, homepageView.getViewName());
+        // Load products at boot so homepage has content
+        loadProductsIntoHomepage();
+        return this;
+    }
+
+    private void loadProductsIntoHomepage() {
+        if (homepageViewModel == null) {
+            return;
+        }
+        HomepageState current = homepageViewModel.getState();
+        HomepageState next = new HomepageState(current == null ? null : current.getUsername());
+        next.setSearchText("All");
+        var products = dataAccessObject.getAllProducts();
+        if (products == null || products.isEmpty()) {
+            System.err.println("[App] No products loaded. Check network/API access.");
+            products = java.util.Collections.emptyList();
+        }
+        next.setProducts(products);
+        homepageViewModel.setState(next);
+    }
+
+    public AppBuilder addLogoutView() {
+        logoutViewModel = new LogoutViewModel();
+        logoutView = new LogoutView(logoutViewModel);
+        cardPanel.add(logoutView, logoutView.getViewName());
+        return this;
+    }
+
+    public AppBuilder addProductView() {
+        productState = new ProductState();
+        productViewModel = new ProductViewModel();
+        addToCartViewModel = new AddToCartViewModel();
+        productView = new ProductView(productViewModel, addToCartViewModel);
+        cardPanel.add(productView, productView.getViewName());
+        return this;
+    }
+
+    /**
+        * Manage Address uses a separate window; call this to construct it.
+        */
+    public AppBuilder addManageAddressWindow() {
+        manageAddressViewModel = new ManageAddressViewModel();
+        manageAddressViewModel.setState(new ManageAddressState());
+        return this;
+    }
+
+    /* ---------- Use case wiring ---------- */
+
+    public AppBuilder addLoginUseCase() {
+        LoginPresenter presenter = new LoginPresenter(viewManagerModel, homepageViewModel, loginViewModel, signUpViewModel);
+        LoginInteractor interactor = new LoginInteractor(dataAccessObject, presenter);
+        loginController = new LoginController(interactor);
+        loginView.setLoginController(loginController);
+        return this;
+    }
+
+    public AppBuilder addSignUpUseCase() {;
+        SignUpPresenter presenter = new SignUpPresenter(signUpViewModel, new SignUpState(), viewManagerModel, loginViewModel, homepageViewModel, homepageState);
+        SignUpInteractor interactor = new SignUpInteractor(presenter, dataAccessObject);
+        signUpController = new SignUpController(interactor);
+        signUpView.setController(signUpController);
+        return this;
+    }
+
+    public AppBuilder addHomepageUseCase() {
+        if (openManageAddress == null) {
+            openManageAddress = () -> JOptionPane.showMessageDialog(null, "Manage Address not configured.", "Not configured", JOptionPane.WARNING_MESSAGE);
+        }
+        if (openCart == null) {
+            openCart = () -> JOptionPane.showMessageDialog(null, "Cart/Checkout not configured.", "Not configured", JOptionPane.WARNING_MESSAGE);
+        }
+
+        HomepagePresenter presenter = new HomepagePresenter(
+                signUpViewModel, viewManagerModel, loginViewModel, homepageViewModel,
+                homepageState, productViewModel, productState,
+                searchViewModel, filterViewModel, logoutViewModel,
+                openManageAddress, openCart);
+        HomepageInteractor interactor = new HomepageInteractor(presenter);
+        homepageController = new HomepageController(interactor);
+        homepageView.setController(homepageController);
+        return this;
+    }
+
+    public AppBuilder addLogoutUseCase() {
+        LogoutPresenter presenter = new LogoutPresenter(viewManagerModel, homepageViewModel, loginViewModel, logoutViewModel);
+        LogoutInteractor interactor = new LogoutInteractor(dataAccessObject, presenter);
+        logoutController = new LogoutController(interactor);
+        logoutView.setLogoutController(logoutController);
+        return this;
+    }
+
+    public AppBuilder addManageAddressUseCase() {
+        if (manageAddressViewModel == null) {
+            manageAddressViewModel = new ManageAddressViewModel();
+            manageAddressViewModel.setState(new ManageAddressState());
+        }
+        ManageAddressPresenter manageAddressPresenter = new ManageAddressPresenter(manageAddressViewModel);
+        AddAddressInteractor addAddressInteractor = new AddAddressInteractor(dataAccessObject, manageAddressPresenter);
+        EditAddressInteractor editAddressInteractor = new EditAddressInteractor(dataAccessObject, manageAddressPresenter);
+        DeleteAddressInteractor deleteAddressInteractor = new DeleteAddressInteractor(dataAccessObject, manageAddressPresenter);
+        ManageAddressController manageAddressController =
+                new ManageAddressController(addAddressInteractor, editAddressInteractor, deleteAddressInteractor);
+        if (manageAddressView == null) {
+            manageAddressView = new ManageAddressView(manageAddressController, manageAddressViewModel);
+        }
+        openManageAddress = () -> {
+            String currentUser = dataAccessObject.getCurrentUsername();
+            if (currentUser == null || currentUser.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Please log in to manage addresses.", "Not logged in", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            ManageAddressState state = new ManageAddressState();
+            state.setUsername(currentUser);
+            if (dataAccessObject.getAddresses(currentUser) != null) {
+                state.setAddresses(new java.util.ArrayList<>(dataAccessObject.getAddresses(currentUser)));
+            }
+            manageAddressViewModel.setState(state);
+            manageAddressView.setVisible(true);
+        };
+        return this;
+    }
+
+//    public AppBuilder addCheckoutUseCase() {
+//        CheckoutOutputBoundary checkoutPresenter = new CheckoutOutputBoundary() {
+//            @Override
+//            public void presentOrderConfirmation(use_case.checkout.CheckoutOutputData outputData) {
+//                SwingUtilities.invokeLater(() -> {
+//                    PaymentWindow window = new PaymentWindow(outputData, dataAccessObject.getUser(outputData.getUsername()));
+//                    window.setVisible(true);
+//                });
+//            }
+//
+//            @Override
+//            public void presentCheckoutError(String errorMessage) {
+//                SwingUtilities.invokeLater(() ->
+//                        JOptionPane.showMessageDialog(null, errorMessage, "Checkout Error", JOptionPane.ERROR_MESSAGE));
+//            }
+//        };
+//        checkoutInteractor = new CheckoutInteractor(dataAccessObject, checkoutPresenter);
+//        openCart = () -> {
+//            String currentUser = dataAccessObject.getCurrentUsername();
+//            if (currentUser == null || currentUser.isEmpty()) {
+//                JOptionPane.showMessageDialog(null, "Please log in to view your cart.", "Not logged in", JOptionPane.WARNING_MESSAGE);
+//                return;
+//            }
+//            checkoutInteractor.execute(new CheckoutInputData(currentUser));
+//        };
+//        return this;
+//    }
+
+    /* ---------- Build ---------- */
+
     public JFrame build() {
         JFrame frame = new JFrame("Shopping App");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setContentPane(cardPanel);
-        viewManagerModel.setActiveViewName(LoginViewModel.VIEW_NAME);
+        viewManagerModel.setActiveViewName(homepageViewModel.getViewName());
         return frame;
     }
+
 }

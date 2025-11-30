@@ -4,8 +4,10 @@ import interface_adapter.ViewModel;
 
 public class HomepageViewModel extends ViewModel<HomepageState> {
 
+    public static final String VIEW_NAME = "homepage";
+
     public HomepageViewModel() {
-        super("homepage");
+        super(VIEW_NAME);
         setState(new HomepageState(""));
     }
 }

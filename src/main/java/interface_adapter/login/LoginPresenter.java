@@ -1,7 +1,7 @@
 package interface_adapter.login;
 
-import interface_adapter.HomePagLoggedIN.HomePageLoggedInState;
-import interface_adapter.HomePagLoggedIN.HomePageLoggedInViewModel;
+import interface_adapter.homepage.HomepageState;
+import interface_adapter.homepage.HomepageViewModel;
 import interface_adapter.ViewManagerModel;
 import interface_adapter.sign_up.SignUpViewModel;
 import use_case.login.LoginOutputBoundary;
@@ -12,28 +12,32 @@ import use_case.login.LoginOutputData;
  */
 public class LoginPresenter implements LoginOutputBoundary {
     private final ViewManagerModel viewManagerModel;
-    private final HomePageLoggedInViewModel homePageLoggedInViewModel;
+    private final HomepageViewModel homepageViewModel;
     private final LoginViewModel loginViewModel;
     private final SignUpViewModel signUpViewModel;
 
     public LoginPresenter(ViewManagerModel viewManagerModel,
-                          HomePageLoggedInViewModel homePageLoggedInViewModel,
+                          HomepageViewModel homepageViewModel,
                           LoginViewModel loginViewModel,
                           SignUpViewModel signUpViewModel) {
         this.viewManagerModel = viewManagerModel;
-        this.homePageLoggedInViewModel = homePageLoggedInViewModel;
+        this.homepageViewModel = homepageViewModel;
         this.loginViewModel = loginViewModel;
         this.signUpViewModel = signUpViewModel;
     }
 
     @Override
     public void prepareSuccessView(LoginOutputData outputData) {
-        HomePageLoggedInState homePageLoggedInState = homePageLoggedInViewModel.getState();
-        homePageLoggedInState.setUsername(outputData.getUsername());
-        homePageLoggedInViewModel.setState(homePageLoggedInState);
+        HomepageState current = homepageViewModel.getState();
+        HomepageState next = new HomepageState(outputData.getUsername());
+        if (current != null) {
+            next.setSearchText(current.getSearchText());
+            next.setProducts(current.getProducts());
+        }
+        homepageViewModel.setState(next);
 
         loginViewModel.setState(new LoginState());
-        viewManagerModel.setActiveViewName(homePageLoggedInViewModel.getViewName());
+        viewManagerModel.setActiveViewName(homepageViewModel.getViewName());
     }
 
     @Override
@@ -50,6 +54,6 @@ public class LoginPresenter implements LoginOutputBoundary {
 
     @Override
     public void switchToHomePage() {
-        viewManagerModel.setActiveViewName(homeViewModel.getViewName());
+        viewManagerModel.setActiveViewName(homepageViewModel.getViewName());
     }
 }

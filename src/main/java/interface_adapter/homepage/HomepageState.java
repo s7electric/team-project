@@ -11,6 +11,8 @@ public class HomepageState {
 
     public HomepageState(String username) {
         this.username = username;
+        this.searchText = "";
+        this.products = null;
     }
 
     public String getUsername() {

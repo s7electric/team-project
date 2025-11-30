@@ -91,7 +91,7 @@ public class ApplyPromotionInteractor implements ApplyPromotionInputBoundary {
      */
     private List<CartItemDisplay> buildDisplayItems(Cart cart) {
         List<CartItemDisplay> result = new ArrayList<>();
-        for (Map.Entry<Integer, CartItem> entry : cart.getProducts().entrySet()) {
+        for (Map.Entry<String, CartItem> entry : cart.getProducts().entrySet()) {
             CartItem item = entry.getValue();
             Product product = item.getProduct();
             String name = product.getName();
