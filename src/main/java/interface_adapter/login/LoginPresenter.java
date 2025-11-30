@@ -42,9 +42,15 @@ public class LoginPresenter implements LoginOutputBoundary {
 
     @Override
     public void prepareFailView(String errorMessage) {
-        LoginState state = loginViewModel.getState();
-        state.setErrorMessage(errorMessage);
-        loginViewModel.setState(state);
+        LoginState previous = loginViewModel.getState();
+        LoginState next = new LoginState(
+                previous != null ? previous.getUsername() : "",
+                errorMessage,
+                previous != null && previous.isLoggedIn());
+        if (previous != null) {
+            next.setPassword(previous.getPassword());
+        }
+        loginViewModel.setState(next);
     }
 
     @Override

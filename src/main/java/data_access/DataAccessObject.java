@@ -45,6 +45,9 @@ public class DataAccessObject implements
         private final String URL1 = "https://xlez-ocau-8ty9.n2.xano.io/api:BftqpNiF";
         private final String URL2 = "https://xlez-ocau-8ty9.n2.xano.io/api:vu2PKIfe";
 
+        // Tracks who is currently logged in so other flows (logout, manage address, etc.) can gate correctly.
+        private String currentUsername;
+
         /* Helper methods */
 
         public void deleteUser(String username) {
@@ -314,12 +317,12 @@ public class DataAccessObject implements
 
         @Override
         public void setCurrentUsername(String username) {
-
+            this.currentUsername = (username == null || username.isBlank()) ? null : username.trim();
         }
 
         @Override
         public String getCurrentUsername() {
-            return "";
+            return currentUsername;
         }
 
         @Override

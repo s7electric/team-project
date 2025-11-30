@@ -1,7 +1,6 @@
-package test;
+package use_case.filter;
 
 import data_access.DataAccessObject;
-import use_case.filter.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 

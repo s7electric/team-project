@@ -1,9 +1,7 @@
-package test;
+package use_case.sign_up;
 
 import data_access.DataAccessObject;
-import interface_adapter.sign_up.SignUpPresenter;
-import use_case.sign_up.*;
-import org.junit.jupiter.api.Test;
+
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
