@@ -22,22 +22,16 @@ public class Address {
     private boolean defaultBilling;
     private boolean defaultShipping;
 
-    /**
-     * Full constructor including id. This is private so that we keep the
-     * public API (two constructors) almost the same as before.
-     */
-
-    /* Do not use this constructor to create new addresses. Use only for formatting data. */
     public Address(String id,
-                    String recipientName,
-                    String line1,
-                    String line2,
-                    String city,
-                    String provinceOrState,
-                    String postalCode,
-                    String country,
-                    boolean defaultBilling,
-                    boolean defaultShipping) {
+                   String recipientName,
+                   String line1,
+                   String line2,
+                   String city,
+                   String provinceOrState,
+                   String postalCode,
+                   String country,
+                   boolean defaultBilling,
+                   boolean defaultShipping) {
 
         if (line1 == null || line1.isEmpty()) {
             throw new IllegalArgumentException("The first address line cannot be empty!");
@@ -94,6 +88,7 @@ public class Address {
 
     /**
      * Creates a detailed address using separate fields.
+     * The id is automatically generated with UUID.
      *
      * @param recipientName name of the person receiving the order
      * @param line1 first address line (street, number, etc.)
@@ -110,9 +105,8 @@ public class Address {
                    String city, String provinceOrState, String postalCode,
                    String country, boolean defaultBilling, boolean defaultShipping) {
 
-        // Delegate to the full constructor with a new random id
         this(
-                UUID.randomUUID().toString(),  // NEW: auto-generated id
+                UUID.randomUUID().toString(),
                 recipientName,
                 line1,
                 line2,
@@ -125,52 +119,29 @@ public class Address {
         );
     }
 
-    /**
-     * Returns the unique identifier of this address.
-     */
     public String getId() {
         return id;
     }
 
-    //Getters
 
-    public String getRecipientName() {
-        return recipientName;
-    }
+    public String getRecipientName() {return recipientName;}
 
-    public String getLine1() {
-        return line1;
-    }
+    public String getLine1() {return line1;}
 
-    public String getLine2() {
-        return line2;
-    }
+    public String getLine2() {return line2;}
 
-    public String getCity() {
-        return city;
-    }
+    public String getCity() {return city;}
 
-    public String getProvinceOrState() {
-        return provinceOrState;
-    }
+    public String getProvinceOrState() {return provinceOrState;}
 
-    public String getPostalCode() {
-        return postalCode;
-    }
+    public String getPostalCode() {return postalCode;}
 
-    public String getCountry() {
-        return country;
-    }
+    public String getCountry() {return country;}
 
-    public boolean isDefaultBilling() {
-        return defaultBilling;
-    }
+    public boolean isDefaultBilling() {return defaultBilling;}
 
-    public boolean isDefaultShipping() {
-        return defaultShipping;
-    }
+    public boolean isDefaultShipping() {return defaultShipping;}
 
-    //Setters
 
     public void setRecipientName(String recipientName) {
         this.recipientName = recipientName;
@@ -184,7 +155,7 @@ public class Address {
     }
 
     public void setLine2(String line2) {
-        this.line2 = line2 == null ? "" : line2;
+        this.line2 = (line2 == null) ? "" : line2;
     }
 
     public void setCity(String city) {
@@ -223,10 +194,6 @@ public class Address {
         this.defaultShipping = defaultShipping;
     }
 
-    /**
-     * Returns a single-line representation of this address.
-     * Useful for display in the UI or logs.
-     */
     public String toSingleLine() {
         if (city == null || city.isEmpty()) {
             return line1;
