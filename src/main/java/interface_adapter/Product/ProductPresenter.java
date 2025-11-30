@@ -1,7 +1,6 @@
 package interface_adapter.Product;
 
 import interface_adapter.ViewManagerModel;
-import interface_adapter.homepage.HomepageState;
 import interface_adapter.homepage.HomepageViewModel;
 import use_case.open_product.OpenProductOutputBoundary;
 import use_case.open_product.OpenProductOutputData;
@@ -26,7 +25,7 @@ public class ProductPresenter implements OpenProductOutputBoundary{
     public void prepareSuccessView(OpenProductOutputData outputData) {
         // On success, open the Product View
         ProductState productState = new ProductState();
-        productState.setName(outputData.getUsername());
+        productState.setName(outputData.getProductName());
         productState.setProductid(outputData.getProductUUID());
         productState.setPrice("$" + outputData.getPrice());
         productState.setImageUrl(outputData.getImageURl());

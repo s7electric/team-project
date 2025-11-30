@@ -22,7 +22,7 @@ public class AddToCartInteractor implements AddToCartInputBoundary {
             final User user = userDataAccessObject.getUserData(addToCartInputData.getUser());
             final Product product = productDataAccessObject.getProduct(addToCartInputData.getProductUUID());
             userDataAccessObject.addToCart(user,addToCartInputData.getProductUUID(),addToCartInputData.getQuantity());
-            final AddToCartOutputData addToCartOutputData = new AddToCartOutputData(product.getProductUUID(),product.getName(),user.getCart().getTotalQuantity());
+            final AddToCartOutputData addToCartOutputData = new AddToCartOutputData(product.getName(),product.getProductUUID(),user.getCart().getSubtotal());
             userPresenter.prepareSuccessView(addToCartOutputData);
         }
     }

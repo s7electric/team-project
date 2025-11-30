@@ -3,6 +3,9 @@ package view;
 import interface_adapter.Product.ProductController;
 import interface_adapter.Product.ProductState;
 import interface_adapter.Product.ProductViewModel;
+import interface_adapter.add_to_cart.AddToCartViewModel;
+import interface_adapter.add_to_cart.AddToCartController;
+import interface_adapter.add_to_cart.AddToCartState;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,6 +21,7 @@ public class ProductView extends JPanel implements PropertyChangeListener {
     private final ProductViewModel productViewModel;
     private ProductController productController;
     private final AddToCartViewModel addToCartViewModel;
+    private AddToCartController addToCartController;
 
     private final JLabel imageLabel = new JLabel();
     private final JLabel seller = new JLabel();

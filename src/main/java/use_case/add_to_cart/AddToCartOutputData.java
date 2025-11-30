@@ -7,9 +7,9 @@ public class AddToCartOutputData {
 
     private String productUUID;
     private String productName;
-    private Integer cartTotal;
+    private double cartTotal;
 
-    public AddToCartOutputData(String productName, String productUUID, Integer cartTotal) {
+    public AddToCartOutputData(String productName, String productUUID, double cartTotal) {
         this.productUUID = productUUID;
         this.productName = productName;
         this.cartTotal = cartTotal;
@@ -21,7 +21,7 @@ public class AddToCartOutputData {
     public String getProductUUID() {
         return productUUID;
     }
-    public Integer getCartTotal() {
+    public double getCartTotal() {
         return cartTotal;
     }
 }
