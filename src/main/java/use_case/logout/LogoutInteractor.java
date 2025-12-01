@@ -1,7 +1,5 @@
 package use_case.logout;
 
-import entity.User;
-
 /**
  * The Login Interactor.
  */

@@ -4,9 +4,9 @@ import interface_adapter.ViewModel;
 
 public class LoginViewModel extends ViewModel<LoginState> {
     public static final String VIEW_NAME = "login";
-    public static final String TITLE_LABEL = "Login View";
-    public static final String USERNAME_LABEL = "Choose username";
-    public static final String PASSWORD_LABEL = "Choose password";
+    public static final String TITLE_LABEL = "Login";
+    public static final String USERNAME_LABEL = "Username";
+    public static final String PASSWORD_LABEL = "Password";
 
     public static final String LOGIN_BUTTON_LABEL = "Login";
     public static final String CANCEL_BUTTON_LABEL = "Cancel";

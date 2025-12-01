@@ -108,7 +108,7 @@ public class SignUpView extends JPanel implements PropertyChangeListener {
                     if (password.equalsIgnoreCase(password2)){
                         signUpController.execute(username, password, email, billingAddress);
                     } else {
-                        errorLabel.setText("Passwords do not match!");
+                        JOptionPane.showMessageDialog(null, "Passwords do not match!");
                     }
                 }
             }

@@ -4,7 +4,7 @@ import interface_adapter.checkout.CheckoutPresenter;
 import interface_adapter.checkout.CheckoutViewModel;
 import interface_adapter.checkout.OrderConfirmationView;
 import interface_adapter.apply_promotion.ApplyPromotionController;
-import use_case.checkout.CheckoutOutputData;
+import interface_adapter.process_payment.ProcessPaymentController; // Add this import
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -19,14 +19,17 @@ public class OrderConfirmationWindow extends JFrame implements OrderConfirmation
 
     private final CheckoutPresenter presenter;
     private final ApplyPromotionController applyPromotionController;
+    private final ProcessPaymentController processPaymentController;
 
     private CheckoutViewModel currentViewModel;
-    private CheckoutOutputData checkoutData;
 
+    // Updated constructor with ProcessPaymentController
     public OrderConfirmationWindow(CheckoutPresenter presenter,
-                                   ApplyPromotionController applyPromotionController) {
+                                   ApplyPromotionController applyPromotionController,
+                                   ProcessPaymentController processPaymentController) {
         this.presenter = presenter;
         this.applyPromotionController = applyPromotionController;
+        this.processPaymentController = processPaymentController;
 
         this.presenter.setOrderConfirmationView(this);
 
@@ -40,9 +43,8 @@ public class OrderConfirmationWindow extends JFrame implements OrderConfirmation
      * Convenience constructor for callers (e.g., tests) that do not wire promotions.
      */
     public OrderConfirmationWindow(CheckoutPresenter presenter) {
-        this(presenter, null);
+        this(presenter, null, null);
     }
-
     @Override
     public void showOrderConfirmation(CheckoutViewModel viewModel) {
         this.currentViewModel = viewModel;
@@ -189,8 +191,17 @@ public class OrderConfirmationWindow extends JFrame implements OrderConfirmation
         paymentButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if (processPaymentController == null) {
+                    JOptionPane.showMessageDialog(
+                            OrderConfirmationWindow.this,
+                            "Payment processing is not configured.",
+                            "Configuration Error",
+                            JOptionPane.ERROR_MESSAGE
+                    );
+                    return;
+                }
 
-                PaymentWindow paymentWindow = new PaymentWindow(presenter);
+                PaymentWindow paymentWindow = new PaymentWindow(presenter, processPaymentController);
                 paymentWindow.setVisible(true);
 
                 dispose();
