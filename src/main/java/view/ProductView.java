@@ -22,7 +22,6 @@ public class ProductView extends JPanel implements PropertyChangeListener {
     private ProductController productController;
     private AddToCartController addToCartController;
     private final AddToCartViewModel addToCartViewModel;
-    private AddToCartController addToCartController;
 
     private final JLabel imageLabel = new JLabel();
     private final JLabel seller = new JLabel();
