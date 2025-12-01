@@ -1,9 +1,11 @@
 package view;
 
+import interface_adapter.checkout.CheckoutState;
 import interface_adapter.checkout.PaymentView;
 import interface_adapter.checkout.CheckoutViewModel;
 import interface_adapter.checkout.CheckoutPresenter;
 import interface_adapter.process_payment.ProcessPaymentController;
+import interface_adapter.process_payment.ProcessPaymentView;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -13,7 +15,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class PaymentWindow extends JFrame implements PaymentView {
+public class PaymentWindow extends JFrame implements PaymentView, ProcessPaymentView {
     private CheckoutPresenter presenter;
     private ProcessPaymentController paymentController;
     private CheckoutViewModel currentViewModel;
@@ -44,6 +46,7 @@ public class PaymentWindow extends JFrame implements PaymentView {
 
     @Override
     public void showPaymentResult(boolean success, String message) {
+        // This method now serves both interfaces
         if (success) {
             JOptionPane.showMessageDialog(this, message, "Payment Complete",
                     JOptionPane.INFORMATION_MESSAGE);
@@ -53,6 +56,31 @@ public class PaymentWindow extends JFrame implements PaymentView {
                     JOptionPane.ERROR_MESSAGE);
         }
     }
+
+    private CheckoutViewModel createPaymentViewModel(CheckoutState state) {
+        String statusMessage = state.hasSufficientFunds() ?
+                "Ready to complete payment" : "Insufficient funds";
+        String statusColor = state.hasSufficientFunds() ? "BLUE" : "RED";
+
+        return new CheckoutViewModel(
+                state.getUsername(),
+                state.getEmail(),
+                state.getBillingAddress(),
+                state.getCartItems(),
+                String.format("$%.2f", state.getSubtotal()),
+                String.valueOf(state.getTotalItems()),
+                String.format("-$%.2f", state.getPointsDiscount()),
+                String.format("$%.2f", state.getTotalAfterDiscount()),
+                String.format("$%.2f", state.getUserBalance()),
+                String.valueOf(state.getUserPoints()),
+                String.format("$%.2f", state.getAmountFromBalance()),
+                String.format("$%.2f", state.getBalanceAfterPayment()),
+                state.hasSufficientFunds(),
+                statusMessage,
+                statusColor
+        );
+    }
+
 
     @Override
     public void showError(String errorMessage) {
