@@ -213,7 +213,7 @@ public class AppBuilder {
         HomepagePresenter presenter = new HomepagePresenter(
                 signUpViewModel, viewManagerModel, loginViewModel, homepageViewModel,
                 homepageState, productViewModel, productState,
-                searchViewModel, filterViewModel, logoutViewModel,
+                searchViewModel, filterViewModel, logoutViewModel, makeListingViewModel,
                 openManageAddress, openCart);
         HomepageInteractor interactor = new HomepageInteractor(presenter);
         homepageController = new HomepageController(interactor);

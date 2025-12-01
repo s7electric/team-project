@@ -120,7 +120,7 @@ public class MakeListingView extends JPanel implements PropertyChangeListener {
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        // Handle property changes if needed
+        MakeListingState makeListingState = (MakeListingState) evt.getNewValue();
     }
 
     public static void main(String[] args) {
