@@ -376,33 +376,6 @@ public class AppBuilder {
         return this;
     }
 
-//    public AppBuilder addCheckoutUseCase() {
-//        CheckoutOutputBoundary checkoutPresenter = new CheckoutOutputBoundary() {
-//            @Override
-//            public void presentOrderConfirmation(use_case.checkout.CheckoutOutputData outputData) {
-//                SwingUtilities.invokeLater(() -> {
-//                    PaymentWindow window = new PaymentWindow(outputData, dataAccessObject.getUser(outputData.getUsername()));
-//                    window.setVisible(true);
-//                });
-//            }
-//
-//            @Override
-//            public void presentCheckoutError(String errorMessage) {
-//                SwingUtilities.invokeLater(() ->
-//                        JOptionPane.showMessageDialog(null, errorMessage, "Checkout Error", JOptionPane.ERROR_MESSAGE));
-//            }
-//        };
-//        checkoutInteractor = new CheckoutInteractor(dataAccessObject, checkoutPresenter);
-//        openCart = () -> {
-//            String currentUser = dataAccessObject.getCurrentUsername();
-//            if (currentUser == null || currentUser.isEmpty()) {
-//                JOptionPane.showMessageDialog(null, "Please log in to view your cart.", "Not logged in", JOptionPane.WARNING_MESSAGE);
-//                return;
-//            }
-//            checkoutInteractor.execute(new CheckoutInputData(currentUser));
-//        };
-//        return this;
-//    }
 
     /* ---------- Build ---------- */
 
