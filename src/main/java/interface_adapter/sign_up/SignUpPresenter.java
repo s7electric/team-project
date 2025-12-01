@@ -46,6 +46,8 @@ public class SignUpPresenter implements SignUpOutputBoundary{
         String username = homepageState.getUsername();
         HomepageState homepageStateNew = new HomepageState(username);
         homepageStateNew.setUsername(outputData.getUser().getUsername());
+        homepageStateNew.setSearchText(homepageState.getSearchText());
+        homepageStateNew.setProducts(homepageState.getProducts());
         this.homepageViewModel.setState(homepageStateNew);
         this.viewManagerModel.setActiveViewName(homepageViewModel.getViewName());
     }
