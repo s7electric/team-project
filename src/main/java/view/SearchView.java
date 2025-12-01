@@ -51,6 +51,7 @@ public class SearchView extends JPanel implements PropertyChangeListener {
         mainPanel.add(searchPanel);
         mainPanel.add(errorPanel);
         mainPanel.add(buttonsPanel);
+        this.add(mainPanel);
 
         enterButton.addActionListener(
                 new ActionListener() {

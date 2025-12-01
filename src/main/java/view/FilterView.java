@@ -48,6 +48,7 @@ public class FilterView extends JPanel implements PropertyChangeListener {
         mainPanel.add(filterPanel);
         mainPanel.add(filterSelectionPanel);
         mainPanel.add(buttonsPanel);
+        this.add(mainPanel);        
 
         filterComboBox.addActionListener(
                 new ActionListener() {
