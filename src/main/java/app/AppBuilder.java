@@ -1,10 +1,18 @@
 package app;
 
 import data_access.DataAccessObject;
+import entity.Product;
+import interface_adapter.Product.ProductController;
+import interface_adapter.Product.ProductPresenter;
 import interface_adapter.Product.ProductState;
 import interface_adapter.Product.ProductViewModel;
 import interface_adapter.ViewManagerModel;
+import interface_adapter.add_to_cart.AddToCartController;
+import interface_adapter.add_to_cart.AddToCartPresenter;
 import interface_adapter.add_to_cart.AddToCartViewModel;
+import interface_adapter.filter.FilterController;
+import interface_adapter.filter.FilterPresenter;
+import interface_adapter.filter.FilterState;
 import interface_adapter.filter.FilterViewModel;
 import interface_adapter.homepage.HomepageController;
 import interface_adapter.homepage.HomepagePresenter;
@@ -23,14 +31,22 @@ import interface_adapter.manage_address.ManageAddressController;
 import interface_adapter.manage_address.ManageAddressPresenter;
 import interface_adapter.manage_address.ManageAddressState;
 import interface_adapter.manage_address.ManageAddressViewModel;
+import interface_adapter.search.SearchController;
+import interface_adapter.search.SearchPresenter;
+import interface_adapter.search.SearchState;
 import interface_adapter.search.SearchViewModel;
 import interface_adapter.sign_up.SignUpController;
 import interface_adapter.sign_up.SignUpPresenter;
 import interface_adapter.sign_up.SignUpState;
 import interface_adapter.sign_up.SignUpViewModel;
+import use_case.add_to_cart.AddToCartInteractor;
+import use_case.add_to_cart.AddToCartOutputBoundary;
 import use_case.checkout.CheckoutInputData;
 import use_case.checkout.CheckoutInteractor;
 import use_case.checkout.CheckoutOutputBoundary;
+import use_case.filter.FilterInputBoundary;
+import use_case.filter.FilterInteractor;
+import use_case.filter.FilterOutputBoundary;
 import use_case.homepage.HomepageInteractor;
 import use_case.login.LoginInteractor;
 import use_case.logout.LogoutInteractor;
@@ -38,16 +54,15 @@ import use_case.make_listing.MakeListingInteractor;
 import use_case.manage_address.AddAddressInteractor;
 import use_case.manage_address.DeleteAddressInteractor;
 import use_case.manage_address.EditAddressInteractor;
+import use_case.open_product.OpenProductInteractor;
+import use_case.open_product.OpenProductOutputBoundary;
+import use_case.search.SearchInputBoundary;
+import use_case.search.SearchInteractor;
+import use_case.search.SearchOutputBoundary;
+import use_case.sign_up.SignUpInputBoundary;
 import use_case.sign_up.SignUpInteractor;
-import view.HomepageView;
-import view.LoginView;
-import view.LogoutView;
-import view.MakeListingView;
-import view.ManageAddressView;
-import view.PaymentWindow;
-import view.ProductView;
-import view.SignUpView;
-import view.ViewManager;
+import use_case.sign_up.SignUpOutputBoundary;
+import view.*;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -55,6 +70,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import java.awt.CardLayout;
+import java.util.*;
 
 /**
  * App builder with explicit add* methods for views and use cases.
@@ -69,20 +85,20 @@ public class AppBuilder {
     private final ViewManager viewManager = new ViewManager(cardPanel, cardLayout, viewManagerModel);
 
     private final DataAccessObject dataAccessObject = new DataAccessObject();
-
+    private final DataAccessObject dataAccessObject2 = new DataAccessObject();
     // View models
-    private LoginViewModel loginViewModel;
-    private SignUpViewModel signUpViewModel;
-    private HomepageViewModel homepageViewModel;
+    private LoginViewModel loginViewModel = new LoginViewModel();
+    private SignUpViewModel signUpViewModel = new SignUpViewModel();
+    private HomepageViewModel homepageViewModel = new HomepageViewModel();
     private HomepageState homepageState;
-    private LogoutViewModel logoutViewModel;
-    private SearchViewModel searchViewModel;
-    private FilterViewModel filterViewModel;
-    private ProductViewModel productViewModel;
+    private LogoutViewModel logoutViewModel =  new LogoutViewModel();
+    private SearchViewModel searchViewModel =  new SearchViewModel();
+    private FilterViewModel filterViewModel =  new FilterViewModel();
+    private ProductViewModel productViewModel =  new ProductViewModel();
     private ProductState productState;
-    private AddToCartViewModel addToCartViewModel;
-    private ManageAddressViewModel manageAddressViewModel;
-    private MakeListingViewModel makeListingViewModel;
+    private AddToCartViewModel addToCartViewModel = new AddToCartViewModel();
+    private ManageAddressViewModel manageAddressViewModel = new ManageAddressViewModel();
+    private MakeListingViewModel makeListingViewModel = new MakeListingViewModel();
 
     // Views
     private LoginView loginView;
@@ -91,6 +107,8 @@ public class AppBuilder {
     private LogoutView logoutView;
     private ProductView productView;
     private ManageAddressView manageAddressView;
+    private SearchView searchView;
+    private FilterView filterView;
     private MakeListingView makeListingView;
 
     // Controllers / interactors shared
@@ -99,11 +117,19 @@ public class AppBuilder {
     private HomepageController homepageController;
     private LogoutController logoutController;
     private CheckoutInteractor checkoutInteractor;
+    private ProductController productController;
+    private AddToCartController addToCartController;
+    private AddToCartInteractor addToCartInteractor;
+    private OpenProductInteractor openProductInteractor;
+    private FilterController filterController;
+    private SearchController searchController;
     private MakeListingController makeListingController;
     private MakeListingInteractor makeListingInteractor;
 
     private Runnable openManageAddress;
     private Runnable openCart;
+
+    private AddToCartViewModel addToCartViewModel;
 
     public AppBuilder() {
         cardPanel.setLayout(cardLayout);
@@ -148,7 +174,13 @@ public class AppBuilder {
             System.err.println("[App] No products loaded. Check network/API access.");
             products = java.util.Collections.emptyList();
         }
-        next.setProducts(products);
+        Map<String, List<Object>> mappedProducts = new HashMap<>();
+        for (Product p: products){
+            if (!mappedProducts.containsKey(p.getProductUUID())){
+                mappedProducts.put(p.getProductUUID(), new ArrayList<>(Arrays.asList(p.getName(), p.getImageUrl(), p.getPrice())));
+            }
+        }
+        next.setProducts(mappedProducts);
         homepageViewModel.setState(next);
     }
 
@@ -160,10 +192,20 @@ public class AppBuilder {
     }
 
     public AppBuilder addProductView() {
-        productState = new ProductState();
         productViewModel = new ProductViewModel();
         addToCartViewModel = new AddToCartViewModel();
+        OpenProductOutputBoundary productPresenter =
+                new ProductPresenter(viewManagerModel, productViewModel, homepageViewModel);
+        AddToCartOutputBoundary addToCartPresenter =
+                new AddToCartPresenter(viewManagerModel, addToCartViewModel);
+        productState = new ProductState();
+        openProductInteractor = new OpenProductInteractor(dataAccessObject,productPresenter);
+        addToCartInteractor = new AddToCartInteractor(dataAccessObject,addToCartPresenter,dataAccessObject2);
+        productController = new ProductController(openProductInteractor);
+        addToCartController = new AddToCartController(addToCartInteractor);
         productView = new ProductView(productViewModel, addToCartViewModel);
+        productView.setProductController(productController);
+        productView.setAddToCartController(addToCartController);
         cardPanel.add(productView, productView.getViewName());
         return this;
     }
@@ -184,6 +226,20 @@ public class AppBuilder {
         return this;
     }
 
+    public AppBuilder addSearchView() {
+        searchViewModel = new SearchViewModel();
+        searchView = new SearchView(searchViewModel);
+        cardPanel.add(searchView, searchView.getViewName());
+        return this;
+    }
+
+    public AppBuilder addFilterView() {
+        filterViewModel = new FilterViewModel();
+        filterView = new FilterView(filterViewModel);
+        cardPanel.add(filterView, filterView.getViewName());
+        return this;
+    }
+
     /* ---------- Use case wiring ---------- */
 
     public AppBuilder addLoginUseCase() {
@@ -195,8 +251,8 @@ public class AppBuilder {
     }
 
     public AppBuilder addSignUpUseCase() {;
-        SignUpPresenter presenter = new SignUpPresenter(signUpViewModel, new SignUpState(), viewManagerModel, loginViewModel, homepageViewModel, homepageState);
-        SignUpInteractor interactor = new SignUpInteractor(presenter, dataAccessObject);
+        SignUpOutputBoundary presenter = new SignUpPresenter(signUpViewModel, new SignUpState(), viewManagerModel, loginViewModel, homepageViewModel, homepageState);
+        SignUpInputBoundary interactor = new SignUpInteractor(presenter, dataAccessObject);
         signUpController = new SignUpController(interactor);
         signUpView.setController(signUpController);
         return this;
@@ -257,6 +313,22 @@ public class AppBuilder {
             manageAddressViewModel.setState(state);
             manageAddressView.setVisible(true);
         };
+        return this;
+    }
+
+    public AppBuilder addFilterUseCase() {
+        FilterOutputBoundary filterPresenter = new FilterPresenter(filterViewModel, new FilterState(), viewManagerModel, homepageViewModel, homepageState);
+        FilterInputBoundary filterInteractor = new FilterInteractor(filterPresenter, dataAccessObject);
+        filterController = new FilterController(filterInteractor);
+        filterView.setController(filterController);
+        return this;
+    }
+
+    public AppBuilder addSearchUseCase() {
+        SearchOutputBoundary searchPresenter = new SearchPresenter(searchViewModel, new SearchState(), viewManagerModel, homepageViewModel, homepageState);
+        SearchInputBoundary searchInteractor = new SearchInteractor(searchPresenter, dataAccessObject);
+        searchController = new SearchController(searchInteractor);
+        searchView.setController(searchController);
         return this;
     }
 

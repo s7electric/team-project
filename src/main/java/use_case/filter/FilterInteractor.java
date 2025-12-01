@@ -2,9 +2,7 @@ package use_case.filter;
 
 import entity.Product;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 /**
  * This class performs all the filtering computations.
@@ -30,32 +28,34 @@ public class FilterInteractor implements FilterInputBoundary{
      * */
     public void execute(FilterInputData filterInputData){
         List<Product> allProducts = dataAccess.getAllProducts();
-        List<Product> filteredProducts = new ArrayList<>();
+        Map<String, List<Object>> filteredProducts = new HashMap<>();
 
         // Gets all products if the filter category is All
         if (filterInputData.getFilter().equals("All")){
-            filteredProducts = allProducts;
+            fillProductMapFromList(allProducts, filteredProducts);
 
         // Gets the most popular products by comparing the average ratings
         } else if (filterInputData.getFilter().equals("Most Popular")) {
             allProducts.sort(Comparator.comparingDouble(Product::getAverageReviewScore).reversed());
-            filteredProducts = allProducts;
+            fillProductMapFromList(allProducts, filteredProducts);
 
         // Gets the most expensive products by comparing their prices
         } else if (filterInputData.getFilter().equals("Most Expensive")) {
             allProducts.sort(Comparator.comparingDouble(Product::getPrice).reversed());
-            filteredProducts = allProducts;
+            fillProductMapFromList(allProducts, filteredProducts);
 
         // Gets the least expensive products by comparing their prices
         } else if (filterInputData.getFilter().equals("Least Expensive")) {
             allProducts.sort((p1, p2) -> Double.compare(p1.getPrice(), p2.getPrice()));
-            filteredProducts = allProducts;
+            fillProductMapFromList(allProducts, filteredProducts);
 
         // Gets the products associated with the user-specified category in the filter input data
         } else {
             for (Product product : allProducts) {
                 if (product.getCategory().equalsIgnoreCase(filterInputData.getFilter())) {
-                    filteredProducts.add(product);
+                    if (!filteredProducts.containsKey(product.getProductUUID())){
+                        filteredProducts.put(product.getProductUUID(), new ArrayList<>(Arrays.asList(product.getName(), product.getImageUrl(), product.getPrice())));
+                    }
                 }
             }
         }
@@ -75,7 +75,17 @@ public class FilterInteractor implements FilterInputBoundary{
      * */
     public void loadProducts(){
         List<Product> allProducts = dataAccess.getAllProducts();
-        FilterOutputData filterOutputData = new FilterOutputData("All", allProducts);
+        Map<String, List<Object>> filteredProducts = new HashMap<>();
+        fillProductMapFromList(allProducts, filteredProducts);
+        FilterOutputData filterOutputData = new FilterOutputData("All", filteredProducts);
         this.filterPresenter.loadProducts(filterOutputData);
+    }
+
+    private static void fillProductMapFromList(List<Product> allProducts, Map<String, List<Object>> filteredProducts) {
+        for (Product p: allProducts){
+            if (!filteredProducts.containsKey(p.getProductUUID())){
+                filteredProducts.put(p.getProductUUID(), new ArrayList<>(Arrays.asList(p.getName(), p.getImageUrl(), p.getPrice())));
+            }
+        }
     }
 }

@@ -2,8 +2,7 @@ package use_case.search;
 
 import entity.Product;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * This class represents the interactor for the search use case
@@ -30,14 +29,14 @@ public class SearchInteractor implements SearchInputBoundary{
     public void execute(SearchInputData searchInputData) {
         List<Product> allProducts = dataAccess.getAllProducts();
         String[] searchTextSplit = searchInputData.getSearchText().split(" ");
-        List<Product> foundProducts = new ArrayList<>();
+        Map<String, List<Object>> foundProducts = new HashMap<>();
 
         // Finds Products that their name or their category matches one of the inputs in the searchText
         for (String searchInput : searchTextSplit) {
             for (Product product : allProducts) {
                 if (product.getName().toLowerCase().contains(searchInput.toLowerCase()) || product.getCategory().toLowerCase().contains(searchInput.toLowerCase())) {
-                    if (!foundProducts.contains(product)) {
-                        foundProducts.add(product);
+                    if (!foundProducts.containsKey(product.getProductUUID())) {
+                        foundProducts.put(product.getProductUUID(), new ArrayList<>(Arrays.asList(product.getName(), product.getImageUrl(), product.getPrice())));
                     }
                 }
             }

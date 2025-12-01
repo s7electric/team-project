@@ -3,11 +3,12 @@ package interface_adapter.homepage;
 import entity.Product;
 
 import java.util.List;
+import java.util.Map;
 
 public class HomepageState {
     private String username;
     private String searchText;
-    private List<Product> products;
+    private Map<String, List<Object>> products;
 
     public HomepageState(String username) {
         this.username = username;
@@ -31,11 +32,11 @@ public class HomepageState {
         return this.searchText;
     }
 
-    public void setProducts(List<Product> products) {
+    public void setProducts(Map<String, List<Object>> products) {
         this.products = products;
     }
 
-    public List<Product> getProducts() {
+    public Map<String, List<Object>> getProducts() {
         return this.products;
     }
 }

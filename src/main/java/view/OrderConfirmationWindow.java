@@ -1,14 +1,12 @@
 package view;
 
-
-import interface_adapter.checkout.CheckoutViewModel;
 import interface_adapter.checkout.CheckoutPresenter;
-
-import javax.swing.*;
-
+import interface_adapter.checkout.CheckoutViewModel;
 import interface_adapter.checkout.OrderConfirmationView;
+import interface_adapter.apply_promotion.ApplyPromotionController;
 import use_case.checkout.CheckoutOutputData;
 
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
@@ -16,19 +14,33 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+
 public class OrderConfirmationWindow extends JFrame implements OrderConfirmationView {
-    private CheckoutPresenter presenter;
+
+    private final CheckoutPresenter presenter;
+    private final ApplyPromotionController applyPromotionController;
+
     private CheckoutViewModel currentViewModel;
     private CheckoutOutputData checkoutData;
 
-    public OrderConfirmationWindow(CheckoutPresenter presenter) {
+    public OrderConfirmationWindow(CheckoutPresenter presenter,
+                                   ApplyPromotionController applyPromotionController) {
         this.presenter = presenter;
-        this.presenter.setOrderConfirmationView(this); // Register with specific interface
+        this.applyPromotionController = applyPromotionController;
+
+        this.presenter.setOrderConfirmationView(this);
 
         setTitle("Order Confirmation");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(700, 600);
         setLocationRelativeTo(null);
+    }
+
+    /**
+     * Convenience constructor for callers (e.g., tests) that do not wire promotions.
+     */
+    public OrderConfirmationWindow(CheckoutPresenter presenter) {
+        this(presenter, null);
     }
 
     @Override
@@ -52,7 +64,7 @@ public class OrderConfirmationWindow extends JFrame implements OrderConfirmation
         mainPanel.add(createOrderDetailsPanel(), BorderLayout.CENTER);
 
         JPanel southPanel = new JPanel(new BorderLayout());
-        southPanel.add(createTotalPanel(checkoutData), BorderLayout.NORTH);
+        southPanel.add(createTotalPanel(), BorderLayout.NORTH);
         southPanel.add(createPaymentButtonPanel(), BorderLayout.SOUTH);
 
         mainPanel.add(southPanel, BorderLayout.SOUTH);
@@ -133,10 +145,7 @@ public class OrderConfirmationWindow extends JFrame implements OrderConfirmation
         return orderPanel;
     }
 
-    /**
-     * Bottom panel now shows the total AND an "Apply Promotion" button.
-     */
-    private JPanel createTotalPanel(CheckoutOutputData checkoutData) {
+    private JPanel createTotalPanel() {
         JPanel totalPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         totalPanel.setBorder(new EmptyBorder(10, 0, 10, 0));
 
@@ -149,10 +158,16 @@ public class OrderConfirmationWindow extends JFrame implements OrderConfirmation
         totalLabel.setForeground(Color.BLUE);
 
         JButton applyPromoButton = new JButton("Apply Promotion...");
-        applyPromoButton.addActionListener(e -> {
-            ApplyPromotionWindow promoWindow = new ApplyPromotionWindow(checkoutData);
-            promoWindow.setVisible(true);
-        });
+        if (applyPromotionController == null) {
+            applyPromoButton.setEnabled(false);
+            applyPromoButton.setToolTipText("Promotion flow not configured.");
+        } else {
+            applyPromoButton.addActionListener(e -> {
+                ApplyPromotionWindow promoWindow =
+                        new ApplyPromotionWindow(this, applyPromotionController, currentViewModel);
+                promoWindow.setVisible(true);
+            });
+        }
 
         totalPanel.add(applyPromoButton);
         totalPanel.add(totalLabel);
@@ -176,8 +191,8 @@ public class OrderConfirmationWindow extends JFrame implements OrderConfirmation
             public void actionPerformed(ActionEvent e) {
 
                 PaymentWindow paymentWindow = new PaymentWindow(presenter);
+                paymentWindow.setVisible(true);
 
-                // Close this window
                 dispose();
             }
         });

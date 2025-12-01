@@ -34,7 +34,7 @@ public class SearchPresenter implements SearchOutputBoundary {
 
     /**
      * Updates the view for the search use case based on if the process was a success
-     * @param searchOutputData the search output data that wraps a searchText and a list of found products
+     * @param searchOutputData the search output data that wraps a searchText and a map of found products
      * */
     public void updateSuccess(SearchOutputData searchOutputData){
         this.searchState.setSuccess(searchOutputData.getSearchText(), searchOutputData.getFoundProducts());

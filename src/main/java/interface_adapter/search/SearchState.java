@@ -3,6 +3,7 @@ package interface_adapter.search;
 import entity.Product;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * This class represents the state for the search use case.
@@ -11,14 +12,14 @@ import java.util.List;
 public class SearchState {
     private String searchText;
     private String error;
-    private List<Product> foundProducts;
+    private Map<String, List<Object>> foundProducts;
 
     /**
      * Sets the state to show the process was a success
      * @param searchText the searchText that the user inputted
      * @param foundProducts the list of products that match the searchText
      * */
-    public void setSuccess(String searchText, List<Product> foundProducts){
+    public void setSuccess(String searchText, Map<String, List<Object>> foundProducts){
         this.searchText = searchText;
         this.foundProducts = foundProducts;
     }
@@ -39,7 +40,7 @@ public class SearchState {
         return this.error;
     }
 
-    public List<Product> getFoundProductsSuccess(){
+    public Map<String, List<Object>> getFoundProductsSuccess(){
         return this.foundProducts;
     }
 }
