@@ -36,4 +36,8 @@ public class HomepageInteractor implements HomepageInputBoundary {
     public void switchToLogoutView(){
         this.homepagePresenter.switchToLogoutView();
     }
+    
+    public void addFunds(double amount){
+        this.homepagePresenter.addFundsPopup();
+    }
 }

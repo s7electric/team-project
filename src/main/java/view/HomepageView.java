@@ -41,9 +41,11 @@ public class HomepageView extends JPanel implements PropertyChangeListener {
         JButton dealsButton = new JButton("Daily Deals");
         JButton searchButton = new JButton("Search");
         JButton filterButton = new JButton("Apply Filters");
+        JButton addFundsButton = new JButton("Add Funds");
         buttonsLayerTwoPanel.add(dealsButton);
         buttonsLayerTwoPanel.add(searchButton);
         buttonsLayerTwoPanel.add(filterButton);
+        buttonsLayerTwoPanel.add(addFundsButton);
 
 //        dealsButton.addActionListener(new ActionListener() {
 //            public void actionPerformed(ActionEvent e) {
@@ -60,6 +62,21 @@ public class HomepageView extends JPanel implements PropertyChangeListener {
         filterButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 homepageController.switchToFilterView();
+            }
+        });
+
+        addFundsButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                double amount;
+                try {
+                    homepageController.addFunds(Double.parseDouble(
+                        JOptionPane.showInputDialog("Enter amount to add:")
+                    ));
+                    
+                } catch (HeadlessException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
             }
         });
 
