@@ -4,6 +4,7 @@ import interface_adapter.checkout.PaymentView;
 import interface_adapter.checkout.CheckoutViewModel;
 import interface_adapter.checkout.CheckoutPresenter;
 import interface_adapter.checkout.CheckoutState;
+import use_case.checkout.CheckoutInteractor;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -16,6 +17,7 @@ import java.awt.event.ActionListener;
 public class PaymentWindow extends JFrame implements PaymentView {
     private CheckoutPresenter presenter;
     private CheckoutViewModel currentViewModel;
+    private CheckoutInteractor paymentProcess;
 
     public PaymentWindow(CheckoutPresenter presenter) {
         this.presenter = presenter;
@@ -239,7 +241,7 @@ public class PaymentWindow extends JFrame implements PaymentView {
         payButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                presenter.presentPaymentResult(true, "Payment processed successfully!");
+                paymentProcess.processPayment(currentViewModel.getUsername());
             }
         });
 

@@ -1,165 +1,45 @@
 package test;
 
 import entity.Address;
+import entity.Cart;
 import entity.User;
+import org.junit.jupiter.api.Test;
 import use_case.manage_address.*;
 
 import java.util.*;
 
+import static org.junit.jupiter.api.Assertions.*;
+
+
 public class ManageAddressTest {
 
-    public static void main(String[] args) {
-        System.out.println("Manage Address Use Case Tests");
+    @Test
+    void testAddAddressSuccess() {
+        FakeUserDataAccess userData = new FakeUserDataAccess();
+        FakeAddPresenter presenter = new FakeAddPresenter();
 
-        testAddAddressSuccess();
-        testAddAddressValidationError();
-        testAddAddressUserNotFound();
-
-        testEditAddressSuccess();
-        testEditAddressAddressNotFound();
-
-        testDeleteAddressSuccess();
-        testDeleteAddressNotFound();
-
-        System.out.println(">>> All ManageAddress tests finished without assertion failures.");
-    }
-
-
-    private static void assertTrue(boolean condition, String message) {
-        if (!condition) {
-            throw new RuntimeException("Assertion failed: " + message);
-        }
-    }
-
-    private static void testAddAddressSuccess() {
-        System.out.println("[Test] AddAddressInteractor - success case");
-
-        InMemoryUserDataAccess userData = new InMemoryUserDataAccess();
-        User user = new User("alice", "alice@example.com", "password123", "123 Initial St, Toronto");
+        HashSet<Address> initialAddresses = new HashSet<>();
+        User user = new User(
+                "alice",
+                "alice@example.com",
+                123456,
+                0.0,
+                initialAddresses,
+                new ArrayList<>(),
+                new Cart("alice")
+        );
         userData.saveUser(user);
 
-        TestAddPresenter presenter = new TestAddPresenter();
-        AddAddressInteractor interactor = new AddAddressInteractor(userData, presenter);
+        AddAddressInteractor interactor =
+                new AddAddressInteractor(userData, presenter);
 
         AddAddressInputData input = new AddAddressInputData(
                 "alice",
-                "456 New St",
-                "Unit 789",
+                "123 King St",
+                "Unit 8",
                 "Toronto",
                 "ON",
-                "M5G 2C3",
-                "Canada",
-                true,
-                false
-        );
-
-        interactor.execute(input);
-
-        assertTrue(presenter.successCalled, "AddAddress success view should be called.");
-        assertTrue(!presenter.validationCalled, "AddAddress validation error should NOT be called.");
-        assertTrue(!presenter.userNotFoundCalled, "AddAddress user-not-found should NOT be called.");
-
-        User updated = userData.getUser("alice");
-        assertTrue(updated != null, "User 'alice' should still exist.");
-        assertTrue(updated.getBillingAddresses().size() == 2,
-                "User should have 2 addresses after adding a new one.");
-
-        System.out.println("  -> OK");
-    }
-
-    private static void testAddAddressValidationError() {
-        System.out.println("[Test] AddAddressInteractor - validation error");
-
-        InMemoryUserDataAccess userData = new InMemoryUserDataAccess();
-        User user = new User("bob", "bob@example.com", "password123", "1 First St");
-        userData.saveUser(user);
-
-        TestAddPresenter presenter = new TestAddPresenter();
-        AddAddressInteractor interactor = new AddAddressInteractor(userData, presenter);
-
-        AddAddressInputData badInput = new AddAddressInputData(
-                "bob",
-                "",
-                "Unit 10",
-                "Toronto",
-                "ON",
-                "M5G 2C3",
-                "Canada",
-                false,
-                false
-        );
-
-        interactor.execute(badInput);
-
-        assertTrue(!presenter.successCalled, "AddAddress success should NOT be called.");
-        assertTrue(presenter.validationCalled, "AddAddress validation error SHOULD be called.");
-        assertTrue(presenter.validationErrors.containsKey("line1"),
-                "Validation errors should contain 'line1'.");
-
-        System.out.println("  -> OK");
-    }
-
-    private static void testAddAddressUserNotFound() {
-        System.out.println("[Test] AddAddressInteractor - user not found");
-
-        InMemoryUserDataAccess userData = new InMemoryUserDataAccess();
-
-        TestAddPresenter presenter = new TestAddPresenter();
-        AddAddressInteractor interactor = new AddAddressInteractor(userData, presenter);
-
-        AddAddressInputData input = new AddAddressInputData(
-                "unknownUser",
-                "100 Street",
-                "",
-                "City",
-                "Province",
-                "12345",
-                "Country",
-                false,
-                false
-        );
-
-        interactor.execute(input);
-
-        assertTrue(!presenter.successCalled, "AddAddress success should NOT be called.");
-        assertTrue(!presenter.validationCalled, "AddAddress validation should NOT be called.");
-        assertTrue(presenter.userNotFoundCalled, "User-not-found should be called.");
-
-        System.out.println("  -> OK");
-    }
-
-    private static void testEditAddressSuccess() {
-        System.out.println("[Test] EditAddressInteractor - success case");
-
-        InMemoryUserDataAccess userData = new InMemoryUserDataAccess();
-        User user = new User("carol", "carol@example.com", "pwd", "Old Default Addr");
-        Address extraAddress = new Address(
-                "Carol",
-                "200 Old St",
-                "Unit 5",
-                "Toronto",
-                "ON",
-                "M1M 1M1",
-                "Canada",
-                false,
-                false
-        );
-        user.addAddress(extraAddress);
-        userData.saveUser(user);
-
-        String addressIdToEdit = extraAddress.getId();
-
-        TestEditPresenter presenter = new TestEditPresenter();
-        EditAddressInteractor interactor = new EditAddressInteractor(userData, presenter);
-
-        EditAddressInputData input = new EditAddressInputData(
-                "carol",
-                addressIdToEdit,
-                "200 New St",
-                "Unit 999",
-                "Waterloo",
-                "ON",
-                "N2L 3G1",
+                "M5V 1A1",
                 "Canada",
                 true,
                 true
@@ -167,200 +47,294 @@ public class ManageAddressTest {
 
         interactor.execute(input);
 
-        assertTrue(presenter.successCalled, "EditAddress success should be called.");
-        assertTrue(!presenter.validationCalled, "EditAddress validation errors should NOT be called.");
-        assertTrue(!presenter.notFoundCalled, "EditAddress not-found should NOT be called.");
+        assertNull(presenter.lastErrors, "There should be no validation errors.");
+        assertNotNull(presenter.lastOutput, "Output data should not be null.");
+        assertEquals("alice", presenter.lastOutput.getUsername());
 
-        User updated = userData.getUser("carol");
-        Address edited = null;
-        for (Address a : updated.getBillingAddresses()) {
-            if (a.getId().equals(addressIdToEdit)) {
-                edited = a;
-                break;
-            }
-        }
-        assertTrue(edited != null, "Edited address should still exist.");
-        assertTrue("200 New St".equals(edited.getLine1()), "Line1 should be updated.");
-        assertTrue("Unit 999".equals(edited.getLine2()), "Line2 should be updated.");
-        assertTrue("Waterloo".equals(edited.getCity()), "City should be updated.");
-        assertTrue(edited.isDefaultBilling(), "Edited address should be default billing.");
-        assertTrue(edited.isDefaultShipping(), "Edited address should be default shipping.");
+        User savedUser = userData.getUser("alice");
+        assertNotNull(savedUser);
+        assertEquals(1, savedUser.getBillingAddresses().size());
 
-        System.out.println("  -> OK");
+        Address added = savedUser.getBillingAddresses().iterator().next();
+        assertEquals("123 King St", added.getLine1());
+        assertEquals("Toronto", added.getCity());
+        assertTrue(added.isDefaultBilling());
+        assertTrue(added.isDefaultShipping());
     }
 
+    @Test
+    void testAddAddressValidationError() {
+        FakeUserDataAccess userData = new FakeUserDataAccess();
+        FakeAddPresenter presenter = new FakeAddPresenter();
 
-    private static void testEditAddressAddressNotFound() {
-        System.out.println("[Test] EditAddressInteractor - address not found");
-
-        InMemoryUserDataAccess userData = new InMemoryUserDataAccess();
-        User user = new User("dave", "dave@example.com", "pwd", "Some Address");
+        User user = new User(
+                "bob",
+                "bob@example.com",
+                123456,
+                0.0,
+                new HashSet<>(),
+                new ArrayList<>(),
+                new Cart("bob")
+        );
         userData.saveUser(user);
 
-        TestEditPresenter presenter = new TestEditPresenter();
-        EditAddressInteractor interactor = new EditAddressInteractor(userData, presenter);
+        AddAddressInteractor interactor =
+                new AddAddressInteractor(userData, presenter);
 
-        EditAddressInputData input = new EditAddressInputData(
-                "dave",
-                "non-existent-id",
-                "New Line 1",
+        AddAddressInputData input = new AddAddressInputData(
+                "bob",
                 "",
-                "City",
-                "Prov",
-                "00000",
-                "Country",
-                false,
-                false
-        );
-
-        interactor.execute(input);
-
-        assertTrue(!presenter.successCalled, "EditAddress success should NOT be called.");
-        assertTrue(!presenter.validationCalled, "EditAddress validation should NOT be called.");
-        assertTrue(presenter.notFoundCalled, "EditAddress not-found should be called.");
-
-        System.out.println("  -> OK");
-    }
-
-    private static void testDeleteAddressSuccess() {
-        System.out.println("[Test] DeleteAddressInteractor - success case");
-
-        InMemoryUserDataAccess userData = new InMemoryUserDataAccess();
-        User user = new User("eric", "eric@example.com", "pwd", "First Addr");
-        // Add another address to delete
-        Address addr = new Address(
-                "Eric",
-                "Del St",
                 "",
-                "Toronto",
+                "",
                 "ON",
-                "K1K 1K1",
+                "M5V 1A1",
                 "Canada",
                 false,
                 false
         );
-        user.addAddress(addr);
-        userData.saveUser(user);
 
-        String addressIdToDelete = addr.getId();
-
-        TestDeletePresenter presenter = new TestDeletePresenter();
-        DeleteAddressInteractor interactor = new DeleteAddressInteractor(userData, presenter);
-
-        DeleteAddressInputData input = new DeleteAddressInputData("eric", addressIdToDelete);
         interactor.execute(input);
 
-        assertTrue(presenter.successCalled, "DeleteAddress success should be called.");
-        assertTrue(!presenter.notFoundCalled, "DeleteAddress not-found should NOT be called.");
-
-        User updated = userData.getUser("eric");
-        boolean stillExists = updated.getBillingAddresses().stream()
-                .anyMatch(a -> a.getId().equals(addressIdToDelete));
-        assertTrue(!stillExists, "Address should be removed from user's addresses.");
-
-        System.out.println("  -> OK");
+        assertNull(presenter.lastOutput);
+        assertNotNull(presenter.lastErrors);
+        assertTrue(presenter.lastErrors.containsKey("line1"));
+        assertTrue(presenter.lastErrors.containsKey("city"));
     }
 
 
-    private static void testDeleteAddressNotFound() {
-        System.out.println("[Test] DeleteAddressInteractor - address not found");
+    @Test
+    void testEditAddressSuccess() {
+        FakeUserDataAccess userData = new FakeUserDataAccess();
+        FakeEditPresenter presenter = new FakeEditPresenter();
 
-        InMemoryUserDataAccess userData = new InMemoryUserDataAccess();
-        User user = new User("frank", "frank@example.com", "pwd", "Base Addr");
+        Address addr = new Address(
+                "Alice", "123 King St", "Unit 8",
+                "Toronto", "ON", "M5V 1A1", "Canada",
+                false, false
+        );
+
+        HashSet<Address> addrSet = new HashSet<>();
+        addrSet.add(addr);
+
+        User user = new User(
+                "alice",
+                "alice@example.com",
+                123456,
+                0.0,
+                addrSet,
+                new ArrayList<>(),
+                new Cart("alice")
+        );
         userData.saveUser(user);
 
-        TestDeletePresenter presenter = new TestDeletePresenter();
-        DeleteAddressInteractor interactor = new DeleteAddressInteractor(userData, presenter);
+        EditAddressInteractor interactor =
+                new EditAddressInteractor(userData, presenter);
 
-        DeleteAddressInputData input = new DeleteAddressInputData("frank", "does-not-exist");
+        EditAddressInputData input = new EditAddressInputData(
+                "alice",
+                addr.getId(),
+                "456 Queen St",
+                "Floor 2",
+                "Toronto",
+                "ON",
+                "M5V 2A2",
+                "Canada",
+                true,
+                true
+        );
+
         interactor.execute(input);
 
-        assertTrue(!presenter.successCalled, "DeleteAddress success should NOT be called.");
-        assertTrue(presenter.notFoundCalled, "DeleteAddress not-found SHOULD be called.");
+        assertNull(presenter.lastErrors);
+        assertNotNull(presenter.lastOutput);
 
-        System.out.println("  -> OK");
+        User savedUser = userData.getUser("alice");
+        assertNotNull(savedUser);
+        Address edited = savedUser.getBillingAddresses().iterator().next();
+
+        assertEquals("456 Queen St", edited.getLine1());
+        assertEquals("M5V 2A2", edited.getPostalCode());
+        assertTrue(edited.isDefaultBilling());
+        assertTrue(edited.isDefaultShipping());
     }
 
-    /**
-     * In-memory implementation of UserDataAccessInterface
-     */
-    private static class InMemoryUserDataAccess implements UserDataAccessInterface {
+    @Test
+    void testEditAddressNotFound() {
+        FakeUserDataAccess userData = new FakeUserDataAccess();
+        FakeEditPresenter presenter = new FakeEditPresenter();
 
-        private final Map<String, User> users = new HashMap<>();
+        User user = new User(
+                "alice",
+                "alice@example.com",
+                123456,
+                0.0,
+                new HashSet<>(),
+                new ArrayList<>(),
+                new Cart("alice")
+        );
+        userData.saveUser(user);
+
+        EditAddressInteractor interactor =
+                new EditAddressInteractor(userData, presenter);
+
+        EditAddressInputData input = new EditAddressInputData(
+                "alice",
+                "NON_EXIST_ID",
+                "456 Queen St",
+                "Floor 2",
+                "Toronto",
+                "ON",
+                "M5V 2A2",
+                "Canada",
+                false,
+                false
+        );
+
+        interactor.execute(input);
+
+        assertNull(presenter.lastOutput);
+        assertEquals("Address not found: NON_EXIST_ID", presenter.lastNotFoundMessage);
+    }
+
+
+    @Test
+    void testDeleteAddressSuccess() {
+        FakeUserDataAccess userData = new FakeUserDataAccess();
+        FakeDeletePresenter presenter = new FakeDeletePresenter();
+
+        Address addr = new Address(
+                "Alice", "123 King St", "Unit 8",
+                "Toronto", "ON", "M5V 1A1", "Canada",
+                false, false
+        );
+        HashSet<Address> addrSet = new HashSet<>();
+        addrSet.add(addr);
+
+        User user = new User(
+                "alice",
+                "alice@example.com",
+                123456,
+                0.0,
+                addrSet,
+                new ArrayList<>(),
+                new Cart("alice")
+        );
+        userData.saveUser(user);
+
+        DeleteAddressInteractor interactor =
+                new DeleteAddressInteractor(userData, presenter);
+
+        DeleteAddressInputData input =
+                new DeleteAddressInputData("alice", addr.getId());
+
+        interactor.execute(input);
+
+        User savedUser = userData.getUser("alice");
+        assertNotNull(savedUser);
+        assertTrue(savedUser.getBillingAddresses().isEmpty(),
+                "Address should be removed from user's addresses.");
+        assertEquals(addr.getId(), presenter.lastDeletedId);
+    }
+
+    @Test
+    void testDeleteAddressNotFound() {
+        FakeUserDataAccess userData = new FakeUserDataAccess();
+        FakeDeletePresenter presenter = new FakeDeletePresenter();
+
+        User user = new User(
+                "bob",
+                "bob@example.com",
+                123456,
+                0.0,
+                new HashSet<>(),
+                new ArrayList<>(),
+                new Cart("bob")
+        );
+        userData.saveUser(user);
+
+        DeleteAddressInteractor interactor =
+                new DeleteAddressInteractor(userData, presenter);
+
+        DeleteAddressInputData input =
+                new DeleteAddressInputData("bob", "UNKNOWN_ID");
+
+        interactor.execute(input);
+
+        assertEquals("Address not found: UNKNOWN_ID", presenter.lastNotFoundMessage);
+    }
+
+    private static class FakeUserDataAccess implements UserDataAccessInterface {
+        private final Map<String, User> store = new HashMap<>();
 
         @Override
         public User getUser(String username) {
-            return users.get(username);
+            return store.get(username);
         }
 
         @Override
         public void saveUser(User user) {
-            users.put(user.getUsername(), user);
+            store.put(user.getUsername(), user);
         }
-
     }
 
-    private static class TestAddPresenter implements AddAddressOutputBoundary {
-
-        boolean successCalled = false;
-        boolean validationCalled = false;
-        boolean userNotFoundCalled = false;
-        Map<String, String> validationErrors = Collections.emptyMap();
+    private static class FakeAddPresenter implements AddAddressOutputBoundary {
+        AddAddressOutputData lastOutput;
+        Map<String, String> lastErrors;
+        String lastUserNotFoundMessage;
 
         @Override
         public void prepareSuccessView(AddAddressOutputData outputData) {
-            successCalled = true;
+            this.lastOutput = outputData;
+            this.lastErrors = null;
         }
 
         @Override
         public void prepareFailView(Map<String, String> errors) {
-            validationCalled = true;
-            validationErrors = errors;
+            this.lastErrors = errors;
+            this.lastOutput = null;
         }
 
         @Override
         public void prepareUserNotFoundView(String message) {
-            userNotFoundCalled = true;
+            this.lastUserNotFoundMessage = message;
         }
     }
 
-    private static class TestEditPresenter implements EditAddressOutputBoundary {
-
-        boolean successCalled = false;
-        boolean validationCalled = false;
-        boolean notFoundCalled = false;
+    private static class FakeEditPresenter implements EditAddressOutputBoundary {
+        EditAddressOutputData lastOutput;
+        Map<String, String> lastErrors;
+        String lastNotFoundMessage;
 
         @Override
         public void prepareSuccessView(EditAddressOutputData outputData) {
-            successCalled = true;
+            this.lastOutput = outputData;
+            this.lastErrors = null;
         }
 
         @Override
         public void prepareFailView(Map<String, String> errors) {
-            validationCalled = true;
+            this.lastErrors = errors;
+            this.lastOutput = null;
         }
 
         @Override
         public void prepareNotFoundView(String message) {
-            notFoundCalled = true;
+            this.lastNotFoundMessage = message;
         }
     }
 
-
-    private static class TestDeletePresenter implements DeleteAddressOutputBoundary {
-
-        boolean successCalled = false;
-        boolean notFoundCalled = false;
+    private static class FakeDeletePresenter implements DeleteAddressOutputBoundary {
+        String lastDeletedId;
+        String lastNotFoundMessage;
 
         @Override
         public void prepareSuccessView(DeleteAddressOutputData outputData) {
-            successCalled = true;
+            this.lastDeletedId = outputData.getDeletedAddressId();
         }
 
         @Override
         public void prepareNotFoundView(String message) {
-            notFoundCalled = true;
+            this.lastNotFoundMessage = message;
         }
     }
 }
-

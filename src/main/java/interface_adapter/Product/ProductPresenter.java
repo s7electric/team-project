@@ -8,7 +8,7 @@ import use_case.open_product.OpenProductOutputData;
 /**
  * The Presenter for the Login Use Case.
  */
-public class ProductPresenter implements OpenProductOutputBoundary{
+public class ProductPresenter implements OpenProductOutputBoundary {
     private final ProductViewModel productViewModel;
     private final HomepageViewModel homepageViewModel;
     private final ViewManagerModel viewManagerModel;
@@ -24,22 +24,23 @@ public class ProductPresenter implements OpenProductOutputBoundary{
     @Override
     public void prepareSuccessView(OpenProductOutputData outputData) {
         // On success, open the Product View
-        ProductState productState = new ProductState();
+        final ProductState productState = new ProductState();
         productState.setName(outputData.getProductName());
-        productState.setProductid(outputData.getProductUUID());
+        productState.setProductid(outputData.getProductId());
         productState.setPrice("$" + outputData.getPrice());
         productState.setImageUrl(outputData.getImageURl());
         productState.setSellerName(outputData.getSeller());
         productState.setCategory(outputData.getCategory());
-        productState.setRating(String.format("%.1f *", outputData.getAverageReviewScore())); // 1 decimal point
+        productState.setRating(String.format("%.1f *", outputData.getAverageReviewScore()));
         productState.setReviewCount(outputData.getTotalReviews() + " reviews");
         productState.setUsername(outputData.getUsername());
         productViewModel.setState(productState);
         viewManagerModel.setState(productViewModel.getViewName());
         viewManagerModel.setActiveViewName(productViewModel.getViewName());
     }
+
     @Override
-    public void switchToHomePageView(){
+    public void switchToHomePageView() {
         this.viewManagerModel.setActiveViewName(this.homepageViewModel.getViewName());
     }
 

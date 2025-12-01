@@ -65,7 +65,61 @@ public class CheckoutInteractor implements CheckoutInputBoundary {
         }
     }
 
-    // ... (rest of the helper methods remain the same)
+    public void processPayment(String username) {
+        try {
+            // 1. Get user and recalculate to ensure data is current
+            User user = dataAccess.getUser(username);
+            Cart cart = user.getCart();
+
+            if (cart.getProducts().isEmpty()) {
+                outputBoundary.presentCheckoutError("Cannot process payment with empty cart");
+                return;
+            }
+
+            // 2. Recalculate payment details (in case cart changed)
+            PaymentCalculation paymentCalc = calculatePaymentDetails(cart, user);
+
+            // 3. Check if user can afford the payment
+            if (!paymentCalc.hasSufficientFunds) {
+                outputBoundary.presentPaymentResult(false, "Insufficient funds to complete payment");
+                return;
+            }
+
+            // 4. Calculate points to use and earn
+            int pointsToUse = calculatePointsToUse(user.getPointsBalance());
+            int pointsToEarn = calculatePointsToEarn(paymentCalc.totalAfterDiscount);
+
+            // 5. Process the payment through data access
+            dataAccess.updateUserBalance(username, paymentCalc.userBalance - paymentCalc.amountFromBalance);
+            dataAccess.updateUserPoints(username, user.getPointsBalance() - pointsToUse + pointsToEarn);
+            // 6. Present success result
+            String successMessage = String.format(
+                    "Payment successful!\n\n" +
+                            "Amount paid: $%.2f\n" +
+                            "Points used: %d\n" +
+                            "Points earned: %d\n" +
+                            "Thank you for your purchase!",
+                    paymentCalc.totalAfterDiscount, pointsToUse, pointsToEarn
+            );
+
+            outputBoundary.presentPaymentResult(true, successMessage);
+
+        } catch (Exception e) {
+            outputBoundary.presentPaymentResult(false, "Payment failed: " + e.getMessage());
+        }
+    }
+
+    private int calculatePointsToUse(int userPoints) {
+        // Use points in multiples of 1000 for $10 discounts
+        return (userPoints / 1000) * 1000;
+    }
+
+    private int calculatePointsToEarn(double amountSpent) {
+        // Earn $1 worth of points (1 point) for every $10 spent
+        return (int) (amountSpent / 10);
+    }
+
+
     private PaymentCalculation calculatePaymentDetails(Cart cart, User user) {
         double subtotal = calculateTotalPrice(cart);
         int totalItems = cart.getTotalQuantity();

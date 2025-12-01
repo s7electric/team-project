@@ -2,7 +2,7 @@ package interface_adapter.checkout;
 
 import use_case.checkout.CheckoutOutputBoundary;
 import use_case.checkout.CheckoutOutputData;
-import interface_adapter.checkout.CheckoutState;
+
 
 import java.awt.*;
 
@@ -14,6 +14,7 @@ public class CheckoutPresenter implements CheckoutOutputBoundary {
     private OrderConfirmationView orderConfirmationView;
     private PaymentView paymentView;
     private CheckoutState currentState;
+
 
     public void setOrderConfirmationView(OrderConfirmationView view) {
         this.orderConfirmationView = view;
@@ -73,6 +74,7 @@ public class CheckoutPresenter implements CheckoutOutputBoundary {
             paymentView.showError(errorMessage);
         }
     }
+
 
 
     private CheckoutViewModel createOrderConfirmationViewModel(CheckoutState state) {

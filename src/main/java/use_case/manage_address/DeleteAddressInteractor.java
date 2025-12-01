@@ -3,9 +3,6 @@ package use_case.manage_address;
 import entity.Address;
 import entity.User;
 
-import java.util.Iterator;
-import java.util.List;
-
 /**
  * Interactor for deleting an address from a user.
  */
@@ -28,17 +25,7 @@ public class DeleteAddressInteractor implements DeleteAddressInputBoundary {
             return;
         }
 
-        List<Address> addresses = user.getBillingAddresses();
-        boolean removed = false;
-        Iterator<Address> it = addresses.iterator();
-        while (it.hasNext()) {
-            Address a = it.next();
-            if (a.getId().equals(in.getAddressId())) {
-                it.remove();
-                removed = true;
-                break;
-            }
-        }
+        boolean removed = user.removeAddressById(in.getAddressId());
 
         if (!removed) {
             presenter.prepareNotFoundView("Address not found: " + in.getAddressId());
@@ -46,6 +33,8 @@ public class DeleteAddressInteractor implements DeleteAddressInputBoundary {
         }
 
         userDataAccess.saveUser(user);
-        presenter.prepareSuccessView(new DeleteAddressOutputData(user.getUsername(), in.getAddressId()));
+        presenter.prepareSuccessView(
+                new DeleteAddressOutputData(user.getUsername(), in.getAddressId())
+        );
     }
 }

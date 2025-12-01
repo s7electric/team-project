@@ -16,7 +16,6 @@ public class User {
     private double balance;
     private int pointsBalance;
 
-    // IMPORTANT: now this holds Address entities, not Strings
     private HashSet<Address> billingAddresses;
     private List<String> previousPurchasesCategories;
     private Cart cart;
@@ -55,10 +54,8 @@ public class User {
         this.balance = 0;
         this.pointsBalance = 0;
 
-
         this.billingAddresses.add(new Address(billingAddress));
 
-        // create an empty cart for this user
         this.cart = new Cart(this.getUsername());
     }
 
@@ -95,7 +92,6 @@ public class User {
 
         this.hashedPassword = hashedPassword;
 
-        // If null is passed, we create empty lists to avoid NullPointerException.
         this.billingAddresses = (billingAddresses == null) ? new HashSet<>() : billingAddresses;
         this.previousPurchasesCategories =
                 (previousPurchasesCategories == null) ? new ArrayList<>() : previousPurchasesCategories;
@@ -247,8 +243,15 @@ public class User {
         return this.hashedPassword == hashPassword(password);
     }
 
-    // turns the password into a hash
     private int hashPassword(String password){
         return password.hashCode();
+    }
+
+    public boolean removeAddressById(String addressId) {
+        if (addressId == null) {
+            return false;
+        }
+
+        return billingAddresses.removeIf(a -> addressId.equals(a.getId()));
     }
 }

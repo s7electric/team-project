@@ -7,7 +7,7 @@ public class OpenProductOutputData {
 
     private String name;
     private double price;
-    private String productUUID;
+    private String productId;
     private String imageUrl;
     private String seller;
     private String category;
@@ -15,10 +15,11 @@ public class OpenProductOutputData {
     private int totalReviews;
     private String username;
 
-    public OpenProductOutputData(String name, double price, String productid, String imageUrl, String seller, String category, double averageReviewScore, int totalReviews, String username) {
+    public OpenProductOutputData(String name, double price, String productid, String imageUrl, String seller,
+                                 String category, double averageReviewScore, int totalReviews, String username) {
         this.name = name;
         this.price = price;
-        this.productUUID = productid;
+        this.productId = productid;
         this.imageUrl = imageUrl;
         this.seller = seller;
         this.category = category;
@@ -28,14 +29,40 @@ public class OpenProductOutputData {
 
     }
 
-    public String getProductName() {return name;}
-    public Double getPrice() {return price;}
-    public String getProductUUID() {return productUUID;}
-    public String getImageURl() {return imageUrl;}
-    public String getSeller() {return seller;}
-    public String getCategory() {return category;}
-    public double getAverageReviewScore() {return averageReviewScore;}
-    public int getTotalReviews() {return totalReviews;}
-    public String getUsername() {return username;}
+    public String getProductName() {
+        return name;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public String getProductId() {
+        return productId;
+    }
+
+    public String getImageURl() {
+        return imageUrl;
+    }
+
+    public String getSeller() {
+        return seller;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public double getAverageReviewScore() {
+        return averageReviewScore;
+    }
+
+    public int getTotalReviews() {
+        return totalReviews;
+    }
+
+    public String getUsername() {
+        return username;
+    }
 
 }

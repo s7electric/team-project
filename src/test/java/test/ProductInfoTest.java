@@ -52,7 +52,7 @@ public class ProductInfoTest {
         assertNotNull(presenter.receivedData);
         assertEquals("TestProduct", presenter.receivedData.getProductName());
         assertEquals(19.99, presenter.receivedData.getPrice());
-        assertEquals("uuid-123", presenter.receivedData.getProductUUID());
+        assertEquals("uuid-123", presenter.receivedData.getProductId());
         assertEquals("http://image.png", presenter.receivedData.getImageURl());
         assertEquals("sellerUser", presenter.receivedData.getSeller());
         assertEquals("Electronics", presenter.receivedData.getCategory());
