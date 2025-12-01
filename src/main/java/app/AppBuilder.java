@@ -24,6 +24,9 @@ import interface_adapter.login.LoginViewModel;
 import interface_adapter.logout.LogoutController;
 import interface_adapter.logout.LogoutPresenter;
 import interface_adapter.logout.LogoutViewModel;
+import interface_adapter.make_listing.MakeListingController;
+import interface_adapter.make_listing.MakeListingPresenter;
+import interface_adapter.make_listing.MakeListingViewModel;
 import interface_adapter.manage_address.ManageAddressController;
 import interface_adapter.manage_address.ManageAddressPresenter;
 import interface_adapter.manage_address.ManageAddressState;
@@ -47,6 +50,7 @@ import use_case.filter.FilterOutputBoundary;
 import use_case.homepage.HomepageInteractor;
 import use_case.login.LoginInteractor;
 import use_case.logout.LogoutInteractor;
+import use_case.make_listing.MakeListingInteractor;
 import use_case.manage_address.AddAddressInteractor;
 import use_case.manage_address.DeleteAddressInteractor;
 import use_case.manage_address.EditAddressInteractor;
@@ -92,8 +96,9 @@ public class AppBuilder {
     private FilterViewModel filterViewModel =  new FilterViewModel();
     private ProductViewModel productViewModel =  new ProductViewModel();
     private ProductState productState;
-    private AddToCartViewModel addToCartViewModel =   new AddToCartViewModel();
+    private AddToCartViewModel addToCartViewModel = new AddToCartViewModel();
     private ManageAddressViewModel manageAddressViewModel = new ManageAddressViewModel();
+    private MakeListingViewModel makeListingViewModel = new MakeListingViewModel();
 
     // Views
     private LoginView loginView;
@@ -104,6 +109,7 @@ public class AppBuilder {
     private ManageAddressView manageAddressView;
     private SearchView searchView;
     private FilterView filterView;
+    private MakeListingView makeListingView;
 
     // Controllers / interactors shared
     private LoginController loginController;
@@ -117,6 +123,8 @@ public class AppBuilder {
     private OpenProductInteractor openProductInteractor;
     private FilterController filterController;
     private SearchController searchController;
+    private MakeListingController makeListingController;
+    private MakeListingInteractor makeListingInteractor;
 
     private Runnable openManageAddress;
     private Runnable openCart;
@@ -202,6 +210,13 @@ public class AppBuilder {
         return this;
     }
 
+    public AppBuilder addMakeListingView() {
+        makeListingViewModel = new MakeListingViewModel();
+        makeListingView = new MakeListingView(makeListingViewModel);
+        cardPanel.add(makeListingView, makeListingView.getViewName());
+        return this;
+    }
+
     /**
         * Manage Address uses a separate window; call this to construct it.
         */
@@ -254,9 +269,9 @@ public class AppBuilder {
         HomepagePresenter presenter = new HomepagePresenter(
                 signUpViewModel, viewManagerModel, loginViewModel, homepageViewModel,
                 homepageState, productViewModel, productState,
-                searchViewModel, filterViewModel, logoutViewModel,
+                searchViewModel, filterViewModel, logoutViewModel, makeListingViewModel,
                 openManageAddress, openCart);
-        HomepageInteractor interactor = new HomepageInteractor(presenter);
+        HomepageInteractor interactor = new HomepageInteractor(presenter, dataAccessObject);
         homepageController = new HomepageController(interactor);
         homepageView.setController(homepageController);
         return this;
@@ -314,6 +329,14 @@ public class AppBuilder {
         SearchInputBoundary searchInteractor = new SearchInteractor(searchPresenter, dataAccessObject);
         searchController = new SearchController(searchInteractor);
         searchView.setController(searchController);
+        return this;
+    }
+
+    public AppBuilder addMakeListingUseCase() {
+        MakeListingPresenter presenter = new MakeListingPresenter(viewManagerModel, makeListingViewModel, homepageViewModel);
+        makeListingInteractor = new MakeListingInteractor(presenter, dataAccessObject);
+        makeListingController = new MakeListingController(makeListingInteractor);
+        makeListingView.setController(makeListingController);
         return this;
     }
 

@@ -7,22 +7,22 @@ public class Product {
     private String name;
     private double price;
     private String productUUID;
-    private String imageUrl;
+    private String imageBase64;
     private User seller;
     private String category;
     private double averageReviewScore;
     private ArrayList<Integer> scores;
 
 
-    public Product(String name, double price, String productUUID, String imageUrl, User seller, String category) {
+    public Product(String name, double price, String productUUID, String imageBase64, User seller, String category) {
         if (name.isEmpty()) {throw new IllegalArgumentException("Product name cannot be empty");}
         this.name = name;
         if (price < 0) {throw new IllegalArgumentException("Product price cannot be negative");}
         this.price = price;
         if  (productUUID == null) {throw new IllegalArgumentException("Product productUUID cannot be null");}
         this.productUUID = productUUID;
-        if (imageUrl.isEmpty()) {throw new IllegalArgumentException("Product image url cannot be empty");}
-        this.imageUrl = imageUrl;
+        if (imageBase64.isEmpty()) {throw new IllegalArgumentException("Product image url cannot be empty");}
+        this.imageBase64 = imageBase64;
         this.seller = seller;
         if (category.isEmpty()) {throw new IllegalArgumentException("Product category cannot be empty");}
         this.category = category;
@@ -54,8 +54,8 @@ public class Product {
     public String getProductUUID() {
         return productUUID;
     }
-    public String getImageUrl() {
-        return imageUrl;
+    public String getimageBase64() {
+        return imageBase64;
     }
     public User getUser() {
         return seller;

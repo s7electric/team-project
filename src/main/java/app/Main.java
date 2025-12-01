@@ -11,6 +11,7 @@ public class Main {
                 .addHomepageView()
                 .addLogoutView()
                 .addProductView()
+                .addMakeListingView()
                 .addManageAddressWindow()
                 .addFilterView()
                 .addSearchView()
@@ -23,6 +24,7 @@ public class Main {
                 //.addCheckoutUseCase()
                 .addHomepageUseCase()
                 .addLogoutUseCase()
+                .addMakeListingUseCase()
                 .build();
 
         application.pack();

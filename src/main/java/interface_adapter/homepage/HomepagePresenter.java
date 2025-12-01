@@ -13,6 +13,7 @@ import interface_adapter.Product.ProductViewModel;
 import interface_adapter.Product.ProductState;
 import interface_adapter.logout.LogoutState;
 import interface_adapter.logout.LogoutViewModel;
+import interface_adapter.make_listing.MakeListingViewModel;
 import use_case.homepage.HomepageInputData;
 import use_case.homepage.HomepageOutputBoundary;
 import use_case.homepage.HomepageOutputData;
@@ -30,6 +31,7 @@ public class HomepagePresenter implements HomepageOutputBoundary {
     private SearchViewModel searchViewModel;
     private FilterViewModel filterViewModel;
     private LogoutViewModel logoutViewModel;
+    private MakeListingViewModel makeListingViewModel;
     private Runnable openManageAddress;
     private Runnable openCart;
 
@@ -43,6 +45,7 @@ public class HomepagePresenter implements HomepageOutputBoundary {
                              SearchViewModel searchViewModel,
                              FilterViewModel filterViewModel,
                              LogoutViewModel logoutViewModel,
+                             MakeListingViewModel makeListingViewModel,
                              Runnable openManageAddress,
                              Runnable openCart) {
         this.signUpViewModel = signUpViewModel;
@@ -55,6 +58,7 @@ public class HomepagePresenter implements HomepageOutputBoundary {
         this.searchViewModel = searchViewModel;
         this.filterViewModel = filterViewModel;
         this.logoutViewModel = logoutViewModel;
+        this.makeListingViewModel = makeListingViewModel;
         this.openManageAddress = openManageAddress;
         this.openCart = openCart;
     }
@@ -102,7 +106,7 @@ public class HomepagePresenter implements HomepageOutputBoundary {
     }
     @Override
     public void switchToListingView(){
-
+        this.viewManagerModel.setActiveViewName(this.makeListingViewModel.getViewName());
     }
     @Override
     public void switchToLogoutView(){

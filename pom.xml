@@ -14,8 +14,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-
-
     <dependencies>
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
@@ -42,4 +40,5 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
 </project>

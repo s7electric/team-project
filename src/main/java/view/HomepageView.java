@@ -1,6 +1,5 @@
 package view;
 
-import entity.Product;
 import interface_adapter.homepage.HomepageController;
 import interface_adapter.homepage.HomepageState;
 import interface_adapter.homepage.HomepageViewModel;
@@ -200,7 +199,14 @@ public class HomepageView extends JPanel implements PropertyChangeListener {
         });
         fundButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                homepageController.switchToFundView();
+                double amount;
+                try {
+                    amount = Double.parseDouble(JOptionPane.showInputDialog("Enter amount to add:"));
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(null, "Invalid amount entered.");
+                    return;
+                }
+                homepageController.addFunds(homepageState.getUsername(), amount);
             }
         });
         cartButton.addActionListener(new ActionListener() {
@@ -223,4 +229,14 @@ public class HomepageView extends JPanel implements PropertyChangeListener {
     public String getViewName(){
         return this.homepageViewName;
     }
+
+    // public static void main(String[] args) {
+    //     JFrame frame = new JFrame("Homepage View Test");
+    //     HomepageViewModel homepageViewModel = new HomepageViewModel();
+    //     HomepageView homepageView = new HomepageView(homepageViewModel);
+    //     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    //     frame.setSize(800, 600);
+    //     frame.add(homepageView);
+    //     frame.setVisible(true);
+    // }
 }
