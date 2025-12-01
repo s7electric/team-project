@@ -79,7 +79,7 @@ public class FilterInteractor implements FilterInputBoundary{
      * */
     public void loadProducts(){
         List<Product> allProducts = dataAccess.getAllProducts();
-        Map<String, List<Object>> filteredProducts = new HashMap<>();
+        Map<String, List<Object>> filteredProducts = new LinkedHashMap<>();
         fillProductMapFromList(allProducts, filteredProducts);
         FilterOutputData filterOutputData = new FilterOutputData("All", filteredProducts);
         this.filterPresenter.loadProducts(filterOutputData);
