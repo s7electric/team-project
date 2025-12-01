@@ -326,6 +326,20 @@ public class AppBuilder {
         return this;
     }
 
+    public AppBuilder addProductUseCase() {
+        final OpenProductOutputBoundary productPresenter =
+                new ProductPresenter(viewManagerModel, productViewModel, homepageViewModel);
+        final AddToCartOutputBoundary addToCartPresenter =
+                new AddToCartPresenter(viewManagerModel, addToCartViewModel);
+        openProductInteractor = new OpenProductInteractor(dataAccessObject, productPresenter);
+        addToCartInteractor = new AddToCartInteractor(dataAccessObject, addToCartPresenter,dataAccessObject2);
+        productController = new ProductController(openProductInteractor);
+        addToCartController = new AddToCartController(addToCartInteractor);
+        productView.setProductController(productController);
+        productView.setAddToCartController(addToCartController);
+        return this;
+    }
+
 //    public AppBuilder addCheckoutUseCase() {
 //        CheckoutOutputBoundary checkoutPresenter = new CheckoutOutputBoundary() {
 //            @Override
