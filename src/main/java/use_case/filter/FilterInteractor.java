@@ -54,7 +54,7 @@ public class FilterInteractor implements FilterInputBoundary{
             for (Product product : allProducts) {
                 if (product.getCategory().equalsIgnoreCase(filterInputData.getFilter())) {
                     if (!filteredProducts.containsKey(product.getProductUUID())){
-                        filteredProducts.put(product.getProductUUID(), new ArrayList<>(Arrays.asList(product.getName(), product.getImageUrl(), product.getPrice())));
+                        filteredProducts.put(product.getProductUUID(), new ArrayList<>(Arrays.asList(product.getName(), product.getimageBase64(), product.getPrice())));
                     }
                 }
             }
@@ -84,7 +84,7 @@ public class FilterInteractor implements FilterInputBoundary{
     private static void fillProductMapFromList(List<Product> allProducts, Map<String, List<Object>> filteredProducts) {
         for (Product p: allProducts){
             if (!filteredProducts.containsKey(p.getProductUUID())){
-                filteredProducts.put(p.getProductUUID(), new ArrayList<>(Arrays.asList(p.getName(), p.getImageUrl(), p.getPrice())));
+                filteredProducts.put(p.getProductUUID(), new ArrayList<>(Arrays.asList(p.getName(), p.getimageBase64(), p.getPrice())));
             }
         }
     }

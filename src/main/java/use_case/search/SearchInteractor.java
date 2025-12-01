@@ -36,7 +36,7 @@ public class SearchInteractor implements SearchInputBoundary{
             for (Product product : allProducts) {
                 if (product.getName().toLowerCase().contains(searchInput.toLowerCase()) || product.getCategory().toLowerCase().contains(searchInput.toLowerCase())) {
                     if (!foundProducts.containsKey(product.getProductUUID())) {
-                        foundProducts.put(product.getProductUUID(), new ArrayList<>(Arrays.asList(product.getName(), product.getImageUrl(), product.getPrice())));
+                        foundProducts.put(product.getProductUUID(), new ArrayList<>(Arrays.asList(product.getName(), product.getimageBase64(), product.getPrice())));
                     }
                 }
             }

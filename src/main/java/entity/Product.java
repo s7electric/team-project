@@ -35,7 +35,7 @@ public class Product {
         this.name = name;
         this.price = price;
         this.productUUID = productUUID;
-        this.imageUrl = imageUrl;
+        this.imageBase64 = imageUrl;
         this.seller = seller;
         this.category = category;
         this.averageReviewScore = averageReviewScore;

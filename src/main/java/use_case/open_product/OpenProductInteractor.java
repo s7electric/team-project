@@ -20,7 +20,7 @@ public class OpenProductInteractor implements OpenProductInputBoundary {
                 showedProduct.getName(),
                 showedProduct.getPrice(),
                 showedProduct.getProductUUID(),
-                showedProduct.getImageUrl(),
+                showedProduct.getimageBase64(),
                 showedProduct.getUser().getUsername(),
                 showedProduct.getCategory(),
                 showedProduct.getAverageReviewScore(),
