@@ -29,7 +29,7 @@ public class EditAddressInteractor implements EditAddressInputBoundary {
             return;
         }
 
-        List<Address> addresses = user.getBillingAddresses();
+        List<Address> addresses = new java.util.ArrayList<>(user.getBillingAddresses());
         Address target = null;
         for (Address a : addresses) {
             if (a.getId().equals(in.getAddressId())) {
@@ -66,6 +66,7 @@ public class EditAddressInteractor implements EditAddressInputBoundary {
         target.setDefaultShipping(in.isDefaultShipping());
         target.setDefaultBilling(in.isDefaultBilling());
 
+        user.setBillingAddresses(addresses);
         userDataAccess.saveUser(user);
         presenter.prepareSuccessView(new EditAddressOutputData(user.getUsername(), user.getBillingAddresses()));
     }

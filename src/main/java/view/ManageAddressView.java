@@ -180,7 +180,7 @@ public class ManageAddressView extends JFrame implements PropertyChangeListener 
                 return;
             }
 
-            String addressId = String.valueOf(selectedIndex);
+            String addressId = addressList.getSelectedValue().getId();
 
             controller.editAddress(
                     username,
@@ -208,7 +208,7 @@ public class ManageAddressView extends JFrame implements PropertyChangeListener 
                 return;
             }
 
-            String addressId = String.valueOf(selectedIndex);
+            String addressId = addressList.getSelectedValue().getId();
 
             int choice = JOptionPane.showConfirmDialog(this,
                     "Delete the selected address?", "Confirm delete",
