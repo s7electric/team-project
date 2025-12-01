@@ -39,18 +39,10 @@ public class HomepageView extends JPanel implements PropertyChangeListener {
         this.homepageViewModel.addPropertyChangeListener(this);
 
         JPanel buttonsLayerTwoPanel = new JPanel();
-        JButton dealsButton = new JButton("Daily Deals");
         JButton searchButton = new JButton("Search");
         JButton filterButton = new JButton("Apply Filters");
-        buttonsLayerTwoPanel.add(dealsButton);
         buttonsLayerTwoPanel.add(searchButton);
         buttonsLayerTwoPanel.add(filterButton);
-
-//        dealsButton.addActionListener(new ActionListener() {
-//            public void actionPerformed(ActionEvent e) {
-//                homepageController.switchToDealsView();
-//            }
-//        });
 
         searchButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {

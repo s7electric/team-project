@@ -25,6 +25,7 @@ public class Main {
                 .addHomepageUseCase()
                 .addLogoutUseCase()
                 .addMakeListingUseCase()
+                .addProductUseCase()
                 .build();
 
         application.pack();

@@ -29,7 +29,7 @@ public class SearchInteractor implements SearchInputBoundary{
     public void execute(SearchInputData searchInputData) {
         List<Product> allProducts = dataAccess.getAllProducts();
         String[] searchTextSplit = searchInputData.getSearchText().split(" ");
-        Map<String, List<Object>> foundProducts = new HashMap<>();
+        Map<String, List<Object>> foundProducts = new LinkedHashMap<>();
 
         // Finds Products that their name or their category matches one of the inputs in the searchText
         for (String searchInput : searchTextSplit) {

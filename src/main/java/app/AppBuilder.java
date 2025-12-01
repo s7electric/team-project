@@ -188,6 +188,7 @@ public class AppBuilder {
         return this;
     }
 
+    @SuppressWarnings("checkstyle:FinalLocalVariable")
     private void loadProductsIntoHomepage() {
         if (homepageViewModel == null) {
             return;
@@ -200,7 +201,7 @@ public class AppBuilder {
             System.err.println("[App] No products loaded. Check network/API access.");
             products = java.util.Collections.emptyList();
         }
-        Map<String, List<Object>> mappedProducts = new HashMap<>();
+        Map<String, List<Object>> mappedProducts = new LinkedHashMap<>();
         for (Product p: products){
             if (!mappedProducts.containsKey(p.getProductUUID())){
                 mappedProducts.put(p.getProductUUID(), new ArrayList<>(Arrays.asList(p.getName(), p.getimageBase64(), p.getPrice())));
@@ -380,6 +381,20 @@ public class AppBuilder {
         makeListingInteractor = new MakeListingInteractor(presenter, dataAccessObject);
         makeListingController = new MakeListingController(makeListingInteractor);
         makeListingView.setController(makeListingController);
+        return this;
+    }
+
+    public AppBuilder addProductUseCase() {
+        final OpenProductOutputBoundary productPresenter =
+                new ProductPresenter(viewManagerModel, productViewModel, homepageViewModel);
+        final AddToCartOutputBoundary addToCartPresenter =
+                new AddToCartPresenter(viewManagerModel, addToCartViewModel);
+        openProductInteractor = new OpenProductInteractor(dataAccessObject, productPresenter);
+        addToCartInteractor = new AddToCartInteractor(dataAccessObject, addToCartPresenter, dataAccessObject2);
+        productController = new ProductController(openProductInteractor);
+        addToCartController = new AddToCartController(addToCartInteractor);
+        productView.setProductController(productController);
+        productView.setAddToCartController(addToCartController);
         return this;
     }
 

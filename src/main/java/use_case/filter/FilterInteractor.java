@@ -28,7 +28,7 @@ public class FilterInteractor implements FilterInputBoundary{
      * */
     public void execute(FilterInputData filterInputData){
         List<Product> allProducts = dataAccess.getAllProducts();
-        Map<String, List<Object>> filteredProducts = new HashMap<>();
+        Map<String, List<Object>> filteredProducts = new LinkedHashMap<>();
 
         // Gets all products if the filter category is All
         if (filterInputData.getFilter().equals("All")){
@@ -79,7 +79,7 @@ public class FilterInteractor implements FilterInputBoundary{
      * */
     public void loadProducts(){
         List<Product> allProducts = dataAccess.getAllProducts();
-        Map<String, List<Object>> filteredProducts = new HashMap<>();
+        Map<String, List<Object>> filteredProducts = new LinkedHashMap<>();
         fillProductMapFromList(allProducts, filteredProducts);
         FilterOutputData filterOutputData = new FilterOutputData("All", filteredProducts);
         this.filterPresenter.loadProducts(filterOutputData);
