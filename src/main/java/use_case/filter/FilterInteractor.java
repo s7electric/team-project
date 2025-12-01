@@ -28,7 +28,7 @@ public class FilterInteractor implements FilterInputBoundary{
      * */
     public void execute(FilterInputData filterInputData){
         List<Product> allProducts = dataAccess.getAllProducts();
-        Map<String, List<Object>> filteredProducts = new HashMap<>();
+        Map<String, List<Object>> filteredProducts = new LinkedHashMap<>();
 
         // Gets all products if the filter category is All
         if (filterInputData.getFilter().equals("All")){
@@ -41,12 +41,16 @@ public class FilterInteractor implements FilterInputBoundary{
 
         // Gets the most expensive products by comparing their prices
         } else if (filterInputData.getFilter().equals("Most Expensive")) {
-            allProducts.sort(Comparator.comparingDouble(Product::getPrice).reversed());
-            fillProductMapFromList(allProducts, filteredProducts);
+            allProducts.sort(Comparator.comparingDouble(Product::getPrice));
+            List<Product> newList = new ArrayList<>();
+            for (Product product : allProducts) {
+                newList.add(0, product);
+            }
+            fillProductMapFromList(newList, filteredProducts);
 
         // Gets the least expensive products by comparing their prices
         } else if (filterInputData.getFilter().equals("Least Expensive")) {
-            allProducts.sort((p1, p2) -> Double.compare(p1.getPrice(), p2.getPrice()));
+            allProducts.sort(Comparator.comparingDouble(Product::getPrice));
             fillProductMapFromList(allProducts, filteredProducts);
 
         // Gets the products associated with the user-specified category in the filter input data
@@ -75,7 +79,7 @@ public class FilterInteractor implements FilterInputBoundary{
      * */
     public void loadProducts(){
         List<Product> allProducts = dataAccess.getAllProducts();
-        Map<String, List<Object>> filteredProducts = new HashMap<>();
+        Map<String, List<Object>> filteredProducts = new LinkedHashMap<>();
         fillProductMapFromList(allProducts, filteredProducts);
         FilterOutputData filterOutputData = new FilterOutputData("All", filteredProducts);
         this.filterPresenter.loadProducts(filterOutputData);

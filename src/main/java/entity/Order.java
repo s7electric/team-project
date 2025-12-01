@@ -6,6 +6,7 @@ public class Order {
     private final Product[] products;
     private final String address;
     private final double price;
+    private String username;
 
 
     public Order(User customer, Product[] products, String address, double price) {
@@ -13,6 +14,7 @@ public class Order {
         this.products = products;
         this.address = address;
         this.price = price;
+        this.username = customer.getUsername();
     }
 
     public String getOrderUUID() {
@@ -33,5 +35,9 @@ public class Order {
 
     public double getPrice() {
         return price;
+    }
+
+    public String getUsername() {
+        return username;
     }
 }

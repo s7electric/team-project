@@ -37,9 +37,13 @@ public class SearchPresenter implements SearchOutputBoundary {
      * @param searchOutputData the search output data that wraps a searchText and a map of found products
      * */
     public void updateSuccess(SearchOutputData searchOutputData){
-        this.searchState.setSuccess(searchOutputData.getSearchText(), searchOutputData.getFoundProducts());
-        this.searchState.setFailure(null);
-        this.searchViewModel.setState(this.searchState);
+        HomepageState homepageState = homepageViewModel.getState();
+        String username = homepageState.getUsername();
+        HomepageState homepageStateNew = new HomepageState(username);
+        homepageStateNew.setSearchText(searchOutputData.getSearchText());
+        homepageStateNew.setProducts(searchOutputData.getFoundProducts());
+        this.homepageViewModel.setState(homepageStateNew);
+        this.viewManagerModel.setActiveViewName(homepageViewModel.getViewName());
     }
 
     /**
@@ -47,20 +51,22 @@ public class SearchPresenter implements SearchOutputBoundary {
      * @param searchOutputData the search output data that wraps an error message
      * */
     public void updateFailure(SearchOutputData searchOutputData){
-        this.searchState.setSuccess(null, null);
-        this.searchState.setFailure(searchOutputData.getError());
-        this.searchViewModel.setState(this.searchState);
+        SearchState searchStateNew = new SearchState();
+        searchStateNew.setSuccess(null, null);
+        searchStateNew.setFailure(searchOutputData.getError());
+        this.searchViewModel.setState(searchStateNew);
     }
 
     /**
      * Switches to homepage when the state of the search has changed
      * */
     public void switchToHomepageView(){
-        this.homepageState.setSearchText(this.searchState.getSearchTextSuccess());
-        this.homepageState.setProducts(this.searchState.getFoundProductsSuccess());
-        this.homepageViewModel.setState(this.homepageState);
-        this.searchState.setSuccess(null, null);
-        this.searchState.setFailure(null);
+        HomepageState homepageState = homepageViewModel.getState();
+        String username = homepageState.getUsername();
+        HomepageState homepageStateNew = new HomepageState(username);
+        homepageStateNew.setSearchText(homepageState.getSearchText());
+        homepageStateNew.setProducts(homepageState.getProducts());
+        this.homepageViewModel.setState(homepageStateNew);
         this.viewManagerModel.setActiveViewName(homepageViewModel.getViewName());
     }
 }

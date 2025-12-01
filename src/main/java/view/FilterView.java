@@ -15,7 +15,7 @@ import java.beans.PropertyChangeListener;
  * This class creates the view for the filter use case.
  * It contains a view name, a FilterViewModel and a FilterController.
  * */
-public class FilterView extends JPanel implements PropertyChangeListener {
+public class FilterView extends JPanel {
     private final String filterViewName = "Filter";
     private FilterViewModel filterViewModel;
     private FilterController filterController;
@@ -26,7 +26,6 @@ public class FilterView extends JPanel implements PropertyChangeListener {
      * */
     public FilterView(FilterViewModel filterViewModel){
         this.filterViewModel = filterViewModel;
-        this.filterViewModel.addPropertyChangeListener(this);
 
         JPanel filterPanel = new JPanel();
         JLabel filterLabel = new JLabel("Filter:");
@@ -38,9 +37,7 @@ public class FilterView extends JPanel implements PropertyChangeListener {
         filterSelectionPanel.add(filterComboBox);
 
         JPanel buttonsPanel = new JPanel();
-        JButton selectButton = new JButton("Select");
         JButton backButton = new JButton("Back");
-        buttonsPanel.add(selectButton);
         buttonsPanel.add(backButton);
 
         JPanel mainPanel = new JPanel();
@@ -48,6 +45,7 @@ public class FilterView extends JPanel implements PropertyChangeListener {
         mainPanel.add(filterPanel);
         mainPanel.add(filterSelectionPanel);
         mainPanel.add(buttonsPanel);
+        this.add(mainPanel);        
 
         filterComboBox.addActionListener(
                 new ActionListener() {
@@ -74,15 +72,6 @@ public class FilterView extends JPanel implements PropertyChangeListener {
      * */
     public void setController(FilterController filterController){
         this.filterController = filterController;
-    }
-
-    /**
-     * Listens to the event of the property change to see if the view has to change
-     * @param evt the event of the property change
-     * */
-    @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-        filterController.switchToHomepageView();
     }
 
     public String getViewName(){

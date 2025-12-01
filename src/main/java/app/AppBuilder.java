@@ -184,7 +184,7 @@ public class AppBuilder {
             System.err.println("[App] No products loaded. Check network/API access.");
             products = java.util.Collections.emptyList();
         }
-        Map<String, List<Object>> mappedProducts = new HashMap<>();
+        Map<String, List<Object>> mappedProducts = new LinkedHashMap<>();
         for (Product p: products){
             if (!mappedProducts.containsKey(p.getProductUUID())){
                 mappedProducts.put(p.getProductUUID(), new ArrayList<>(Arrays.asList(p.getName(), p.getimageBase64(), p.getPrice())));

@@ -13,6 +13,7 @@ import interface_adapter.Product.ProductViewModel;
 import interface_adapter.Product.ProductState;
 import interface_adapter.logout.LogoutState;
 import interface_adapter.logout.LogoutViewModel;
+import interface_adapter.make_listing.MakeListingState;
 import interface_adapter.make_listing.MakeListingViewModel;
 import use_case.homepage.HomepageInputData;
 import use_case.homepage.HomepageOutputBoundary;
@@ -106,6 +107,11 @@ public class HomepagePresenter implements HomepageOutputBoundary {
     }
     @Override
     public void switchToListingView(){
+        HomepageState current = homepageViewModel.getState();
+        String username = current.getUsername();
+        MakeListingState next = new MakeListingState();
+        next.setUsername(username);
+        makeListingViewModel.setState(next);
         this.viewManagerModel.setActiveViewName(this.makeListingViewModel.getViewName());
     }
     @Override

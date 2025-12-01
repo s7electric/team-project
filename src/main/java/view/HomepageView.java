@@ -4,6 +4,7 @@ import interface_adapter.homepage.HomepageController;
 import interface_adapter.homepage.HomepageState;
 import interface_adapter.homepage.HomepageViewModel;
 
+import java.io.ByteArrayInputStream;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -12,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.net.URL;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -106,7 +108,9 @@ public class HomepageView extends JPanel implements PropertyChangeListener {
             JPanel productPanel = new JPanel();
             JLabel imageLabel;
             try {
-                Image original = ImageIO.read(new URL((String)products.get(productKey).get(1)));
+                // Image original = ImageIO.read(new URL((String)products.get(productKey).get(1)));
+                byte[] imageBytes = Base64.getDecoder().decode((String)products.get(productKey).get(1));
+                Image original = ImageIO.read(new ByteArrayInputStream(imageBytes));
                 Image scaled = original.getScaledInstance(120, 120, Image.SCALE_SMOOTH);
                 imageLabel = new JLabel(new ImageIcon(scaled));
             } catch (Exception e){

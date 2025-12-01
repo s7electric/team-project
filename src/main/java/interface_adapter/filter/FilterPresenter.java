@@ -38,19 +38,26 @@ public class FilterPresenter implements FilterOutputBoundary {
      * @param filterOutputData the output data that wraps all the filtered products and the filter category
      * */
     public void updateFilteredProducts(FilterOutputData filterOutputData) {
-        this.filterState.setFilterCategory(filterOutputData.getFilterCategory());
-        this.filterState.setFilteredProducts(filterOutputData.getFilteredProducts());
-        this.filterViewModel.setState(this.filterState);
+        HomepageState homepageState = homepageViewModel.getState();
+        String username = homepageState.getUsername();
+        HomepageState homepageStateNew = new HomepageState(username);
+        homepageStateNew.setSearchText(filterOutputData.getFilterCategory());
+        homepageStateNew.setProducts(filterOutputData.getFilteredProducts());
+        this.homepageViewModel.setState(homepageStateNew);
+        this.viewManagerModel.setActiveViewName(homepageViewModel.getViewName());
     }
 
     /**
      * Switches to homepage when the state has changed
      * */
     public void switchToHomepageView(){
-        this.homepageState.setSearchText(this.filterState.getFilterCategory());
-        this.homepageState.setProducts(this.filterState.getFilteredProducts());
-        this.homepageViewModel.setState(this.homepageState);
-        this.viewManagerModel.setActiveViewName(this.homepageViewModel.getViewName());
+        HomepageState homepageState = homepageViewModel.getState();
+        String username = homepageState.getUsername();
+        HomepageState homepageStateNew = new HomepageState(username);
+        homepageStateNew.setSearchText(homepageState.getSearchText());
+        homepageStateNew.setProducts(homepageState.getProducts());
+        this.homepageViewModel.setState(homepageStateNew);
+        this.viewManagerModel.setActiveViewName(homepageViewModel.getViewName());
     }
 
     /**

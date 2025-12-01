@@ -35,7 +35,7 @@ import java.io.IOException;
 
 public class DataAccessObject implements
     AddToCartUserDataAccessInterface,
-        AddToCartProductDataAccessInterface,
+    AddToCartProductDataAccessInterface,
     FilterDataAccessInterface,
     LoginUserDataAccessInterface,
     UserDataAccessInterface,
@@ -44,7 +44,8 @@ public class DataAccessObject implements
     LogoutUserDataAccessInterface,
     SignUpDataAccessInterface, 
     AddFundsDataAccessInterface,
-    MakeListingDataAccessInterface {
+    MakeListingDataAccessInterface,
+    CheckoutDataAccessInterface {
 
         private final String URL1 = "https://xlez-ocau-8ty9.n2.xano.io/api:BftqpNiF";
         private final String URL2 = "https://xlez-ocau-8ty9.n2.xano.io/api:vu2PKIfe";
@@ -433,7 +434,7 @@ public class DataAccessObject implements
                 jsonBody.put("average_review_score", product.getAverageReviewScore());
                 JSONArray scoresArray = new JSONArray();
                 for (Integer score : product.getScores()) {
-                    scoresArray.put(score);
+                    scoresArray.put(score.intValue());
                 }
                 jsonBody.put("review_scores", scoresArray);
                 Request request = new Request.Builder()
@@ -443,8 +444,10 @@ public class DataAccessObject implements
                 client.newCall(request).execute();
             }
             catch (IOException e) {
+                System.out.println(e.getMessage());
             }
             catch (JSONException e) {
+                System.out.println(e.getMessage());
             }
         }
 
@@ -492,12 +495,60 @@ public class DataAccessObject implements
             }
         }
 
-//        @Override
-//        public void saveOrder(Order order) {
-//            // Not implemented
-//            return;
-//        }
+        @Override
+        public void saveOrder(Order order) {
+            OkHttpClient client = new OkHttpClient();
+            JSONArray products = new JSONArray();
+            for (Product product : order.getProducts()) {
+                products.put(product.getProductUUID());
+            }
+            JSONObject jsonBody = new JSONObject();
+            try {
+                jsonBody.put("seller_name", order.getUsername());
+                jsonBody.put("products", products);
+                jsonBody.put("price", order.getPrice());
+                jsonBody.put("address", order.getAddress());
+                Request request = new Request.Builder()
+                    .url(URL1 + "/order")
+                    .post(okhttp3.RequestBody.create(jsonBody.toString(), okhttp3.MediaType.parse("application/json")))
+                    .build();
+                client.newCall(request).execute();
+            }
+            catch (IOException e) {
+            }
+            catch (JSONException e) {
+            }
+        }
 
+        @Override
+        public void updateUserBalance(String username, double newBalance) {
+            User user = getUser(username);
+            if (user == null) {
+                return;
+            }
+            double diff = newBalance - user.getBalance();
+            if (diff < 0) {
+                user.removeBalance(0-diff);
+            }
+            else {
+                user.addBalance(diff);
+            }
+            saveUser(user);
+        }
 
-
+        @Override
+        public void updateUserPoints(String username, int newPoints) {
+            User user = getUser(username);
+            if (user == null) {
+                return;
+            }
+            int diff = newPoints - user.getPointsBalance();
+            if (diff < 0) {
+                user.removePointsBalance(0-diff);
+            }
+            else {
+                user.addPointsBalance(diff);
+            }
+            saveUser(user);
+        }
 }

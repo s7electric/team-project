@@ -7,13 +7,16 @@ import interface_adapter.add_to_cart.AddToCartController;
 import interface_adapter.add_to_cart.AddToCartState;
 import interface_adapter.add_to_cart.AddToCartViewModel;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.ByteArrayInputStream;
 import java.net.URL;
+import java.util.Base64;
 
 public class ProductView extends JPanel implements PropertyChangeListener {
 
@@ -146,9 +149,9 @@ public class ProductView extends JPanel implements PropertyChangeListener {
                 category.setText(state.getCategory());
                 username.setText(state.getUsername());
                 try {
-                    final URL url = new URL(state.getImageUrl());
-                    final ImageIcon icon = new ImageIcon(url);
-                    final Image scaled = icon.getImage().getScaledInstance(
+                    byte[] imageBytes = Base64.getDecoder().decode(state.getImageUrl());
+                    Image original = ImageIO.read(new ByteArrayInputStream(imageBytes));
+                    Image scaled = original.getScaledInstance(
                             200, 200, Image.SCALE_SMOOTH
                     );
                     imageLabel.setIcon(new ImageIcon(scaled));

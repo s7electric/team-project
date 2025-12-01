@@ -27,15 +27,15 @@ public class Product {
         if (category.isEmpty()) {throw new IllegalArgumentException("Product category cannot be empty");}
         this.category = category;
         this.averageReviewScore = 0;
-        this.scores = new ArrayList<>();
+        this.scores = new ArrayList<Integer>();
     }
 
     /* Do not use this constructor to create Products, only for formatting DB data. */
-    public Product(String name, double price, String productUUID, String imageUrl, User seller, String category, double averageReviewScore, ArrayList<Integer> scores) {
+    public Product(String name, double price, String productUUID, String imageBase64, User seller, String category, double averageReviewScore, ArrayList<Integer> scores) {
         this.name = name;
         this.price = price;
         this.productUUID = productUUID;
-        this.imageBase64 = imageUrl;
+        this.imageBase64 = imageBase64;
         this.seller = seller;
         this.category = category;
         this.averageReviewScore = averageReviewScore;
@@ -68,7 +68,10 @@ public class Product {
         for (Integer integer : scores) {
             newTotal += integer;
         }
-        averageReviewScore = newTotal / scores.size();
+        if (scores.size() == 0) {
+            return 0;
+        }
+        double averageReviewScore = newTotal / scores.size();
         return averageReviewScore;
     }
     public ArrayList<Integer> getScores() {
