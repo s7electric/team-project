@@ -35,7 +35,7 @@ import java.io.IOException;
 
 public class DataAccessObject implements
     AddToCartUserDataAccessInterface,
-        AddToCartProductDataAccessInterface,
+    AddToCartProductDataAccessInterface,
     FilterDataAccessInterface,
     LoginUserDataAccessInterface,
     UserDataAccessInterface,
@@ -44,7 +44,8 @@ public class DataAccessObject implements
     LogoutUserDataAccessInterface,
     SignUpDataAccessInterface, 
     AddFundsDataAccessInterface,
-    MakeListingDataAccessInterface {
+    MakeListingDataAccessInterface,
+    CheckoutDataAccessInterface {
 
         private final String URL1 = "https://xlez-ocau-8ty9.n2.xano.io/api:BftqpNiF";
         private final String URL2 = "https://xlez-ocau-8ty9.n2.xano.io/api:vu2PKIfe";
@@ -490,6 +491,44 @@ public class DataAccessObject implements
                 user.addBalance(amount);
                 saveUser(user);
             }
+        }
+
+        @Override
+        public void saveOrder(Order order) {
+            // TODO Auto-generated method stub
+            throw new UnsupportedOperationException("Unimplemented method 'saveOrder'");
+        }
+
+        @Override
+        public void updateUserBalance(String username, double newBalance) {
+            User user = getUser(username);
+            if (user == null) {
+                return;
+            }
+            double diff = newBalance - user.getBalance();
+            if (diff < 0) {
+                user.removeBalance(0-diff);
+            }
+            else {
+                user.addBalance(diff);
+            }
+            saveUser(user);
+        }
+
+        @Override
+        public void updateUserPoints(String username, int newPoints) {
+            User user = getUser(username);
+            if (user == null) {
+                return;
+            }
+            int diff = newPoints - user.getPointsBalance();
+            if (diff < 0) {
+                user.removePointsBalance(0-diff);
+            }
+            else {
+                user.addPointsBalance(diff);
+            }
+            saveUser(user);
         }
 
 //        @Override
