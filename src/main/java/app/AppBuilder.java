@@ -1,5 +1,11 @@
 package app;
 
+import interface_adapter.process_payment.ProcessPaymentController;
+import interface_adapter.process_payment.ProcessPaymentPresenter;
+import interface_adapter.process_payment.ProcessPaymentView;
+import use_case.process_payment.ProcessPaymentDataAccessInterface;
+import use_case.process_payment.ProcessPaymentInteractor;
+import use_case.process_payment.ProcessPaymentOutputBoundary;
 import data_access.DataAccessObject;
 import entity.Product;
 import interface_adapter.Product.ProductController;
@@ -121,6 +127,8 @@ public class AppBuilder {
     private MakeListingView makeListingView;
 
     // Controllers / interactors shared
+    private ProcessPaymentController processPaymentController;
+    private ProcessPaymentPresenter processPaymentPresenter;
     private LoginController loginController;
     private SignUpController signUpController;
     private HomepageController homepageController;
@@ -168,6 +176,15 @@ public class AppBuilder {
         cardPanel.add(homepageView, homepageView.getViewName());
         // Load products at boot so homepage has content
         loadProductsIntoHomepage();
+        return this;
+    }
+
+    public AppBuilder addProcessPaymentUseCase() {
+        processPaymentPresenter = new ProcessPaymentPresenter();
+        ProcessPaymentInteractor processPaymentInteractor =
+                new ProcessPaymentInteractor((ProcessPaymentDataAccessInterface) dataAccessObject, processPaymentPresenter);
+        processPaymentController = new ProcessPaymentController(processPaymentInteractor);
+
         return this;
     }
 
@@ -353,6 +370,8 @@ public class AppBuilder {
 
             // Execute the checkout use case - this will populate the window with data
             checkoutController.executeCheckout(currentUser);
+            PaymentWindow paymentWindow = new PaymentWindow(checkoutPresenter, processPaymentController);
+            processPaymentPresenter.setView((ProcessPaymentView) paymentWindow);
         };
 
         return this;
