@@ -21,7 +21,6 @@ public class OrderConfirmationWindow extends JFrame implements OrderConfirmation
     private final ApplyPromotionController applyPromotionController;
 
     private CheckoutViewModel currentViewModel;
-    private CheckoutOutputData checkoutData;
 
     public OrderConfirmationWindow(CheckoutPresenter presenter,
                                    ApplyPromotionController applyPromotionController) {

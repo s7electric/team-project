@@ -3,8 +3,7 @@ package view;
 import interface_adapter.checkout.PaymentView;
 import interface_adapter.checkout.CheckoutViewModel;
 import interface_adapter.checkout.CheckoutPresenter;
-import interface_adapter.checkout.CheckoutState;
-import use_case.checkout.CheckoutInteractor;
+import interface_adapter.process_payment.ProcessPaymentController;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -16,19 +15,19 @@ import java.awt.event.ActionListener;
 
 public class PaymentWindow extends JFrame implements PaymentView {
     private CheckoutPresenter presenter;
+    private ProcessPaymentController paymentController;
     private CheckoutViewModel currentViewModel;
-    private CheckoutInteractor paymentProcess;
 
-    public PaymentWindow(CheckoutPresenter presenter) {
+    public PaymentWindow(CheckoutPresenter presenter, ProcessPaymentController paymentController) {
         this.presenter = presenter;
-        this.presenter.setPaymentView(this); // Register with specific interface
+        this.paymentController = paymentController;
+        this.presenter.setPaymentView(this);
 
         setTitle("Payment");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(700, 700);
         setLocationRelativeTo(null);
 
-        // Auto-initialize with current state if available
         if (presenter.getCurrentState() != null) {
             CheckoutViewModel paymentViewModel = createPaymentViewModel(presenter.getCurrentState());
             showPaymentScreen(paymentViewModel);
@@ -60,30 +59,6 @@ public class PaymentWindow extends JFrame implements PaymentView {
         JOptionPane.showMessageDialog(this, errorMessage, "Error", JOptionPane.ERROR_MESSAGE);
     }
 
-    // Add this missing helper method
-    private CheckoutViewModel createPaymentViewModel(CheckoutState state) {
-        String statusMessage = state.hasSufficientFunds() ?
-                "Ready to complete payment" : "Insufficient funds";
-        String statusColor = state.hasSufficientFunds() ? "BLUE" : "RED";
-
-        return new CheckoutViewModel(
-                state.getUsername(),
-                state.getEmail(),
-                state.getBillingAddress(),
-                state.getCartItems(),
-                String.format("$%.2f", state.getSubtotal()),
-                String.valueOf(state.getTotalItems()),
-                String.format("-$%.2f", state.getPointsDiscount()),
-                String.format("$%.2f", state.getTotalAfterDiscount()),
-                String.format("$%.2f", state.getUserBalance()),
-                String.valueOf(state.getUserPoints()),
-                String.format("$%.2f", state.getAmountFromBalance()),
-                String.format("$%.2f", state.getBalanceAfterPayment()),
-                state.hasSufficientFunds(),
-                statusMessage,
-                statusColor
-        );
-    }
 
     private void initializeUI() {
         JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
@@ -241,7 +216,7 @@ public class PaymentWindow extends JFrame implements PaymentView {
         payButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                paymentProcess.processPayment(currentViewModel.getUsername());
+                processPayment();
             }
         });
 
@@ -249,5 +224,41 @@ public class PaymentWindow extends JFrame implements PaymentView {
         buttonPanel.add(payButton);
 
         return buttonPanel;
+    }
+
+    private void processPayment() {
+        if (!currentViewModel.hasSufficientFunds()) {
+            showPaymentResult(false, "Insufficient funds to complete payment");
+            return;
+        }
+
+        // Extract data from view model
+        String username = currentViewModel.getUsername();
+        double amountToPay = extractAmountFromString(currentViewModel.getFormattedTotalAfterDiscount());
+        int pointsToUse = extractPointsToUse(currentViewModel);
+
+        // Execute payment use case
+        paymentController.execute(username, amountToPay, pointsToUse);
+    }
+
+    private double extractAmountFromString(String formattedAmount) {
+        try {
+            // Remove $ sign and parse
+            return Double.parseDouble(formattedAmount.replace("$", "").trim());
+        } catch (NumberFormatException e) {
+            return 0.0;
+        }
+    }
+
+    private int extractPointsToUse(CheckoutViewModel viewModel) {
+        // Points used are the points that gave the discount
+        // Format: -$20.00 -> corresponds to 2000 points used (for $20 discount)
+        String discountStr = viewModel.getFormattedPointsDiscount();
+        try {
+            double discountAmount = Double.parseDouble(discountStr.replace("-$", "").trim());
+            return (int) (discountAmount * 100); // 100 points per $1 discount
+        } catch (NumberFormatException e) {
+            return 0;
+        }
     }
 }
