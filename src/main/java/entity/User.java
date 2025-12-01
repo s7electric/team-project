@@ -254,4 +254,8 @@ public class User {
 
         return billingAddresses.removeIf(a -> addressId.equals(a.getId()));
     }
+
+    public void setCart(Cart cart) {
+        this.cart = cart;
+    }
 }

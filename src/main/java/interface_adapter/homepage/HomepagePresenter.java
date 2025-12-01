@@ -10,6 +10,8 @@ import interface_adapter.sign_up.SignUpViewModel;
 import interface_adapter.search.SearchViewModel;
 import interface_adapter.filter.FilterViewModel;
 import interface_adapter.Product.ProductViewModel;
+import interface_adapter.checkout.CheckoutViewModel;
+import interface_adapter.checkout.OrderConfirmationView;
 import interface_adapter.Product.ProductState;
 import interface_adapter.logout.LogoutState;
 import interface_adapter.logout.LogoutViewModel;
@@ -33,6 +35,7 @@ public class HomepagePresenter implements HomepageOutputBoundary {
     private FilterViewModel filterViewModel;
     private LogoutViewModel logoutViewModel;
     private MakeListingViewModel makeListingViewModel;
+    private CheckoutViewModel checkoutViewModel;
     private Runnable openManageAddress;
     private Runnable openCart;
 
@@ -47,6 +50,7 @@ public class HomepagePresenter implements HomepageOutputBoundary {
                              FilterViewModel filterViewModel,
                              LogoutViewModel logoutViewModel,
                              MakeListingViewModel makeListingViewModel,
+                             CheckoutViewModel checkoutViewModel,
                              Runnable openManageAddress,
                              Runnable openCart) {
         this.signUpViewModel = signUpViewModel;
@@ -62,6 +66,7 @@ public class HomepagePresenter implements HomepageOutputBoundary {
         this.makeListingViewModel = makeListingViewModel;
         this.openManageAddress = openManageAddress;
         this.openCart = openCart;
+        this.checkoutViewModel = checkoutViewModel;
     }
 
     @Override
@@ -74,9 +79,10 @@ public class HomepagePresenter implements HomepageOutputBoundary {
     }
     @Override
     public void switchToCartView(){
-        if (openCart != null) {
-            openCart.run();
-        }
+        // if (openCart != null) {
+        //     openCart.run();
+        // }
+        this.viewManagerModel.setActiveViewName(checkoutViewModel.getViewName());
     }
     @Override
     public void switchToInfoView(HomepageOutputData homepageOutputData){

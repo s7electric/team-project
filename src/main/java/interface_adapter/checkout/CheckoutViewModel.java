@@ -2,27 +2,28 @@ package interface_adapter.checkout;
 
 import entity.CartItemDisplay;
 import java.util.List;
+import interface_adapter.ViewModel;
 
 /**
  * ViewModel for the checkout presentation layer
  * Contains formatted data ready for display
  */
-public class CheckoutViewModel {
-    private final String username;
-    private final String email;
-    private final String billingAddress;
-    private final List<CartItemDisplay> cartItems;
-    private final String formattedSubtotal;
-    private final String formattedTotalItems;
-    private final String formattedPointsDiscount;
-    private final String formattedTotalAfterDiscount;
-    private final String formattedUserBalance;
-    private final String formattedUserPoints;
-    private final String formattedAmountFromBalance;
-    private final String formattedBalanceAfterPayment;
-    private final boolean hasSufficientFunds;
-    private final String paymentStatusMessage;
-    private final String paymentStatusColor;
+public class CheckoutViewModel extends ViewModel<CheckoutState>{
+    private String username;
+    private String email;
+    private String billingAddress;
+    private List<CartItemDisplay> cartItems;
+    private String formattedSubtotal;
+    private String formattedTotalItems;
+    private String formattedPointsDiscount;
+    private String formattedTotalAfterDiscount;
+    private String formattedUserBalance;
+    private String formattedUserPoints;
+    private String formattedAmountFromBalance;
+    private String formattedBalanceAfterPayment;
+    private boolean hasSufficientFunds;
+    private String paymentStatusMessage;
+    private String paymentStatusColor;
 
     public CheckoutViewModel(String username, String email, String billingAddress,
                              List<CartItemDisplay> cartItems, String formattedSubtotal,
@@ -31,6 +32,7 @@ public class CheckoutViewModel {
                              String formattedUserPoints, String formattedAmountFromBalance,
                              String formattedBalanceAfterPayment, boolean hasSufficientFunds,
                              String paymentStatusMessage, String paymentStatusColor) {
+        super("CheckoutView");
         this.username = username;
         this.email = email;
         this.billingAddress = billingAddress;
@@ -46,6 +48,10 @@ public class CheckoutViewModel {
         this.hasSufficientFunds = hasSufficientFunds;
         this.paymentStatusMessage = paymentStatusMessage;
         this.paymentStatusColor = paymentStatusColor;
+    }
+
+    public CheckoutViewModel() {
+        super("CheckoutView");
     }
 
     // Getters

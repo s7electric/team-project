@@ -75,6 +75,9 @@ public class PasswordStrengthChecker {
      * @throws IllegalArgumentException the message that the password is weak
      * */
     private static void checkWithEmail(String email, String password) throws IllegalArgumentException{
+        if (!email.contains("@")) {
+            throw new IllegalArgumentException("The email is invalid.");
+        }
         String emailSection = email.toLowerCase().substring(0, email.toLowerCase().indexOf('@'));
         String errorMessage = "Your password contains your email or \n" +
                 "a 4-character sequence from the email.";

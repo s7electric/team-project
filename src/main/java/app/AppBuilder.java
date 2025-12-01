@@ -268,7 +268,7 @@ public class AppBuilder {
                 signUpViewModel, viewManagerModel, loginViewModel, homepageViewModel,
                 homepageState, productViewModel, productState,
                 searchViewModel, filterViewModel, logoutViewModel, makeListingViewModel,
-                openManageAddress, openCart);
+                checkoutViewModel, openManageAddress, openCart);
         HomepageInteractor interactor = new HomepageInteractor(presenter, dataAccessObject);
         homepageController = new HomepageController(interactor);
         homepageView.setController(homepageController);
