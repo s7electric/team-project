@@ -4,5 +4,6 @@ import entity.User;
 
 public interface ProcessPaymentDataAccessInterface {
     User getUser(String username);
-    void saveUser(User user);
+    void updateUserBalance(String username, double newBalance);
+    void updateUserPoints(String username, int newPoints);
 }
