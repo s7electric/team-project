@@ -142,6 +142,7 @@ public class ProductView extends JPanel implements PropertyChangeListener {
             }
             else {
                 productName.setText(state.getName());
+                productID.setText(state.getProductid());
                 seller.setText(state.getSellerName());
                 productPrice.setText(state.getPrice());
                 productRating.setText(state.getRating());
