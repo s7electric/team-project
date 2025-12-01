@@ -144,13 +144,8 @@ public class SignUpView extends JPanel implements PropertyChangeListener {
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         SignUpState signUpState = (SignUpState) evt.getNewValue();
-        if (signUpState.getSuccess() != null){
-            this.signUpController.switchToHomepageView();
-        }
         if (signUpState.getFailure() != null){
-            this.errorLabel.setText(signUpState.getFailure());
-        } else {
-            this.errorLabel.setText("");
+            JOptionPane.showMessageDialog(null, signUpState.getFailure());
         }
     }
 

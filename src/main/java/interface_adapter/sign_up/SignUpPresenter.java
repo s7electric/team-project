@@ -2,6 +2,7 @@ package interface_adapter.sign_up;
 
 import interface_adapter.ViewManagerModel;
 import interface_adapter.login.LoginViewModel;
+import interface_adapter.search.SearchState;
 import use_case.sign_up.SignUpOutputBoundary;
 import use_case.sign_up.SignUpOutputData;
 import interface_adapter.homepage.*;
@@ -41,9 +42,12 @@ public class SignUpPresenter implements SignUpOutputBoundary{
      * @param outputData the output data of the SignUpInteractor
      * */
     public void updateSuccess(SignUpOutputData outputData){
-        this.signUpState.setSuccess(outputData.getUser().getUsername());
-        this.signUpState.setFailure(null);
-        this.signUpViewModel.setState(signUpState);
+        HomepageState homepageState = homepageViewModel.getState();
+        String username = homepageState.getUsername();
+        HomepageState homepageStateNew = new HomepageState(username);
+        homepageStateNew.setUsername(outputData.getUser().getUsername());
+        this.homepageViewModel.setState(homepageStateNew);
+        this.viewManagerModel.setActiveViewName(homepageViewModel.getViewName());
     }
 
     /**
@@ -51,17 +55,16 @@ public class SignUpPresenter implements SignUpOutputBoundary{
      * @param outputData the output data of the SignUpInteractor
      * */
     public void updateFailure(SignUpOutputData outputData) {
-        this.signUpState.setSuccess(null);
-        this.signUpState.setFailure(outputData.getError());
-        this.signUpViewModel.setState(signUpState);
+        SignUpState signUpStateNew = new SignUpState();
+        signUpStateNew.setSuccess(null);
+        signUpStateNew.setFailure(outputData.getError());
+        this.signUpViewModel.setState(signUpStateNew);
     }
 
     /**
      * Switches to log in view
      * */
     public void switchToLoginView(){
-        this.signUpState.setSuccess(null);
-        this.signUpState.setFailure(null);
         this.viewManagerModel.setActiveViewName(loginViewModel.getViewName());
     }
 
@@ -69,10 +72,12 @@ public class SignUpPresenter implements SignUpOutputBoundary{
      * Switches to homepage view and passes the username
      * */
     public void switchToHomepageView(){
-        this.homepageState.setUsername(this.signUpState.getSuccess());
-        this.homepageViewModel.setState(this.homepageState);
-        this.signUpState.setSuccess(null);
-        this.signUpState.setFailure(null);
+        HomepageState homepageState = homepageViewModel.getState();
+        String username = homepageState.getUsername();
+        HomepageState homepageStateNew = new HomepageState(username);
+        homepageStateNew.setSearchText(homepageState.getSearchText());
+        homepageStateNew.setProducts(homepageState.getProducts());
+        this.homepageViewModel.setState(homepageStateNew);
         this.viewManagerModel.setActiveViewName(homepageViewModel.getViewName());
     }
 }
