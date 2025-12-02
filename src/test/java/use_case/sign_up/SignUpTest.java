@@ -253,4 +253,59 @@ public class SignUpTest {
         SignUpInputBoundary signUpInputBoundary = new SignUpInteractor(signUpOutputBoundary, signUpDataAccessObject);
         signUpInputBoundary.execute(signUpInputData);
     }
+    @Test
+    void testSwitchToLoginView() {
+        SignUpDataAccessInterface  signUpDataAccessObject = new DataAccessObject();
+        SignUpOutputBoundary signUpOutputBoundary = new SignUpOutputBoundary() {
+            @Override
+            public void updateSuccess(SignUpOutputData signUpOutputData) {
+                fail("Use case failure is unexpected");
+            }
+
+            @Override
+            public void updateFailure(SignUpOutputData signUpOutputData) {
+                fail("Use case failure is unexpected");
+            }
+
+            @Override
+            public void switchToLoginView() {
+                assert true;
+            }
+
+            @Override
+            public void switchToHomepageView() {
+                fail("Use case failure is unexpected");
+            }
+        };
+        SignUpInputBoundary signUpInputBoundary = new SignUpInteractor(signUpOutputBoundary, signUpDataAccessObject);
+        signUpInputBoundary.switchToLoginView();
+    }
+
+    @Test
+    void testSwitchToHomepageView() {
+        SignUpDataAccessInterface  signUpDataAccessObject = new DataAccessObject();
+        SignUpOutputBoundary signUpOutputBoundary = new SignUpOutputBoundary() {
+            @Override
+            public void updateSuccess(SignUpOutputData signUpOutputData) {
+                fail("Use case failure is unexpected");
+            }
+
+            @Override
+            public void updateFailure(SignUpOutputData signUpOutputData) {
+                fail("Use case failure is unexpected");
+            }
+
+            @Override
+            public void switchToLoginView() {
+                fail("Use case failure is unexpected");
+            }
+
+            @Override
+            public void switchToHomepageView() {
+                assert true;
+            }
+        };
+        SignUpInputBoundary signUpInputBoundary = new SignUpInteractor(signUpOutputBoundary, signUpDataAccessObject);
+        signUpInputBoundary.switchToHomepageView();
+    }
 }

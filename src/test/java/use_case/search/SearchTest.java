@@ -2,6 +2,7 @@ package use_case.search;
 
 import data_access.DataAccessObject;
 import org.junit.jupiter.api.Test;
+import use_case.sign_up.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -57,5 +58,25 @@ public class SearchTest{
         };
         SearchInputBoundary searchInputBoundary = new SearchInteractor(searchOutputBoundary, searchDataAccessObject);
         searchInputBoundary.execute(searchInputData);
+    }
+    @Test
+    void testSwitchToHomepageView() {
+        SearchDataAccessInterface searchDataAccessObject = new DataAccessObject();
+        SearchOutputBoundary searchOutputBoundary = new SearchOutputBoundary() {
+            @Override
+            public void updateSuccess(SearchOutputData searchOutputData) {
+                fail("Use case failure is unexpected");
+            }
+            @Override
+            public void updateFailure(SearchOutputData searchOutputData) {
+                fail("Use case failure is unexpected");
+            }
+            @Override
+            public void switchToHomepageView() {
+                assert true;
+            }
+        };
+        SearchInputBoundary searchInputBoundary = new SearchInteractor(searchOutputBoundary, searchDataAccessObject);
+        searchInputBoundary.switchToHomepageView();
     }
 }
