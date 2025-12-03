@@ -13,22 +13,39 @@ your team will find it easier to prepare for the final presentation
 at the end of the term.
 -------------------------------
 Presentation TUT0401-BA2200-17 Dec 1 4:00 -> 4:40
+
 Project Specification for Group  TUT0401-17 
+
 Team Name: Team 17
+
 Domain: Online Store
+
 An account-based online store. Users will be able to add items to a cart that they can eventually pay for. 
+
 User Stories: 
+
 User story 1: As a user, I want to be able to add items to my cart, so that I can eventually pay and receive the items.
+
 User story 2: As a user, I want to create an account so that I can personalize my experience and get the access to my points and tokens
+
 User story 3: As a user, I want to give a rating to items so that I can give other customers my advice.
+
 User story 4: As a user, I want to use my points or tokens so that I can reduce the amount of money I pay.
+
 User story 5: As a user, I want to get recommendations or suggestions based on my previous purchases and the deals of the day so that I can shop easily and with knowledge.
+
 User story 6: As a user, I want to be able to create listings for items on the store so that other people can purchase them.
+
 User story 7: As a user, I want to sort and filter products (price, rating, category) so that I can compare options easily.
+
 User story 8: As a user, I want to save items to a wishlist so that I can purchase them later.
+
 User story 9: As a user, I want to add money to my account so I can easily pay for the items in my cart. 
+
 User story 10: As a user, I want to manage my addresses so that checkout is faster and accurate.
+
 User story 11: As a user, I want to be able to add money to my account to buy products.
+
 User story 12: As a customer, I want to apply promo codes or gift cards so that I can save money.
 
 
