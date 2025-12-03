@@ -48,7 +48,6 @@ public class EditAddressInteractor implements EditAddressInputBoundary {
             return;
         }
 
-        // update fields
         target.setLine1(in.getLine1());
         target.setLine2(in.getLine2());
         target.setCity(in.getCity());
@@ -56,7 +55,6 @@ public class EditAddressInteractor implements EditAddressInputBoundary {
         target.setPostalCode(in.getPostalCode());
         target.setCountry(in.getCountry());
 
-        // handle default flags
         if (in.isDefaultShipping()) {
             addresses.forEach(a -> a.setDefaultShipping(false));
         }

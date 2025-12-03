@@ -16,14 +16,12 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class ManageAddressTest {
 
-    /* =======================  AddAddressInteractor Tests  ======================= */
 
     @Test
     void testAddAddressSuccess() {
         FakeUserDataAccess userData = new FakeUserDataAccess();
         FakeAddPresenter presenter = new FakeAddPresenter();
 
-        // 先放一个已有用户到“数据库”里
         User user = new User(
                 "alice",
                 "alice@example.com",
@@ -52,12 +50,10 @@ public class ManageAddressTest {
 
         interactor.execute(input);
 
-        // Presenter 收到的是成功而不是错误
         assertNull(presenter.lastErrors, "There should be no validation errors.");
         assertNotNull(presenter.lastOutput, "Output data should not be null.");
         assertEquals("alice", presenter.lastOutput.getUsername());
 
-        // 检查 FakeUserDataAccess 里用户被更新了
         User savedUser = userData.getUser("alice");
         assertNotNull(savedUser);
         assertEquals(1, savedUser.getBillingAddresses().size());
@@ -88,7 +84,6 @@ public class ManageAddressTest {
         AddAddressInteractor interactor =
                 new AddAddressInteractor(userData, presenter);
 
-        // line1 和 city 为空，会触发 validation error
         AddAddressInputData input = new AddAddressInputData(
                 "bob",
                 "",
@@ -117,7 +112,6 @@ public class ManageAddressTest {
         AddAddressInteractor interactor =
                 new AddAddressInteractor(userData, presenter);
 
-        // username 在 fake DAO 中不存在
         AddAddressInputData input = new AddAddressInputData(
                 "ghost",
                 "123 King St",
@@ -137,7 +131,6 @@ public class ManageAddressTest {
         assertEquals("User not found: ghost", presenter.lastUserNotFoundMessage);
     }
 
-    /* =======================  EditAddressInteractor Tests  ======================= */
 
     @Test
     void testEditAddressSuccess() {
@@ -260,7 +253,6 @@ public class ManageAddressTest {
         assertEquals("User not found: ghost", presenter.lastNotFoundMessage);
     }
 
-    /* =======================  DeleteAddressInteractor Tests  ======================= */
 
     @Test
     void testDeleteAddressSuccess() {
@@ -346,7 +338,6 @@ public class ManageAddressTest {
         assertEquals("User not found: ghost", presenter.lastNotFoundMessage);
     }
 
-    /* =======================  Fake DAO ======================= */
 
     private static class FakeUserDataAccess implements UserDataAccessInterface {
         private final Map<String, User> store = new HashMap<>();
@@ -367,7 +358,6 @@ public class ManageAddressTest {
         }
     }
 
-    /* =======================  Fake Presenters ======================= */
 
     private static class FakeAddPresenter implements AddAddressOutputBoundary {
         AddAddressOutputData lastOutput;
