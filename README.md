@@ -55,187 +55,340 @@ User story 12: As a customer, I want to apply promo codes or gift cards so that 
 Use Cases:
 
 Use Case 1: Add Item to Cart
+
 Main Flow:
+
 User selects a product.
+
 The System displays product details.
+
 User clicks “Add to Cart,” prompting the system to add the item to the cart and update the total.
+
 Alternative Flows:
+
 Item out of stock → system shows “Out of stock” message.
+
 Use Case 2: Creating an Account
+
 Main Flow:
+
 User selects the Signup Button if they do not have an account.
+
 User input their name, their contact information and a password.
+
 User confirms their password.
+
 User selects the Create button.
+
 User receives a confirmation email.
+
 User confirms their identity.
+
 User has a new account now.
+
 Alternative Flow:
+
 User already has an account so they cannot register a new one so they get a warning that the account exists and they need to log in instead of signing up.
+
 User Case 3: Item Rating
+
 Main Flow:
+
 User should have been signed up.
+
 User selects an item.
+
 User gives stars from 1 to 5 based on their opinion.
+
 User confirms the rating.
+
 User sees the updated item status with the new average rating.
+
 Alternative Flow:
+
 User can undo their rating and give a new one.
+
 User Case 4:   Token Discounts
+
 	Main Flow:
+
 User selects an items they want to buy.
+
 User wants to pay for the item in the cart.
+
 User sees the amount of the tokens or points they can use to lower their cost.
+
 User agrees to use their points or token.
+
 User sees the amount points or tokens used for their purchase in the receipt.
+
 Alternative Flow:
+
 User can see their current amount of tokens or points in a page regardless of their cart being empty or not.
+
 User Case 5: Daily Deals
+
 	Main Flow:
+
 User selects the page for the deals of the day page.
+
 User selects an item there.
+
 User add the item into the cart.
+
 User follows the other steps as they do normally for other types of purchases.
+
 Main Flow for the recommendations:
+
 User sees the products recommended to them by the app based on their previous purchases on the main page.
+
 User selects an item.
+
 User follows the other steps as they do normally for other types of purchases.
+
 User Case 6: Create Listing
+
 Main Flow:
+
 User selects “Create Listing” button
+
 User is prompted to choose an image file for the listing
+
 User submits a name and price for the listing
+
 User can now see the listing on the market view
+
 Alternative flow: 
+
 User selects “Create Listing” button
+
 User is prompted to choose an image file for the listing
+
 Process is canceled because the file is invalid; user is notified
+
 Use Case 7: Search & Filter Products
+
 	Main Flow:
+
 User enters a search term or selects a category..
+
 System returns a list of matching products.
+
 User applies filters (price range, rating, brand) and/or sorting (price, popularity).
+
 System refreshes results accordingly.
+
 Alternative Flow:
+
 No match.
+
 System shows “No results” with suggestions (broaden filters, try similar keywords).
+
 Use Case 8: Login
- 	Main Flow:
-User enters email and password.
-System authenticates and starts a session.
-Alternative Flow:
-Wrong credentials.
-System shows error and rate-limits repeated attempts.
-Use Case 9: Logout
- 	Main Flow:
-User clicks “Logout.”
-System ends session and returns to the home page.
-Use Case 10: Manage Shipping/Billing Addresses
+
 	Main Flow:
-	      - User navigates to “Account then Addresses.”
-	      - System displays saved addresses.
-	      - User selects “Add Address,” fills in fields, and saves.
-	     - System validates and saves the new address.
+
+User enters email and password.
+
+System authenticates and starts a session.
+
+Alternative Flow:
+
+Wrong credentials.
+
+System shows error and rate-limits repeated attempts.
+
+Use Case 9: Logout
+
+	Main Flow:
+
+User clicks “Logout.”
+
+System ends session and returns to the home page.
+
+Use Case 10: Manage Shipping/Billing Addresses
+	
+	Main Flow:
+	      
+		  - User navigates to “Account then Addresses.”
+	      
+		  - System displays saved addresses.
+	     
+		  - User selects “Add Address,” fills in fields, and saves.
+	
+		 - System validates and saves the new address.
+
 	Alternative Flow:
+
 Address fails validation (missing/invalid fields) then system highlights errors.
+
 User edits or deletes an existing address then system updates list and confirms changes.
+
 Use Case 11: Add Funds (to the user’s Account)
+
 Main Flow:
+
 User selects the “Add Funds” button.
+
 The system displays the current balance, some pre-set options ($5, $10, $20 etc) and the option to choose a custom amount.
+
 System adds the selected amount to the account’s balance.
+
 Alternative Flow:
+
 User inputs an invalid custom option (float with more than 2 decimal places, non-positive number, or a non-numerical character)
+
 System displays a pop-up informing the user they need to input a valid monetary amount (i.e. a positive number with no more than 2 decimal places)
+
 Account balance remains unaffected.
+
 Use Case 12: Apply promotions
+
 Main Flow:
+
 User views cart or checkout page.
+
 The user enters a promo code or gift card number and clicks “Apply.”
+
 The system validates the code, updates totals, and shows the discount or balance used.
-      -  Alternative Flow:
+    
+	  -  Alternative Flow:
+	
 	- Code invalid/expired or conditions not met then the system shows reason and keeps totals unchanged.
+
 	- Multiple promotions conflict then system applies best eligible discount and explains the rule
+
 Use Case 13: Checkout
+
 Main Flow:
+
 User views cart or checkout page
+
 User selects checkout option
+
 User selects Pay
+
 User confirms payment
+
 Alternative Flow:
+
 The user has insufficient funds.
+
 There is nothing in the cart.
+
 Use Case 14: Clicking on a product to see more information
+
 Main Flow:
+
 User sees a product they are interested in and clicks it to see more information
 
+Leads:
 
-
-
-
-MVP:
-
-
-
-Lead
-Use Case [title of use case from previous section]
 Eric
+
 Use Case #1,5
+
 Ethan
+
 Use Case #8, #9
+
 Zhaoning Zhang (Robert)
+
 Use Case #10, #12
+
 Sam
+
 Use Case #6, #11
+
 John
+
 Use Case #3, 4
+
 Reza
+
 Use Case #2, #7
 
  
 
 Proposed Entities for the Domain:
+
 Entity 1: User
+
 private name: String
+
 private email: String
+
 private passwordHash: String
+
 private balance: int
+
 public getName(): String
+
 public getEmail(): String
+
 public addBalance(double): void
+
 public removeBalance(double): void
+
 public setPassword(String): void
+
 public checkPassword(String): boolean
+
 Entity 2: Product
+
 private name: String
+
 private price: double
+
 private imageURL: String
+
 private seller: User
+
 public getName(): String
+
 public getPrice(): double
+
 public getImageURL(): String
+
 public getSeller(): User
+
 Entity 3: Cart
+
 private owner: User
+
 private products: Product[]
+
 public getOwner(): User
+
 public getProducts(): Product[]
+
 Entity 4: Order
+
 private customer: User
+
 private products: Product[]
+
 private address: String
+
 private price: double
+
 public getCustomer(): User
+
 public getProducts(): Product[]
+
 public getAddress(): String
+
 public getPrice(): double
 
 
 
 
 Proposed API for the project:
-API Name: Custom (Xano)
-Main Service Provided: Everything (Customizable)
-We will create the necessary database and API
-Status: Not yet tested using OkHttp, tested successfully in browser (responds and gives DB info)
 
+API Name: Custom (Xano)
+
+Main Service Provided: Everything (Customizable)
+
+We will create the necessary database and API
+
+Status: Fully functional
