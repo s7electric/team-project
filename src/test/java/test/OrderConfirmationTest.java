@@ -18,7 +18,7 @@ public class OrderConfirmationTest {
         // Create the view with the presenter
         OrderConfirmationWindow orderWindow = new OrderConfirmationWindow(presenter);
 
-        // Execute checkout - this will trigger the whole flow
+        // Execute checkout
         SwingUtilities.invokeLater(() -> {
             controller.executeCheckout("john_doe");
         });

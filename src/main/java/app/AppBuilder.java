@@ -367,8 +367,6 @@ public class AppBuilder {
 
             // Create the OrderConfirmationWindow with the presenter
             OrderConfirmationWindow orderWindow = new OrderConfirmationWindow(checkoutPresenter);
-
-            // Execute the checkout use case - this will populate the window with data
             checkoutController.executeCheckout(currentUser);
             PaymentWindow paymentWindow = new PaymentWindow(checkoutPresenter, processPaymentController);
             processPaymentPresenter.setView((ProcessPaymentView) paymentWindow);
