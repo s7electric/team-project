@@ -35,15 +35,22 @@ public class MakeListingInteractor implements MakeListingInputBoundary {
                 dataAccessInterface.getUser(inputData.getSellerName()),
                 inputData.getCategory()
             );
+            dataAccessInterface.postListing(product);
         } catch (IOException e) {
             presenter.prepareFailView(new MakeListingOutputData(
-                "Failed to create listing; \n" + e.getMessage() + "\n Please try again.", 
+                "Failed to create listing;\n Please try again.",
                 inputData.getSellerName()
             ));
             return;
         }
+        catch (NullPointerException e) {
+            presenter.prepareFailView(new MakeListingOutputData(
+                    "User does not exist.\n Please try again.",
+                    inputData.getSellerName()
+            ));
+            return;
+        }
 
-        dataAccessInterface.postListing(product);
         presenter.prepareSuccessView(new MakeListingOutputData(
             product.getName() + " listed successfully!", 
             inputData.getSellerName()));
