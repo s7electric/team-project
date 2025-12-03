@@ -17,4 +17,6 @@ public interface UserDataAccessInterface {
      * @param user the user to save
      */
     void saveUser(User user);
+
+    User getUserData(String username);
 }

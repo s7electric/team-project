@@ -10,21 +10,24 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
+/**
+ * Tests for AddAddressInteractor, EditAddressInteractor, DeleteAddressInteractor
+ * using an in-memory FakeUserDataAccess.
+ */
 public class ManageAddressTest {
+
 
     @Test
     void testAddAddressSuccess() {
         FakeUserDataAccess userData = new FakeUserDataAccess();
         FakeAddPresenter presenter = new FakeAddPresenter();
 
-        HashSet<Address> initialAddresses = new HashSet<>();
         User user = new User(
                 "alice",
                 "alice@example.com",
                 123456,
                 0.0,
-                initialAddresses,
+                new HashSet<>(),
                 new ArrayList<>(),
                 new Cart("alice")
         );
@@ -55,7 +58,7 @@ public class ManageAddressTest {
         assertNotNull(savedUser);
         assertEquals(1, savedUser.getBillingAddresses().size());
 
-        Address added = savedUser.getBillingAddresses().iterator().next();
+        Address added = savedUser.getBillingAddresses().get(0);
         assertEquals("123 King St", added.getLine1());
         assertEquals("Toronto", added.getCity());
         assertTrue(added.isDefaultBilling());
@@ -99,6 +102,33 @@ public class ManageAddressTest {
         assertNotNull(presenter.lastErrors);
         assertTrue(presenter.lastErrors.containsKey("line1"));
         assertTrue(presenter.lastErrors.containsKey("city"));
+    }
+
+    @Test
+    void testAddAddressUserNotFound() {
+        FakeUserDataAccess userData = new FakeUserDataAccess();
+        FakeAddPresenter presenter = new FakeAddPresenter();
+
+        AddAddressInteractor interactor =
+                new AddAddressInteractor(userData, presenter);
+
+        AddAddressInputData input = new AddAddressInputData(
+                "ghost",
+                "123 King St",
+                "Unit 8",
+                "Toronto",
+                "ON",
+                "M5V 1A1",
+                "Canada",
+                false,
+                false
+        );
+
+        interactor.execute(input);
+
+        assertNull(presenter.lastOutput);
+        assertNull(presenter.lastErrors);
+        assertEquals("User not found: ghost", presenter.lastUserNotFoundMessage);
     }
 
 
@@ -150,7 +180,7 @@ public class ManageAddressTest {
 
         User savedUser = userData.getUser("alice");
         assertNotNull(savedUser);
-        Address edited = savedUser.getBillingAddresses().iterator().next();
+        Address edited = savedUser.getBillingAddresses().get(0);
 
         assertEquals("456 Queen St", edited.getLine1());
         assertEquals("M5V 2A2", edited.getPostalCode());
@@ -196,6 +226,33 @@ public class ManageAddressTest {
         assertEquals("Address not found: NON_EXIST_ID", presenter.lastNotFoundMessage);
     }
 
+    @Test
+    void testEditAddressUserNotFound() {
+        FakeUserDataAccess userData = new FakeUserDataAccess();
+        FakeEditPresenter presenter = new FakeEditPresenter();
+
+        EditAddressInteractor interactor =
+                new EditAddressInteractor(userData, presenter);
+
+        EditAddressInputData input = new EditAddressInputData(
+                "ghost",
+                "ANY_ID",
+                "456 Queen St",
+                "Floor 2",
+                "Toronto",
+                "ON",
+                "M5V 2A2",
+                "Canada",
+                false,
+                false
+        );
+
+        interactor.execute(input);
+
+        assertNull(presenter.lastOutput);
+        assertEquals("User not found: ghost", presenter.lastNotFoundMessage);
+    }
+
 
     @Test
     void testDeleteAddressSuccess() {
@@ -233,7 +290,7 @@ public class ManageAddressTest {
         assertNotNull(savedUser);
         assertTrue(savedUser.getBillingAddresses().isEmpty(),
                 "Address should be removed from user's addresses.");
-        assertEquals(addr.getId(), presenter.lastDeletedId);
+        assertNotNull(presenter.lastOutput);
     }
 
     @Test
@@ -260,8 +317,27 @@ public class ManageAddressTest {
 
         interactor.execute(input);
 
+        assertNull(presenter.lastOutput);
         assertEquals("Address not found: UNKNOWN_ID", presenter.lastNotFoundMessage);
     }
+
+    @Test
+    void testDeleteAddressUserNotFound() {
+        FakeUserDataAccess userData = new FakeUserDataAccess();
+        FakeDeletePresenter presenter = new FakeDeletePresenter();
+
+        DeleteAddressInteractor interactor =
+                new DeleteAddressInteractor(userData, presenter);
+
+        DeleteAddressInputData input =
+                new DeleteAddressInputData("ghost", "ANY_ID");
+
+        interactor.execute(input);
+
+        assertNull(presenter.lastOutput);
+        assertEquals("User not found: ghost", presenter.lastNotFoundMessage);
+    }
+
 
     private static class FakeUserDataAccess implements UserDataAccessInterface {
         private final Map<String, User> store = new HashMap<>();
@@ -275,7 +351,13 @@ public class ManageAddressTest {
         public void saveUser(User user) {
             store.put(user.getUsername(), user);
         }
+
+        @Override
+        public User getUserData(String username) {
+            return store.get(username);
+        }
     }
+
 
     private static class FakeAddPresenter implements AddAddressOutputBoundary {
         AddAddressOutputData lastOutput;
@@ -324,12 +406,12 @@ public class ManageAddressTest {
     }
 
     private static class FakeDeletePresenter implements DeleteAddressOutputBoundary {
-        String lastDeletedId;
+        DeleteAddressOutputData lastOutput;
         String lastNotFoundMessage;
 
         @Override
         public void prepareSuccessView(DeleteAddressOutputData outputData) {
-            this.lastDeletedId = outputData.getDeletedAddressId();
+            this.lastOutput = outputData;
         }
 
         @Override

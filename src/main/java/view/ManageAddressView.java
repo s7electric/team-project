@@ -24,7 +24,6 @@ public class ManageAddressView extends JFrame implements PropertyChangeListener 
     private final ManageAddressController controller;
     private final ManageAddressViewModel viewModel;
 
-    // UI components
     private final DefaultListModel<Address> addressListModel = new DefaultListModel<>();
     private final JList<Address> addressList = new JList<>(addressListModel);
 
@@ -45,7 +44,6 @@ public class ManageAddressView extends JFrame implements PropertyChangeListener 
 
     private final JLabel lblMessage = new JLabel(" ");
 
-    // To restore original borders after we highlight errors
     private final Map<JComponent, Border> originalBorders = new HashMap<>();
     private final Border errorBorder = new LineBorder(Color.RED, 2, true);
 
@@ -67,7 +65,6 @@ public class ManageAddressView extends JFrame implements PropertyChangeListener 
         setSize(900, 600);
         setLocationRelativeTo(null);
 
-        // Left: address list
         addressList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         addressList.setCellRenderer((list, value, index, isSelected, cellHasFocus) -> {
             JLabel label = new JLabel();
@@ -81,7 +78,6 @@ public class ManageAddressView extends JFrame implements PropertyChangeListener 
         });
         JScrollPane listScroll = new JScrollPane(addressList);
 
-        //Right: form
         JPanel formPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
         gc.insets = new Insets(6, 6, 6, 6);
@@ -125,7 +121,6 @@ public class ManageAddressView extends JFrame implements PropertyChangeListener 
         lblMessage.setForeground(Color.DARK_GRAY);
         formPanel.add(lblMessage, gc);
 
-        //Split pane
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, listScroll, formPanel);
         splitPane.setDividerLocation(350);
         splitPane.setResizeWeight(0.4);
