@@ -2,9 +2,11 @@ package data_access;
 
 import use_case.add_to_cart.AddToCartProductDataAccessInterface;
 import use_case.add_to_cart.AddToCartUserDataAccessInterface;
+import use_case.apply_promotion.PromotionDataAccessInterface;
 import use_case.checkout.CheckoutDataAccessInterface;
 import use_case.login.LoginUserDataAccessInterface;
 import use_case.open_product.OpenProductProductDataAccessInterface;
+import use_case.process_payment.ProcessPaymentDataAccessInterface;
 import use_case.filter.FilterDataAccessInterface;
 import use_case.homepage.AddFundsDataAccessInterface;
 import use_case.manage_address.UserDataAccessInterface;
@@ -27,6 +29,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.Flow.Processor;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -37,16 +40,19 @@ import java.io.IOException;
 public class DataAccessObject implements
     AddToCartUserDataAccessInterface,
     AddToCartProductDataAccessInterface,
+    // PromotionDataAccessInterface,
+    CheckoutDataAccessInterface,
     FilterDataAccessInterface,
+    AddFundsDataAccessInterface,
     LoginUserDataAccessInterface,
+    LogoutUserDataAccessInterface,
+    MakeListingDataAccessInterface,
     UserDataAccessInterface,
     OpenProductProductDataAccessInterface,
+    ProcessPaymentDataAccessInterface,
     SearchDataAccessInterface,
-    LogoutUserDataAccessInterface,
-    SignUpDataAccessInterface, 
-    AddFundsDataAccessInterface,
-    MakeListingDataAccessInterface,
-    CheckoutDataAccessInterface {
+    SignUpDataAccessInterface
+    {
 
         private final String URL1 = "https://xlez-ocau-8ty9.n2.xano.io/api:BftqpNiF";
         private final String URL2 = "https://xlez-ocau-8ty9.n2.xano.io/api:vu2PKIfe";
@@ -135,6 +141,19 @@ public class DataAccessObject implements
             }
             catch (JSONException e) {
                 return null;
+            }
+        }
+
+        public void deleteAddress(String addressUUID) {
+            OkHttpClient client = new OkHttpClient();
+            Request request = new Request.Builder()
+                .url(URL2 + "/address?address_id=" + addressUUID)
+                .delete()
+                .build();
+            try {
+                client.newCall(request).execute();
+            }
+            catch (IOException e) {
             }
         }
 
@@ -359,6 +378,12 @@ public class DataAccessObject implements
 
         @Override
         public void saveUser(User user) {
+            HashSet<Address> addresses = getAddresses(user.getUsername());
+            for (Address address : addresses) {
+                if (!user.getBillingAddresses().contains(address)) {
+                    deleteAddress(address.getId());
+                }
+            }
             deleteUser(user.getUsername());
             createUser(user);
         }
